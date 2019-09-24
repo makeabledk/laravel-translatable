@@ -10,44 +10,6 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 class RelationsTest extends TestCase
 {
     /** @test **/
-    public function it_merges_translations_according_to_given_priority()
-    {
-        $this->seedTranslatedModels();
-
-        $posts = Post::requestLanguagePriority(['sv', 'en'])->get();
-
-        $this->assertEquals(2, $posts->count());
-
-        [$en, $sv] = [$posts->get(0), $posts->get(1)];
-
-        $this->assertEquals('en', $en->language_code);
-        $this->assertEquals('sv', $sv->language_code);
-
-        // Since they are both translations of each their course, they should have a master_id set
-        $this->assertEquals('da', Post::findOrFail($en->master_id)->language_code);
-        $this->assertEquals('da', Post::findOrFail($sv->master_id)->language_code);
-    }
-
-    /** @test **/
-    public function it_can_fallback_to_master_when_no_language_matches()
-    {
-        $this->seedTranslatedModels();
-
-        $posts = Post::requestLanguagePriority(['sv', 'en'], true)->get();
-
-        $this->assertEquals(3, $posts->count());
-
-        [$da, $en, $sv] = [$posts->get(0), $posts->get(1), $posts->get(2)];
-
-        $this->assertEquals('da', $da->language_code);
-        $this->assertEquals('en', $en->language_code);
-        $this->assertEquals('sv', $sv->language_code);
-
-        // This should give us the exact same thing
-        $this->assertEquals(3, Post::requestLanguagePriority(['sv', 'en', '*'])->get()->count());
-    }
-
-    /** @test **/
     public function it_can_eager_load_translated_belongs_to_many_relationships()
     {
         $masterPost = factory(Post::class)
@@ -58,7 +20,7 @@ class RelationsTest extends TestCase
         $masterPost->images()->attach($image = factory(Image::class)->create());
 
         $image = Image::whereKey($image->id)->with(['posts' => function ($query) {
-            $query->requestLanguagePriority('sv');
+            $query->language('sv');
         }])->first();
 
         $this->assertEquals(1, $image->posts->count());
@@ -89,11 +51,11 @@ class RelationsTest extends TestCase
 
         $result = $image->load([
             'posts' => function ($posts) {
-                $posts->requestLanguagePriority('en');
+                $posts->language('en');
             },
             'posts.images',
             'posts.images.posts' => function ($posts) {
-                $posts->requestLanguagePriority('en');
+                $posts->language('en');
             },
         ])->toArray();
 
@@ -102,20 +64,5 @@ class RelationsTest extends TestCase
         $this->assertEquals(1, count(data_get($result, 'posts.0.images.0.posts')));
         $this->assertEquals('en', data_get($result, 'posts.0.language_code'));
         $this->assertEquals('en', data_get($result, 'posts.0.images.0.posts.0.language_code'));
-    }
-
-    protected function seedTranslatedModels()
-    {
-        factory(Post::class) // danish
-            ->create();
-
-        factory(Post::class)
-            ->with(1, 'english', 'translations')
-            ->create();
-
-        factory(Post::class)
-            ->with(1, 'english', 'translations')
-            ->andWith(1, 'swedish', 'translations')
-            ->create();
     }
 }
