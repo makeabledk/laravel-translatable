@@ -5,7 +5,7 @@ namespace Makeable\LaravelTranslatable\Tests\Feature;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
-class TranslatableTest extends TestCase
+class LanguageScopeTest extends TestCase
 {
 
     /** @test **/

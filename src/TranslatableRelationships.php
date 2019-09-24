@@ -5,6 +5,7 @@ namespace Makeable\LaravelTranslatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Makeable\LaravelTranslatable\Relations\TranslatedBelongsToMany;
 
 trait TranslatableRelationships
 {

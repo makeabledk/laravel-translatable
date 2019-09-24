@@ -5,11 +5,13 @@ namespace Makeable\LaravelTranslatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
 use Makeable\LaravelTranslatable\Queries\BestLanguageQuery;
 
 trait Translatable
 {
-    use TranslatableRelationships;
+    use HasCurrentLanguage,
+        TranslatableRelationships;
 
     /**
      * @return HasMany
@@ -53,6 +55,18 @@ trait Translatable
     public function getMasterKey()
     {
         return $this->master_id ?: $this->id;
+    }
+
+    /**
+     * @return Builder
+     */
+    public function newQuery()
+    {
+        return tap(parent::newQuery(), function ($query) {
+            if (($language = static::getCurrentLanguage()) !== null) {
+                $query->language($language);
+            }
+        });
     }
 
 //

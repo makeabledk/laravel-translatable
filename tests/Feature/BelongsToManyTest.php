@@ -2,12 +2,11 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
-use Makeable\LaravelFactory\Factory;
 use Makeable\LaravelTranslatable\Tests\Stubs\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
-class RelationsTest extends TestCase
+class BelongsToManyTest extends TestCase
 {
     /** @test **/
     public function it_can_eager_load_translated_belongs_to_many_relationships()
