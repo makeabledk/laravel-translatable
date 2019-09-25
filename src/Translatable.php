@@ -6,12 +6,22 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
+use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
 use Makeable\LaravelTranslatable\Queries\BestLanguageQuery;
 
 trait Translatable
 {
     use HasCurrentLanguage,
+        SyncsAttributes,
         TranslatableRelationships;
+
+    /**
+     * Register observer on model
+     */
+    public static function bootTranslatable()
+    {
+        static::observe(TranslatableObserver::class);
+    }
 
     /**
      * @return HasMany
@@ -67,6 +77,14 @@ trait Translatable
                 $query->language($language);
             }
         });
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMaster()
+    {
+        return $this->master_id === null;
     }
 
 //

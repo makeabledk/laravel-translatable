@@ -11,6 +11,8 @@ class Post extends Model
 
     protected $guarded = [];
 
+    public $sync = ['team_id'];
+
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
@@ -28,6 +30,6 @@ class Post extends Model
 
     public function team()
     {
-        return $this->belongsTo(Team::class, 'author_id');
+        return $this->belongsTo(Team::class, 'team_id');
     }
 }
