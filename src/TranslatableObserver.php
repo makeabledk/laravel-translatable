@@ -28,10 +28,7 @@ class TranslatableObserver
 
         if ($this->shouldSyncSiblings($model)) {
             $model
-                ->translations
-                ->values()
-                ->push($model->master) // currently necessary because translations doesn't include master
-                ->filter() // in case master is null
+                ->siblings
                 ->each(function ($translation) use ($model) {
                     if (! $translation->is($model)) {
                         $translation->syncingInProgress = true;
@@ -55,6 +52,8 @@ class TranslatableObserver
 
         $changes = $model->isMaster()
             ? $model->getChangedSyncAttributes()
+            // In case model was just inserted, there will be no original values to check against.
+            // Therefore we'll compare against the master-attributes and see if any sync-attributes were changed.
             : $model->getChangedSyncAttributes($model->master->getAttributes());
 
         return count($changes) > 0;

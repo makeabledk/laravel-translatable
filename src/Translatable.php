@@ -3,12 +3,15 @@
 namespace Makeable\LaravelTranslatable;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
 use Makeable\LaravelTranslatable\Queries\BestLanguageQuery;
+use Makeable\LaravelTranslatable\Relations\HasManySiblings;
+use Makeable\LaravelTranslatable\Relations\TranslatedHasMany;
 
 trait Translatable
 {
@@ -33,12 +36,37 @@ trait Translatable
     }
 
     /**
+     * Translations refer to all non-master versions. Ex
+     *
+     * - Danish (master)
+     * - English <-- TRANSLATION, $this instance
+     * - Swedish <-- TRANSLATION,
+     *
      * @return HasMany
      */
     public function translations()
     {
-        return $this->hasMany(get_class($this), $this->getMasterKeyName());
+        return $this->hasMany(static::class, $this->getMasterKeyName());
     }
+
+    /**
+     * Siblings refer to other translations than the current one (incl. master). Ex
+     *
+     * - Danish (master) <-- SIBLING
+     * - English <-- $this instance
+     * - Swedish <-- SIBLING
+     *
+     * This relation should only be used for query purposes and not attaching
+     * new translations as it relies on a sub-selected foreign key.
+     *
+     * @return HasMany
+     */
+    public function siblings()
+    {
+        return new HasManySiblings($this->newRelatedInstance(static::class)->newQuery(), $this);
+    }
+
+    // _________________________________________________________________________________________________________________
 
     /**
      * @param Builder $query
@@ -61,11 +89,34 @@ trait Translatable
     }
 
     /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithMasterKey(Builder $query)
+    {
+        if ($query->getQuery()->columns === null) {
+            $query->select($query->getQuery()->from.'.*');
+        }
+
+        return $query->selectRaw("(SELECT IF({$this->getMasterKeyName()} is NULL, {$this->getKeyName()}, {$this->getMasterKeyName()})) as master_key");
+    }
+
+    // _________________________________________________________________________________________________________________
+
+    /**
      * @return int
      */
     public function getMasterKey()
     {
-        return $this->master_id ?: $this->id;
+        return $this->getAttribute($this->getMasterKeyName()) ?: $this->getKey();
+    }
+
+    /**
+     * @return int
+     */
+    public function getMasterKeyAttribute()
+    {
+        return $this->getMasterKey();
     }
 
     /**
@@ -77,15 +128,27 @@ trait Translatable
     }
 
     /**
+     * @return bool
+     */
+    public function isMaster()
+    {
+        return $this->getAttribute($this->getMasterKeyName()) === null;
+    }
+
+    /**
      * @param string $language
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function getTranslation($language)
     {
-        return $this->translations->firstWhere('language_code', $language);
+        return ($language === $this->language_code)
+            ? $this
+            : $this->siblings->firstWhere('language_code', $language);
     }
 
     /**
+     * Make sure to initialize new query with current language when set
+     *
      * @return Builder
      */
     public function newQuery()
@@ -96,28 +159,4 @@ trait Translatable
             }
         });
     }
-
-    /**
-     * @return bool
-     */
-    public function isMaster()
-    {
-        return $this->master_id === null;
-    }
-
-//
-//    public function scopeWithPostId($query)
-//    {
-//        return $query
-//            ->selectDefault()
-//            ->selectRaw('(SELECT IF(master_id is NULL, id, master_id)) as post_id');
-//    }
-
-//    /**
-//     * @return mixed
-//     */
-//    public function getPostIdAttribute()
-//    {
-//        return $this->master_id ?: $this->id;
-//    }
 }
