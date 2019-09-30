@@ -3,6 +3,7 @@
 use Makeable\LaravelFactory\Factory;
 use Makeable\LaravelTranslatable\Tests\Stubs\Category;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
+use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
 
 new class ($factory)
 {
@@ -17,6 +18,7 @@ new class ($factory)
 
         $this->multilingual(Category::class);
         $this->multilingual(Post::class);
+        $this->multilingual(PostMeta::class);
     }
 
     protected function multilingual($modelClass)

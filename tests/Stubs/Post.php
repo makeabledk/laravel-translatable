@@ -18,6 +18,11 @@ class Post extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
+    public function meta()
+    {
+        return $this->hasMany(PostMeta::class);
+    }
+
     public function images()
     {
         return $this->belongsToMany(Image::class);

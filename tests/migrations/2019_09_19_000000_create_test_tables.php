@@ -43,6 +43,14 @@ class CreateTestTables extends Migration
             $table->unsignedInteger('team_id')->nullable();
             $table->timestamps();
         });
+        Schema::create('post_meta', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('master_id')->nullable();
+            $table->string('language_code');
+            $table->unsignedInteger('post_id')->nullable();
+            $table->string('key')->nullable();
+            $table->timestamps();
+        });
         Schema::create('image_post', function (Blueprint $table) {
             $table->unsignedInteger('image_id');
             $table->unsignedInteger('post_id');

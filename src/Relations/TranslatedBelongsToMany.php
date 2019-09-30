@@ -10,10 +10,7 @@ use Makeable\LaravelTranslatable\Translatable;
 
 class TranslatedBelongsToMany extends BelongsToMany
 {
-    /**
-     * @var string
-     */
-    protected $masterKeyName = 'master_id';
+    use TranslatedRelationHelpers;
 
     /**
      * Set the join clause for the relation query.
@@ -34,7 +31,7 @@ class TranslatedBelongsToMany extends BelongsToMany
             $join->on($baseTable.'.'.$this->relatedKey, '=', $this->getQualifiedRelatedPivotKeyName());
 
             if ($this->relatedIsTranslatable()) {
-                $join->orOn($baseTable.'.'.$this->masterKeyName, '=', $this->getQualifiedRelatedPivotKeyName());
+                $join->orOn($baseTable.'.master_id', '=', $this->getQualifiedRelatedPivotKeyName());
             }
         });
 
@@ -65,9 +62,7 @@ class TranslatedBelongsToMany extends BelongsToMany
 
         $this->query->{$whereIn}(
             $this->getQualifiedForeignPivotKeyName(),
-            collect($models)->map(function ($model) {
-                return $this->getParentKey($model);
-            })->values()->unique(null, true)->sort()->all()
+            $this->getMasterKeys($models, $this->parentKey)
         );
     }
 
@@ -87,7 +82,7 @@ class TranslatedBelongsToMany extends BelongsToMany
         // children back to their parent using the dictionary and the keys on the
         // the parent models. Then we will return the hydrated models back out.
         foreach ($models as $model) {
-            if (isset($dictionary[$key = $this->getModelKey($model)])) {
+            if (isset($dictionary[$key = $this->getMasterKey($model)])) {
                 $model->setRelation(
                     $relation,
                     $this->related->newCollection($dictionary[$key])
@@ -104,25 +99,7 @@ class TranslatedBelongsToMany extends BelongsToMany
      */
     protected function getParentKey($model = null)
     {
-        return $this->getModelKey($model ?? $this->parent, $this->parentKey);
-    }
-
-    /**
-     * @param null $model
-     * @param null $keyName
-     * @return mixed
-     */
-    protected function getModelKey($model, $keyName = null)
-    {
-        if ($this->modelIsTranslatable($model)) {
-            return $model->getMasterKey();
-        }
-
-        if ($keyName !== null) {
-            return $model->{$keyName};
-        }
-
-        return $model->getKey();
+        return $this->getMasterKey($model ?? $this->parent, $this->parentKey);
     }
 
     /**
@@ -131,14 +108,5 @@ class TranslatedBelongsToMany extends BelongsToMany
     protected function relatedIsTranslatable()
     {
         return $this->modelIsTranslatable($this->related);
-    }
-
-    /**
-     * @param Model $model
-     * @return bool
-     */
-    protected function modelIsTranslatable($model)
-    {
-        return array_key_exists(Translatable::class, class_uses($model));
     }
 }

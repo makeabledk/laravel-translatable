@@ -3,6 +3,7 @@
 namespace Makeable\LaravelTranslatable;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
@@ -28,7 +29,7 @@ trait Translatable
      */
     public function master()
     {
-        return $this->belongsTo(get_class($this), 'master_id');
+        return $this->belongsTo(get_class($this), $this->getMasterKeyName());
     }
 
     /**
@@ -36,7 +37,7 @@ trait Translatable
      */
     public function translations()
     {
-        return $this->hasMany(get_class($this), 'master_id');
+        return $this->hasMany(get_class($this), $this->getMasterKeyName());
     }
 
     /**
@@ -56,15 +57,32 @@ trait Translatable
      */
     public function scopeMaster($query)
     {
-        return $query->whereNull('master_id');
+        return $query->whereNull($this->getMasterKeyName());
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getMasterKey()
     {
         return $this->master_id ?: $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMasterKeyName()
+    {
+        return 'master_id';
+    }
+
+    /**
+     * @param string $language
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function getTranslation($language)
+    {
+        return $this->translations->firstWhere('language_code', $language);
     }
 
     /**
