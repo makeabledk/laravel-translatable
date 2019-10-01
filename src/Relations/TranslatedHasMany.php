@@ -2,12 +2,9 @@
 
 namespace Makeable\LaravelTranslatable\Relations;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\JoinClause;
-use Makeable\LaravelTranslatable\Translatable;
 
 class TranslatedHasMany extends HasMany
 {
@@ -62,5 +59,61 @@ class TranslatedHasMany extends HasMany
         }
 
         return $models;
+    }
+
+    /**
+     * Add the constraints for a relationship query.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
+     * @param  array|mixed  $columns
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
+    {
+        if ($query->getQuery()->from == $parentQuery->getQuery()->from) {
+            return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
+        }
+
+        return $query->select($columns)->where(
+            $this->constrainExistenceQuery($this->getExistenceCompareKey())
+        );
+    }
+
+    /**
+     * Add the constraints for a relationship query on the same table.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
+     * @param  array|mixed  $columns
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
+    {
+        $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
+
+        $query->getModel()->setTable($hash);
+
+        return $query->select($columns)->where(
+            $this->constrainExistenceQuery($hash.'.'.$this->getForeignKeyName())
+        );
+    }
+
+    /**
+     * @param $compareKey
+     * @return \Closure
+     */
+    protected function constrainExistenceQuery($compareKey)
+    {
+        return function (Builder $query) use ($compareKey) {
+            $query->whereColumn($this->getQualifiedParentKeyName(), '=', $compareKey);
+
+            if ($this->modelIsTranslatable($this->parent)) {
+                $query->orWhere(function ($query) use ($compareKey) {
+                    $query->whereNotNull($qualifiedMasterKey = $this->parent->qualifyColumn($this->parent->getMasterKeyName()))
+                        ->whereColumn($qualifiedMasterKey, '=', $compareKey);
+                });
+            }
+        };
     }
 }

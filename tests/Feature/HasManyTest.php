@@ -63,6 +63,7 @@ class HasManyTest extends TestCase
             ->with(1, 'english', 'posts.translations')
             ->create();
 
+        // All versions will be loaded unless a specific language is requested
         $this->assertEquals(2, $team->posts->count());
     }
 
@@ -89,5 +90,35 @@ class HasManyTest extends TestCase
         $this->assertEquals(1, count(data_get($result, 'posts.0.meta')));
         $this->assertEquals('en', data_get($result, 'posts.0.language_code'));
         $this->assertEquals('en', data_get($result, 'posts.0.meta.0.language_code'));
+    }
+
+    /** @test **/
+    public function it_can_query_relation_existence_on_translated_has_many_relations()
+    {
+        $translation = factory(Post::class)
+            ->state('english')
+            ->with('master')
+            ->with(1, 'meta')
+            ->with(1, 'english', 'meta.translations')
+            ->create();
+
+        $this->assertEquals(1, Post::whereKey($translation->id)->has('meta', '>=', 2)->get()->count());
+        $this->assertEquals(1, Post::whereKey($translation->id)->whereHas('meta', $this->ofLanguage('en'))->get()->count());
+        $this->assertEquals(0, Post::whereKey($translation->id)->whereHas('meta', $this->ofLanguage('sv'))->get()->count());
+
+        // On self (separate implementation)
+        $this->assertEquals(1, Post::whereKey($translation->id)->whereHas('translations', $this->ofLanguage('en'))->get()->count());
+        $this->assertEquals(0, Post::whereKey($translation->id)->whereHas('translations', $this->ofLanguage('sv'))->get()->count());
+    }
+
+    /**
+     * @param $lang
+     * @return \Closure
+     */
+    protected function ofLanguage($lang)
+    {
+        return function ($query) use ($lang) {
+            return $query->language($lang);
+        };
     }
 }
