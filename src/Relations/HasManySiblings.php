@@ -17,7 +17,7 @@ class HasManySiblings extends TranslatedHasMany
     public function __construct(Builder $query, Model $parent, $foreignKey = null, $localKey = null)
     {
         $localKey = $localKey ?: $parent->qualifyColumn($parent->getKeyName());
-        $foreignKey = $foreignKey ?: 'master_key'; // Don't qualify column as this is not an actual table column
+        $foreignKey = $foreignKey ?: 'master_key'; // Don't qualify master_key as is not an actual table column
         $query = $query->withMasterKey()->where($localKey, '<>', $parent->getKey());
 
         parent::__construct($query, $parent, $foreignKey, $localKey);

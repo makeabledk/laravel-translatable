@@ -2,6 +2,8 @@
 
 namespace Makeable\LaravelTranslatable\Concerns;
 
+use Illuminate\Database\Eloquent\Builder;
+
 trait HasCurrentLanguage
 {
     /**
@@ -31,5 +33,15 @@ trait HasCurrentLanguage
     public static function setGlobalLanguage($language)
     {
         app()[__TRAIT__ . '@globalLanguage'] = $language;
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     */
+    protected function applyCurrentLanguage(Builder $query)
+    {
+        if (($language = static::getCurrentLanguage()) !== null) {
+            $query->language($language);
+        }
     }
 }

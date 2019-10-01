@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TranslatedHasMany extends HasMany
 {
-    use TranslatedRelationHelpers;
+    use TranslatedRelation;
 
     /**
      * @param null $model

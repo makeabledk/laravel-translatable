@@ -2,11 +2,31 @@
 
 namespace Makeable\LaravelTranslatable\Relations;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Makeable\LaravelTranslatable\Queries\BestLanguageQuery;
 use Makeable\LaravelTranslatable\Translatable;
 
-trait TranslatedRelationHelpers
+trait TranslatedRelation
 {
+    use RelationQueryHooks;
+
+//
+//    /**
+//     * Constrain the relation query to a specific language. This is the same implementation
+//     * as Translatable@scopeLanguage, however, having it on the relation itself allows
+//     * us to customize implementation for each relation type.
+//     *
+//     * @param string|array $languagePriority
+//     * @param bool $fallbackMaster
+//     * @return Builder
+//     */
+//    public function language($languagePriority, $fallbackMaster = false)
+//    {
+//        return call_user_func(new BestLanguageQuery, $this->query, ...func_get_args());
+//    }
+
+
     /**
      * @param  array  $models
      * @param  null  $keyName

@@ -10,7 +10,7 @@ use Makeable\LaravelTranslatable\Translatable;
 
 class TranslatedBelongsToMany extends BelongsToMany
 {
-    use TranslatedRelationHelpers;
+    use TranslatedRelation;
 
     /**
      * Set the join clause for the relation query.

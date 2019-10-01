@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -28,7 +29,7 @@ trait Translatable
     }
 
     /**
-     * @return HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function master()
     {
@@ -104,6 +105,14 @@ trait Translatable
     // _________________________________________________________________________________________________________________
 
     /**
+     * @return \Makeable\LaravelTranslatable\Translatable
+     */
+    public function getMaster()
+    {
+        return $this->isMaster() ? $this : $this->master;
+    }
+
+    /**
      * @return int
      */
     public function getMasterKey()
@@ -147,16 +156,21 @@ trait Translatable
     }
 
     /**
+     * @param $language
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getTranslationOrNew($language)
+    {
+        return $this->getTranslation($language) ?: (new static)->master()->associate($this->getMaster());
+    }
+
+    /**
      * Make sure to initialize new query with current language when set
      *
      * @return Builder
      */
     public function newQuery()
     {
-        return tap(parent::newQuery(), function ($query) {
-            if (($language = static::getCurrentLanguage()) !== null) {
-                $query->language($language);
-            }
-        });
+        return tap(parent::newQuery(), Closure::fromCallable([$this, 'applyCurrentLanguage']));
     }
 }

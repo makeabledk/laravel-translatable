@@ -8,6 +8,11 @@ use Illuminate\Support\Collection;
 class BestLanguageQuery
 {
     /**
+     * @var array
+     */
+    protected static $appliedQueries = [];
+
+    /**
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  array  $languages
      * @param  bool  $fallbackMaster
@@ -19,7 +24,20 @@ class BestLanguageQuery
 
         $this->clearVariables($query);
 
-        return $query->whereRaw($query->qualifyColumn('id') . " IN ({$this->getBestIdsQuery($query, $languages)})");
+        $query->whereRaw($query->qualifyColumn('id') . " IN ({$this->getBestIdsQuery($query, $languages)})");
+
+        static::$appliedQueries[spl_object_id($query)] = true;
+
+        return $query;
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return bool
+     */
+    public static function wasAppliedOn(Builder $query)
+    {
+        return array_key_exists(spl_object_id($query), static::$appliedQueries);
     }
 
     /**
