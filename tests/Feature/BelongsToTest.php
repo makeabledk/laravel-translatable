@@ -17,7 +17,7 @@ class BelongsToTest extends TestCase
             ->with(1, 'english', 'translations')
             ->times(2)
             ->create()
-            ->last(); // Ensure it doesn't just select the first one, but actually matches foreign constraints
+            ->last(); // Ensure the post() relation on Meta doesn't just select the first post in table, but actually matches foreign key constraints
 
         $metaMaster = PostMeta::create();
         $metaTranslation = $metaMaster->getTranslationOrNew('en');

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
 use Makeable\LaravelTranslatable\Queries\BestLanguageQuery;
+use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedRelation;
 use Makeable\LaravelTranslatable\Translatable;
 
 class TranslatedBelongsTo extends BelongsTo
@@ -45,12 +46,10 @@ class TranslatedBelongsTo extends BelongsTo
 
         // Finally we wish to always only fetch the parent best matching the
         // current language of the child, unless otherwise specified.
-        $this->beforeGetting(function (Builder $query) {
-            if ($this->modelIsTranslatable($this->related) || ! BestLanguageQuery::wasAppliedOn($query)) {
-                // If child is not translatable, language_code will be null and default to master
-                $query->language([$this->child->language_code, '*']);
-            }
-        });
+        if ($this->modelIsTranslatable($this->related)) {
+            // If child is not translatable, language_code will be null and default to master
+            $this->setDefaultLanguage([$this->child->language_code, '*']);
+        }
     }
 
     /**

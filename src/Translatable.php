@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
 use Makeable\LaravelTranslatable\Queries\BestLanguageQuery;
-use Makeable\LaravelTranslatable\Relations\HasManySiblings;
+use Makeable\LaravelTranslatable\Relations\VersionsRelation;
 use Makeable\LaravelTranslatable\Relations\TranslatedHasMany;
 
 trait Translatable
@@ -47,7 +47,7 @@ trait Translatable
      */
     public function translations()
     {
-        return $this->hasMany(static::class, $this->getMasterKeyName());
+        return $this->hasMany(static::class, $this->getMasterKeyName())->withoutDefaultingLanguage();
     }
 
     /**
@@ -60,11 +60,28 @@ trait Translatable
      * This relation should only be used for query purposes and not attaching
      * new translations as it relies on a sub-selected foreign key.
      *
-     * @return HasMany
+     * @return VersionsRelation
      */
     public function siblings()
     {
-        return new HasManySiblings($this->newRelatedInstance(static::class)->newQuery(), $this);
+        return VersionsRelation::model($this)->withoutSelf();
+    }
+
+    /**
+     * Versions refer to all translations (incl. master). Ex
+     *
+     * - Danish (master) <-- VERSION
+     * - English <-- VERSIONS, $this instance
+     * - Swedish <-- VERSION
+     *
+     * This relation should only be used for query purposes and not attaching
+     * new translations as it relies on a sub-selected foreign key.
+     *
+     * @return VersionsRelation
+     */
+    public function versions()
+    {
+        return VersionsRelation::model($this);
     }
 
     // _________________________________________________________________________________________________________________

@@ -1,6 +1,6 @@
 <?php
 
-namespace Makeable\LaravelTranslatable\Relations;
+namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 trait RelationQueryHooks
 {
@@ -12,7 +12,7 @@ trait RelationQueryHooks
      * @return array
      */
     public static $knownQueryBuilderGetters = [
-        'chunk', 'count', 'each', 'first', 'firstOrFail', 'get', 'getQuery', 'paginate', 'simplePaginate'
+        'chunk', 'count', 'dd', 'each', 'first', 'firstOrFail', 'get', 'getQuery', 'paginate', 'simplePaginate'
     ];
 
     protected $hooks = [
@@ -29,22 +29,10 @@ trait RelationQueryHooks
     public function __call($method, $parameters)
     {
         if (in_array($method, static::$knownQueryBuilderGetters)) {
-            $this->performHookCallback('beforeGetting', [$this->query]);
+            $this->fireBeforeGetting();
         }
 
         return parent::__call($method, $parameters);
-
-//        if (static::hasMacro($method)) {
-//            return $this->macroCall($method, $parameters);
-//        }
-//
-//        $result = $this->forwardCallTo($this->query, $method, $parameters);
-//
-//        if ($result === $this->query) {
-//            return $this;
-//        }
-//
-//        return $result;
     }
 
     /**
@@ -53,11 +41,28 @@ trait RelationQueryHooks
      */
     public function get($columns = ['*'])
     {
-        $this->performHookCallback('beforeGetting', [$this->query]);
+        $this->fireBeforeGetting();
 
         return parent::get($columns);
     }
 
+    /**
+     * @return mixed
+     */
+    public function getResults()
+    {
+        $this->fireBeforeGetting();
+
+        return parent::getResults();
+    }
+
+    /**
+     * Fire the queued callbacks for the before-getting hook
+     */
+    protected function fireBeforeGetting()
+    {
+        $this->performHookCallback('beforeGetting', [$this->query]);
+    }
 
     /**
      * @param  callable  $callback

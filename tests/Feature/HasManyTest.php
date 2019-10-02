@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Illuminate\Support\Facades\DB;
 use Makeable\LaravelTranslatable\Tests\Stubs\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
@@ -41,30 +42,40 @@ class HasManyTest extends TestCase
     }
 
     /** @test **/
-    public function the_has_many_translatable_models_includes_both_master_and_translations()
+    public function the_has_many_translatable_models_always_selects_best_matching_language()
     {
-        $master = factory(Post::class)
+        $postMaster = factory(Post::class)
+            ->with(1, 'english', 'translations')
+            ->andWith(1, 'swedish', 'translations')
             ->with(1, 'meta')
             ->with(1, 'english', 'meta.translations')
-            ->create();
+            ->times(2)
+            ->create()
+            ->first();
 
-        $this->assertEquals(2, $master->loadCount('meta')->meta_count);
-        $this->assertEquals(2, $master->meta()->count());
-        $this->assertEquals(2, $master->meta->count());
-        $this->assertEquals('da', $master->meta->get(0)->language_code);
-        $this->assertEquals('en', $master->meta->get(1)->language_code);
+        $this->assertEquals(1, $postMaster->meta->count());
+        $this->assertEquals('da', $postMaster->meta->first()->language_code);
+
+        $this->assertEquals(1, ($english = $postMaster->getTranslation('en'))->meta->count());
+        $this->assertEquals('en', $english->meta->first()->language_code);
+
+        $this->assertEquals(1, ($swedish = $postMaster->getTranslation('sv'))->meta->count(), 'It should default to master when language not available');
+        $this->assertEquals('da', $swedish->meta->first()->language_code, 'It should default to master when language not available');
     }
 
     /** @test **/
-    public function a_non_translatable_model_can_have_many_translatable_relations()
+    public function it_defaults_to_master_language_when_parent_is_non_translatable()
     {
         $team = factory(Team::class)
             ->with(1, 'posts')
             ->with(1, 'english', 'posts.translations')
             ->create();
 
-        // All versions will be loaded unless a specific language is requested
-        $this->assertEquals(2, $team->posts->count());
+        $this->assertEquals(1, $team->posts->count(), 'Master version will be loaded unless a specific language is requested');
+        $this->assertEquals('da', $team->posts->first()->language_code, 'Master version will be loaded unless a specific language is requested');
+
+        $this->assertEquals(1, $team->posts()->language('en')->count(), 'A specific language is requested');
+        $this->assertEquals('en', $team->posts()->language('en')->first()->language_code, 'A specific language is requested');
     }
 
     /** @test **/
@@ -81,9 +92,7 @@ class HasManyTest extends TestCase
             'posts' => function ($posts) {
                 $posts->language('en');
             },
-            'posts.meta' => function ($posts) {
-                $posts->language('en');
-            },
+            'posts.meta',
         ])->toArray();
 
         $this->assertEquals(1, count(data_get($result, 'posts')));

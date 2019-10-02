@@ -1,15 +1,16 @@
 <?php
 
-namespace Makeable\LaravelTranslatable\Relations;
+namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Makeable\LaravelTranslatable\Queries\BestLanguageQuery;
+use Makeable\LaravelTranslatable\Relations\Concerns\RelationQueryHooks;
 use Makeable\LaravelTranslatable\Translatable;
 
 trait TranslatedRelation
 {
-    use RelationQueryHooks;
+    use HasDefaultLanguage;
 
 //
 //    /**

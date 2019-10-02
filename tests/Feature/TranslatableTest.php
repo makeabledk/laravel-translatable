@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Illuminate\Support\Facades\DB;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
@@ -29,5 +30,17 @@ class TranslatableTest extends TestCase
 
         $this->assertEquals(['en', 'sv'], $master->translations->pluck('language_code')->toArray());
         $this->assertEquals(['en', 'sv'], $master->getTranslation('en')->translations->pluck('language_code')->toArray());
+    }
+
+    /** @test * */
+    public function the_versions_relation_returns_all_translations_and_master()
+    {
+        $master = factory(Post::class)
+            ->with(1, 'english', 'translations')
+            ->andWith(1, 'swedish', 'translations')
+            ->create();
+
+        $this->assertEquals(['da', 'en', 'sv'], $master->versions->pluck('language_code')->toArray());
+        $this->assertEquals(['da', 'en', 'sv'], $master->getTranslation('en')->versions->pluck('language_code')->toArray());
     }
 }

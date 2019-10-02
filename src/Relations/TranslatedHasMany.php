@@ -5,6 +5,8 @@ namespace Makeable\LaravelTranslatable\Relations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Arr;
+use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedRelation;
 
 class TranslatedHasMany extends HasMany
 {
@@ -20,6 +22,24 @@ class TranslatedHasMany extends HasMany
     }
 
     /**
+     * @return void
+     */
+    public function addConstraints()
+    {
+        parent::addConstraints();
+
+        // We'll always only fetch the related children best matching the
+        // current language of the parent, unless otherwise specified.
+
+        // Sometimes the parent will be an empty instance (ex when
+        // eager-loading) in which case we'll catch it later on.
+        if ($this->modelIsTranslatable($this->related) && $this->parent->exists) {
+            // If parent is not translatable, language_code will be null and default to master
+            $this->setDefaultLanguage([$this->parent->language_code, '*']);
+        }
+    }
+
+    /**
      * Set the constraints for an eager load of the relation.
      *
      * @param  array  $models
@@ -32,6 +52,10 @@ class TranslatedHasMany extends HasMany
         $this->query->{$whereIn}(
             $this->foreignKey, $this->getMasterKeys($models, $this->localKey)
         );
+
+        if ($this->modelIsTranslatable($this->related)) {
+            $this->setDefaultLanguage([optional(Arr::first($models))->language_code, '*']);
+        }
     }
 
     /**
