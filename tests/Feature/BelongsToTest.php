@@ -31,6 +31,10 @@ class BelongsToTest extends TestCase
         $this->assertEquals(1, $metaTranslation->post()->language('da')->count());
         $this->assertEquals($postMaster->id, $metaTranslation->post()->language('da')->first()->id, 'Another language may be set on the relation which changes the outcome');
     }
+
+    // TODO eager-loaded nested relations
+
+
 //
 //    /** @test **/
 //    public function it_can_eager_load_has_many_from_translated_model()

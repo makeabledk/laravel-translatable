@@ -44,13 +44,32 @@ class TranslatedBelongsTo extends BelongsTo
             });
         }
 
-        // Finally we wish to always only fetch the parent best matching the
+        // Finally we wish to default to only fetch the parent best matching the
         // current language of the child, unless otherwise specified.
         if ($this->modelIsTranslatable($this->related)) {
-            // If child is not translatable, language_code will be null and default to master
             $this->setDefaultLanguage([$this->child->language_code, '*']);
         }
     }
+
+// TODO ? Default language?
+//    /**
+//     * Set the constraints for an eager load of the relation.
+//     *
+//     * @param  array  $models
+//     * @return void
+//     */
+//    public function addEagerConstraints(array $models)
+//    {
+//        // We'll grab the primary key name of the related models since it could be set to
+//        // a non-standard name and not "id". We will then construct the constraint for
+//        // our eagerly loading query so it returns the proper models from execution.
+//        $key = $this->related->getTable().'.'.$this->ownerKey;
+//
+//        $whereIn = $this->whereInMethod($this->related, $this->ownerKey);
+//
+//        $this->query->{$whereIn}($key, $this->getEagerModelKeys($models));
+//    }
+
 
     /**
      * Associate the model instance to the given parent.

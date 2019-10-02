@@ -28,13 +28,10 @@ class TranslatedHasMany extends HasMany
     {
         parent::addConstraints();
 
-        // We'll always only fetch the related children best matching the
-        // current language of the parent, unless otherwise specified.
-
+        // Per default we'll try and fetch the children best matching the parent.
         // Sometimes the parent will be an empty instance (ex when
         // eager-loading) in which case we'll catch it later on.
         if ($this->modelIsTranslatable($this->related) && $this->parent->exists) {
-            // If parent is not translatable, language_code will be null and default to master
             $this->setDefaultLanguage([$this->parent->language_code, '*']);
         }
     }
