@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
-use Makeable\LaravelTranslatable\Queries\BestLanguageQuery;
+use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 use Makeable\LaravelTranslatable\Relations\VersionsRelation;
 use Makeable\LaravelTranslatable\Relations\TranslatedHasMany;
 
@@ -47,7 +47,7 @@ trait Translatable
      */
     public function translations()
     {
-        return $this->hasMany(static::class, $this->getMasterKeyName())->withoutDefaultingLanguage();
+        return $this->hasMany(static::class, $this->getMasterKeyName())->withoutLanguageScope();
     }
 
     /**
@@ -94,7 +94,7 @@ trait Translatable
      */
     public function scopeLanguage($query, $languagePriority, $fallbackMaster = false)
     {
-        return call_user_func(new BestLanguageQuery, ...func_get_args());
+        return LanguageScope::apply($query, $languagePriority, $fallbackMaster);
     }
 
     /**

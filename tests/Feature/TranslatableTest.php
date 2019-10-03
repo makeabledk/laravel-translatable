@@ -33,7 +33,7 @@ class TranslatableTest extends TestCase
     }
 
     /** @test * */
-    public function the_versions_relation_returns_all_translations_and_master()
+    public function the_versions_relation_returns_all_translations_including_master()
     {
         $master = factory(Post::class)
             ->with(1, 'english', 'translations')

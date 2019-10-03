@@ -2,11 +2,24 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class LanguageScopeTest extends TestCase
 {
+    /** @test * */
+    public function it_keeps_track_of_the_queries_it_was_applied_on()
+    {
+        $model = new Post();
+
+        $this->assertFalse(LanguageScope::wasApplied($query = $model->newQuery()));
+
+        LanguageScope::apply($query, 'en', true);
+
+        $this->assertTrue(LanguageScope::wasApplied($query));
+        $this->assertEquals(['en', '*'], LanguageScope::getLatestRequestedLanguage($model));
+    }
 
     /** @test **/
     public function when_using_language_scope_it_finds_the_best_matching_model()
@@ -45,15 +58,6 @@ class LanguageScopeTest extends TestCase
         // This should give us the exact same thing
         $this->assertEquals(3, Post::language(['sv', 'en', '*'])->get()->count());
     }
-
-    //
-//    /** @test **/
-//    public function it_()
-//    {
-//        $post = factory(Post::class)->times(2)->with(1, 'english', 'translations')->create();
-//
-//        $this->assertEquals(4, Post::count());
-//    }
 
     protected function seedTranslatedModels()
     {

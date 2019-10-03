@@ -12,7 +12,7 @@ class TranslatableObserver
      */
     public function creating(Model $model)
     {
-        $this->ensureTranslatable($model);
+        ModelChecker::ensureTranslatable($model);
 
         if (! $model->isMaster()) {
             $model->forceFillMissing($model->master->getSyncAttributes());
@@ -24,7 +24,7 @@ class TranslatableObserver
      */
     public function saved(Model $model)
     {
-        $this->ensureTranslatable($model);
+        ModelChecker::ensureTranslatable($model);
 
         if ($this->shouldSyncSiblings($model)) {
             $model
@@ -57,14 +57,5 @@ class TranslatableObserver
             : $model->getChangedSyncAttributes($model->master->getAttributes());
 
         return count($changes) > 0;
-    }
-
-    /**
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @throws \Throwable
-     */
-    protected function ensureTranslatable($model)
-    {
-        throw_unless(array_key_exists(Translatable::class, class_uses($model)), \BadMethodCallException::class);
     }
 }

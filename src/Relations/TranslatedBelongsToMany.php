@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Arr;
+use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedRelation;
 use Makeable\LaravelTranslatable\Translatable;
 
@@ -31,7 +33,8 @@ class TranslatedBelongsToMany extends BelongsToMany
 
             $join->on($baseTable.'.'.$this->relatedKey, '=', $this->getQualifiedRelatedPivotKeyName());
 
-            if ($this->relatedIsTranslatable()) {
+
+            if (ModelChecker::checkTranslatable($this->related)) {
                 $join->orOn($baseTable.'.master_id', '=', $this->getQualifiedRelatedPivotKeyName());
             }
         });
@@ -48,13 +51,16 @@ class TranslatedBelongsToMany extends BelongsToMany
     {
         $this->query->where($this->getQualifiedForeignPivotKeyName(), '=', $this->getParentKey());
 
-        // Per default we'll try and fetch the children best matching the parent.
-        // Sometimes the parent will be an empty instance (ie when
-        // eager-loading) in which case we'll catch it later on.
-        if ($this->modelIsTranslatable($this->related) && $this->parent->exists) {
-            // If parent is not translatable, language_code will be null and default to master
-            $this->setDefaultLanguage([$this->parent->language_code, '*']);
-        }
+        $this->setDefaultLanguageFromModel($this->parent);
+
+//
+//        // Per default we'll try and fetch the children best matching the parent.
+//        // Sometimes the parent will be an empty instance (ie when
+//        // eager-loading) in which case we'll catch it later on.
+//        if ($this->modelIsTranslatable($this->related) && $this->parent->exists) {
+//            // If parent is not translatable, language_code will be null and default to master
+//            $this->setDefaultLanguage([$this->parent->language_code, '*']);
+//        }
 
         return $this;
     }
@@ -74,7 +80,7 @@ class TranslatedBelongsToMany extends BelongsToMany
             $this->getMasterKeys($models, $this->parentKey)
         );
 
-        // TODO default language
+        $this->setDefaultLanguageFromModel(Arr::first($models));
     }
 
     /**
@@ -111,13 +117,5 @@ class TranslatedBelongsToMany extends BelongsToMany
     protected function getParentKey($model = null)
     {
         return $this->getMasterKey($model ?? $this->parent, $this->parentKey);
-    }
-
-    /**
-     * @return bool
-     */
-    protected function relatedIsTranslatable()
-    {
-        return $this->modelIsTranslatable($this->related);
     }
 }

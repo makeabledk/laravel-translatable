@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Makeable\LaravelTranslatable\Tests\Stubs\Category;
 use Makeable\LaravelTranslatable\Tests\Stubs\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
@@ -64,27 +65,44 @@ class BelongsToManyTest extends TestCase
     /** @test **/
     public function it_can_eager_load_nested_translated_belongs_to_many_models()
     {
-        $image = factory(Image::class)
+        factory(Category::class)
+            ->with(1, 'english', 'translations')
+            ->andWith(1, 'swedish', 'translations')
             ->with(1, 'posts')
             ->with(1, 'english', 'posts.translations')
+            ->times(2)
             ->create();
 
-        // TODO test eager-loaded nested relations
+        $load = function($language) {
+            return Category::latest()
+                ->language($language)
+                ->with('posts.categories.posts')
+                ->first()
+                ->toArray();
+        };
 
-        $result = $image->load([
-            'posts' => function ($posts) {
-                $posts->language('en');
-            },
-            'posts.images',
-            'posts.images.posts' => function ($posts) {
-                $posts->language('en');
-            },
-        ])->toArray();
+        // The language should be inherited all the way down
+        $result = $load('en');
 
         $this->assertEquals(1, count(data_get($result, 'posts')));
-        $this->assertEquals(1, count(data_get($result, 'posts.0.images')));
-        $this->assertEquals(1, count(data_get($result, 'posts.0.images.0.posts')));
+        $this->assertEquals(1, count(data_get($result, 'posts.0.categories')));
+        $this->assertEquals(1, count(data_get($result, 'posts.0.categories.0.posts')));
+        $this->assertEquals('en', data_get($result, 'language_code'));
         $this->assertEquals('en', data_get($result, 'posts.0.language_code'));
-        $this->assertEquals('en', data_get($result, 'posts.0.images.0.posts.0.language_code'));
+        $this->assertEquals('en', data_get($result, 'posts.0.categories.0.language_code'));
+        $this->assertEquals('en', data_get($result, 'posts.0.categories.0.posts.0.language_code'));
+
+        // When a child doesn't exist in the requested language, it will default to master.
+        // When nesting further relation, it will keep trying the originally requested
+        // language, and only use master on the individual models where necessary.
+        $result = $load('sv');
+
+        $this->assertEquals(1, count(data_get($result, 'posts')));
+        $this->assertEquals(1, count(data_get($result, 'posts.0.categories')));
+        $this->assertEquals(1, count(data_get($result, 'posts.0.categories.0.posts')));
+        $this->assertEquals('sv', data_get($result, 'language_code'));
+        $this->assertEquals('da', data_get($result, 'posts.0.language_code'));
+        $this->assertEquals('sv', data_get($result, 'posts.0.categories.0.language_code'));
+        $this->assertEquals('da', data_get($result, 'posts.0.categories.0.posts.0.language_code'));
     }
 }

@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
-use Makeable\LaravelTranslatable\Queries\BestLanguageQuery;
+use Illuminate\Support\Arr;
+use Makeable\LaravelTranslatable\ModelChecker;
+use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedRelation;
 use Makeable\LaravelTranslatable\Translatable;
 
@@ -37,7 +39,7 @@ class TranslatedBelongsTo extends BelongsTo
         // If parent is translatable we'll also accept that it matches on master_id in
         // case we're querying for a translation.
         // Ie. select * from posts WHERE posts.id = {$meta->post_id} or (posts.master_id = {$meta->post_id} and posts.master_id is not null)
-        if ($this->modelIsTranslatable($this->related)) {
+        if (ModelChecker::checkTranslatable($this->related)) {
             $this->query->orWhere(function ($query) use ($table) {
                 $query->where($table.'.'.$this->related->getMasterKeyName(), '=', $this->child->{$this->foreignKey})
                     ->whereNotNull($table.'.'.$this->related->getMasterKeyName());
@@ -46,9 +48,7 @@ class TranslatedBelongsTo extends BelongsTo
 
         // Finally we wish to default to only fetch the parent best matching the
         // current language of the child, unless otherwise specified.
-        if ($this->modelIsTranslatable($this->related)) {
-            $this->setDefaultLanguage([$this->child->language_code, '*']);
-        }
+        $this->setDefaultLanguageFromModel($this->child);
     }
 
 // TODO ? Default language?

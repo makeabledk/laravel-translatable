@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
+use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedRelation;
 
 class TranslatedHasMany extends HasMany
@@ -28,12 +29,14 @@ class TranslatedHasMany extends HasMany
     {
         parent::addConstraints();
 
-        // Per default we'll try and fetch the children best matching the parent.
-        // Sometimes the parent will be an empty instance (ex when
-        // eager-loading) in which case we'll catch it later on.
-        if ($this->modelIsTranslatable($this->related) && $this->parent->exists) {
-            $this->setDefaultLanguage([$this->parent->language_code, '*']);
-        }
+        $this->setDefaultLanguageFromModel($this->parent);
+
+//        // Per default we'll try and fetch the children best matching the parent.
+//        // Sometimes the parent will be an empty instance (ex when
+//        // eager-loading) in which case we'll catch it later on.
+//        if ($this->modelIsTranslatable($this->related) && $this->parent->exists) {
+//            $this->setDefaultLanguage([$this->parent->language_code, '*']);
+//        }
     }
 
     /**
@@ -50,9 +53,12 @@ class TranslatedHasMany extends HasMany
             $this->foreignKey, $this->getMasterKeys($models, $this->localKey)
         );
 
-        if ($this->modelIsTranslatable($this->related)) {
-            $this->setDefaultLanguage([optional(Arr::first($models))->language_code, '*']);
-        }
+        $this->setDefaultLanguageFromModel(Arr::first($models));
+
+//
+//        if ($this->modelIsTranslatable($this->related)) {
+//            $this->setDefaultLanguage([optional(Arr::first($models))->language_code, '*']);
+//        }
     }
 
     /**
@@ -129,7 +135,7 @@ class TranslatedHasMany extends HasMany
         return function (Builder $query) use ($compareKey) {
             $query->whereColumn($this->getQualifiedParentKeyName(), '=', $compareKey);
 
-            if ($this->modelIsTranslatable($this->parent)) {
+            if (ModelChecker::checkTranslatable($this->parent)) {
                 $query->orWhere(function ($query) use ($compareKey) {
                     $query->whereNotNull($qualifiedMasterKey = $this->parent->qualifyColumn($this->parent->getMasterKeyName()))
                         ->whereColumn($qualifiedMasterKey, '=', $compareKey);
