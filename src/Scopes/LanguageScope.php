@@ -81,11 +81,15 @@ class LanguageScope
     {
         $languages = $this->normalizeLanguages($languages, $fallbackMaster);
 
+//        dump($languages);
+
         $this->clearVariables();
 
         $this->pushHistory($languages);
 
-        return $this->query->whereRaw("{$this->model->getQualifiedKeyName()} IN ({$this->getBestIdsQuery($languages)})");
+        $this->query->whereRaw("{$this->model->getQualifiedKeyName()} IN ({$this->getBestIdsQuery($languages)})");
+
+//        dump('matches', $this->query->count());
     }
 
     /**

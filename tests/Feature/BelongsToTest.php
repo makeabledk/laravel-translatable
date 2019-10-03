@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Makeable\LaravelTranslatable\Tests\Stubs\Category;
 use Makeable\LaravelTranslatable\Tests\Stubs\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
@@ -31,6 +32,49 @@ class BelongsToTest extends TestCase
         $this->assertEquals(1, $metaTranslation->post()->language('da')->count());
         $this->assertEquals($postMaster->id, $metaTranslation->post()->language('da')->first()->id, 'Another language may be set on the relation which changes the outcome');
     }
+
+    /** @test **/
+    public function it_can_load_nested_translatable_belongs_to_relations()
+    {
+        factory(Post::class)
+            ->with(1, 'english', 'translations')
+            ->andWith(1, 'swedish', 'translations')
+            ->with(1, 'meta')
+            ->with(1, 'english', 'meta.translations')
+            ->times(2)
+            ->create();
+
+//        dd(
+//            Post::all()->toArray()
+////                ->language('en')
+////                ->with('meta.post')
+////                ->first()
+//        );
+
+
+        $load = function($language) {
+            return Post::latest()
+                ->language($language)
+                ->with('meta.post')
+                ->first()
+                ->toArray();
+        };
+
+//        \DB::listen(function ($e) {
+//            dump($e->sql);
+//        });
+
+        $result = $load('en');
+
+//        dd($result);
+
+
+        $this->assertEquals(1, count(data_get($result, 'meta')));
+        $this->assertEquals('en', data_get($result, 'language_code'));
+        $this->assertEquals('en', data_get($result, 'meta.0.language_code'));
+        $this->assertEquals('en', data_get($result, 'meta.0.post.language_code'));
+    }
+
 
     // TODO eager-loaded nested relations
 

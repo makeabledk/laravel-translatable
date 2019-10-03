@@ -30,13 +30,6 @@ class TranslatedHasMany extends HasMany
         parent::addConstraints();
 
         $this->setDefaultLanguageFromModel($this->parent);
-
-//        // Per default we'll try and fetch the children best matching the parent.
-//        // Sometimes the parent will be an empty instance (ex when
-//        // eager-loading) in which case we'll catch it later on.
-//        if ($this->modelIsTranslatable($this->related) && $this->parent->exists) {
-//            $this->setDefaultLanguage([$this->parent->language_code, '*']);
-//        }
     }
 
     /**
@@ -53,12 +46,7 @@ class TranslatedHasMany extends HasMany
             $this->foreignKey, $this->getMasterKeys($models, $this->localKey)
         );
 
-        $this->setDefaultLanguageFromModel(Arr::first($models));
-
-//
-//        if ($this->modelIsTranslatable($this->related)) {
-//            $this->setDefaultLanguage([optional(Arr::first($models))->language_code, '*']);
-//        }
+        $this->setDefaultLanguageFromLatestQuery(Arr::first($models));
     }
 
     /**
