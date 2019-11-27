@@ -9,7 +9,6 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedRelation;
-use Makeable\LaravelTranslatable\Translatable;
 
 class TranslatedBelongsToMany extends BelongsToMany
 {
@@ -32,7 +31,6 @@ class TranslatedBelongsToMany extends BelongsToMany
             $baseTable = $this->related->getTable();
 
             $join->on($baseTable.'.'.$this->relatedKey, '=', $this->getQualifiedRelatedPivotKeyName());
-
 
             if (ModelChecker::checkTranslatable($this->related)) {
                 $join->orOn($baseTable.'.master_id', '=', $this->getQualifiedRelatedPivotKeyName());

@@ -3,9 +3,7 @@
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
@@ -32,7 +30,6 @@ trait HasDefaultLanguage
         return $this;
     }
 
-
     /**
      * Check what was actually the latest requested language for the model.
      * Only in case we can't retrieve that, we'll default to the
@@ -52,6 +49,7 @@ trait HasDefaultLanguage
         ) {
             // Ensure we always default to master
             $this->setDefaultLanguage(array_merge($language, ['*']));
+
             return;
         }
 

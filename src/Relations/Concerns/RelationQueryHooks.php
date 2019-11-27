@@ -12,11 +12,11 @@ trait RelationQueryHooks
      * @return array
      */
     public static $knownQueryBuilderGetters = [
-        'chunk', 'count', 'dd', 'each', 'first', 'firstOrFail', 'get', 'getQuery', 'paginate', 'simplePaginate'
+        'chunk', 'count', 'dd', 'each', 'first', 'firstOrFail', 'get', 'getQuery', 'paginate', 'simplePaginate',
     ];
 
     protected $hooks = [
-        'beforeGetting' => []
+        'beforeGetting' => [],
     ];
 
     /**
@@ -57,7 +57,7 @@ trait RelationQueryHooks
     }
 
     /**
-     * Fire the queued callbacks for the before-getting hook
+     * Fire the queued callbacks for the before-getting hook.
      */
     protected function fireBeforeGetting()
     {

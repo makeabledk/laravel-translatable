@@ -5,14 +5,11 @@ namespace Makeable\LaravelTranslatable;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
 use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
-use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 use Makeable\LaravelTranslatable\Relations\VersionsRelation;
-use Makeable\LaravelTranslatable\Relations\TranslatedHasMany;
+use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait Translatable
 {
@@ -21,7 +18,7 @@ trait Translatable
         TranslatableRelationships;
 
     /**
-     * Register observer on model
+     * Register observer on model.
      */
     public static function bootTranslatable()
     {
@@ -37,7 +34,7 @@ trait Translatable
     }
 
     /**
-     * Translations refer to all non-master versions. Ex
+     * Translations refer to all non-master versions. Ex.
      *
      * - Danish (master)
      * - English <-- TRANSLATION, $this instance
@@ -51,7 +48,7 @@ trait Translatable
     }
 
     /**
-     * Siblings refer to other translations than the current one (incl. master). Ex
+     * Siblings refer to other translations than the current one (incl. master). Ex.
      *
      * - Danish (master) <-- SIBLING
      * - English <-- $this instance
@@ -68,7 +65,7 @@ trait Translatable
     }
 
     /**
-     * Versions refer to all translations (incl. master). Ex
+     * Versions refer to all translations (incl. master). Ex.
      *
      * - Danish (master) <-- VERSION
      * - English <-- VERSIONS, $this instance
@@ -182,7 +179,7 @@ trait Translatable
     }
 
     /**
-     * Make sure to initialize new query with current language when set
+     * Make sure to initialize new query with current language when set.
      *
      * @return Builder
      */

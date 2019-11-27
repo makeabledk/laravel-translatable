@@ -2,8 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
-use Makeable\LaravelTranslatable\Tests\Stubs\Category;
-use Makeable\LaravelTranslatable\Tests\Stubs\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
 use Makeable\LaravelTranslatable\Tests\Stubs\Team;
@@ -46,13 +44,12 @@ class BelongsToTest extends TestCase
 
 //        dd(
 //            Post::all()->toArray()
-////                ->language('en')
-////                ->with('meta.post')
-////                ->first()
+        ////                ->language('en')
+        ////                ->with('meta.post')
+        ////                ->first()
 //        );
 
-
-        $load = function($language) {
+        $load = function ($language) {
             return Post::latest()
                 ->language($language)
                 ->with('meta.post')
@@ -68,16 +65,13 @@ class BelongsToTest extends TestCase
 
 //        dd($result);
 
-
         $this->assertEquals(1, count(data_get($result, 'meta')));
         $this->assertEquals('en', data_get($result, 'language_code'));
         $this->assertEquals('en', data_get($result, 'meta.0.language_code'));
         $this->assertEquals('en', data_get($result, 'meta.0.post.language_code'));
     }
 
-
     // TODO eager-loaded nested relations
-
 
 //
 //    /** @test **/

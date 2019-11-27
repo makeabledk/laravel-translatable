@@ -2,16 +2,10 @@
 
 namespace Makeable\LaravelTranslatable\Relations;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Makeable\LaravelTranslatable\ModelChecker;
-use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedRelation;
 use Makeable\LaravelTranslatable\Translatable;
 
@@ -77,7 +71,6 @@ class TranslatedBelongsTo extends BelongsTo
 
         $this->setDefaultLanguageFromLatestQuery(Arr::first($models));
     }
-
 
     /**
      * Associate the model instance to the given parent.
