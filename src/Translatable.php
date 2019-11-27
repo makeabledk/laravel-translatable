@@ -175,7 +175,8 @@ trait Translatable
      */
     public function getTranslationOrNew($language)
     {
-        return $this->getTranslation($language) ?: (new static)->master()->associate($this->getMaster());
+        return $this->getTranslation($language)
+            ?: (new static)->forceFill(['language_code' => $language])->master()->associate($this->getMaster());
     }
 
     /**
