@@ -3,7 +3,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/makeabledk/laravel-translatable.svg?style=flat-square)](https://packagist.org/packages/makeabledk/laravel-translatable)
 [![Build Status](https://img.shields.io/travis/makeabledk/laravel-translatable/master.svg?style=flat-square)](https://travis-ci.org/makeabledk/laravel-translatable)
-[![StyleCI](https://styleci.io/repos/123456789/shield?branch=master)](https://styleci.io/repos/123456789)
+[![StyleCI](https://styleci.io/repos/210617296/shield?branch=master)](https://styleci.io/repos/210617296)
 
 
 **IMPORTANT NOTICE** 
