@@ -2,12 +2,12 @@
 
 namespace Makeable\LaravelTranslatable\Relations;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedRelation;
-use Makeable\LaravelTranslatable\Translatable;
 
 class TranslatedBelongsTo extends BelongsTo
 {
@@ -24,21 +24,23 @@ class TranslatedBelongsTo extends BelongsTo
             return;
         }
 
-        $table = $this->related->getTable();
+        $this->query->where(function ($query) {
+            $table = $this->related->getTable();
 
-        // If parent is not a translatable table we can match directly on the foreign keys.
-        // Ie. select * from posts WHERE posts.id = {$meta->post_id}
-        $this->query->where($table.'.'.$this->ownerKey, '=', $this->child->{$this->foreignKey});
+            // If parent is not a translatable table we can match directly on the foreign keys.
+            // Ie. select * from posts WHERE posts.id = {$meta->post_id}
+            $query->where($table . '.' . $this->ownerKey, '=', $this->child->{$this->foreignKey});
 
-        // If parent is translatable we'll also accept that it matches on master_id in
-        // case we're querying for a translation.
-        // Ie. select * from posts WHERE posts.id = {$meta->post_id} or (posts.master_id = {$meta->post_id} and posts.master_id is not null)
-        if (ModelChecker::checkTranslatable($this->related)) {
-            $this->query->orWhere(function ($query) use ($table) {
-                $query->where($table.'.'.$this->related->getMasterKeyName(), '=', $this->child->{$this->foreignKey})
-                    ->whereNotNull($table.'.'.$this->related->getMasterKeyName());
-            });
-        }
+            // If parent is translatable we'll also accept that it matches on master_id in
+            // case we're querying for a translation.
+            // Ie. select * from posts WHERE posts.id = {$meta->post_id} or (posts.master_id = {$meta->post_id} and posts.master_id is not null)
+            if (ModelChecker::checkTranslatable($this->related)) {
+                $query->orWhere(function ($query) use ($table) {
+                    $query->where($table . '.' . $this->related->getMasterKeyName(), '=', $this->child->{$this->foreignKey})
+                        ->whereNotNull($table . '.' . $this->related->getMasterKeyName());
+                });
+            }
+        });
 
         // Finally we wish to default to only fetch the parent best matching the
         // current language of the child, unless otherwise specified.
@@ -53,21 +55,23 @@ class TranslatedBelongsTo extends BelongsTo
      */
     public function addEagerConstraints(array $models)
     {
-        // We'll grab the primary key name of the related models since it could be set to
-        // a non-standard name and not "id". We will then construct the constraint for
-        // our eagerly loading query so it returns the proper models from execution.
-        $key = $this->related->getTable().'.'.$this->ownerKey;
+        $this->query->where(function ($query) use ($models) {
+            // We'll grab the primary key name of the related models since it could be set to
+            // a non-standard name and not "id". We will then construct the constraint for
+            // our eagerly loading query so it returns the proper models from execution.
+            $key = $this->related->getTable().'.'.$this->ownerKey;
 
-        $whereIn = $this->whereInMethod($this->related, $this->ownerKey);
+            $whereIn = $this->whereInMethod($this->related, $this->ownerKey);
 
-        $this->query->{$whereIn}($key, $modelKeys = $this->getEagerModelKeys($models));
+            $query->{$whereIn}($key, $modelKeys = $this->getEagerModelKeys($models));
 
-        if (ModelChecker::checkTranslatable($this->related)) {
-            $this->query->orWhere(function ($query) use ($modelKeys) {
-                $query->whereIn($this->related->getTable().'.'.$this->related->getMasterKeyName(), $modelKeys)
-                    ->whereNotNull($this->related->getTable().'.'.$this->related->getMasterKeyName());
-            });
-        }
+            if (ModelChecker::checkTranslatable($this->related)) {
+                $query->orWhere(function ($query) use ($modelKeys) {
+                    $query->whereIn($this->related->getTable().'.'.$this->related->getMasterKeyName(), $modelKeys)
+                        ->whereNotNull($this->related->getTable().'.'.$this->related->getMasterKeyName());
+                });
+            }
+        });
 
         $this->setDefaultLanguageFromLatestQuery(Arr::first($models));
     }
@@ -91,5 +95,40 @@ class TranslatedBelongsTo extends BelongsTo
         }
 
         return $this->child;
+    }
+
+    /**
+     * Match the eagerly loaded results to their parents.
+     *
+     * @param  array  $models
+     * @param  \Illuminate\Database\Eloquent\Collection  $results
+     * @param  string  $relation
+     * @return array
+     */
+    public function match(array $models, Collection $results, $relation)
+    {
+        $foreign = $this->foreignKey;
+
+        $owner = $this->ownerKey;
+
+        // First we will get to build a dictionary of the child models by their primary
+        // key of the relationship, then we can easily match the children back onto
+        // the parents using that dictionary and the primary key of the children.
+        $dictionary = [];
+
+        foreach ($results as $result) {
+            $dictionary[$this->getMasterKey($result, $owner)] = $result;
+        }
+
+        // Once we have the dictionary constructed, we can loop through all the parents
+        // and match back onto their children using these keys of the dictionary and
+        // the primary key of the children to map them onto the correct instances.
+        foreach ($models as $model) {
+            if (isset($dictionary[$model->{$foreign}])) {
+                $model->setRelation($relation, $dictionary[$model->{$foreign}]);
+            }
+        }
+
+        return $models;
     }
 }
