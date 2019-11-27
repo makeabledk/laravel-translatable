@@ -18,7 +18,7 @@ class BelongsToTest extends TestCase
             ->create()
             ->last(); // Ensure the post() relation on Meta doesn't just select the first post in table, but actually matches foreign key constraints
 
-        $metaMaster = PostMeta::create();
+        $metaMaster = factory(PostMeta::class)->create();
         $metaTranslation = $metaMaster->getTranslationOrNew('en');
         $metaTranslation->post()->associate($postTranslation = $postMaster->getTranslation('en'))->save();
 

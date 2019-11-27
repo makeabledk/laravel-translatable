@@ -17,7 +17,7 @@ class HasManyTest extends TestCase
             ->create();
 
         $translation = $master->getTranslation('en');
-        $translation->meta()->save($meta = new PostMeta);
+        $translation->meta()->save($meta = factory(PostMeta::class)->make());
 
         $this->assertEquals($master->id, $meta->post_id);
         $this->assertEquals(1, $translation->meta()->count());

@@ -22,7 +22,7 @@ class TestCase extends BaseTestCase
     public function createApplication()
     {
         putenv('APP_ENV=testing');
-        putenv('DB_CONNECTION=mysql'); // using sqlite will cause rounding issues in score calculation
+        putenv('DB_CONNECTION=mysql');
 
         $app = require __DIR__.'/../vendor/laravel/laravel/bootstrap/app.php';
         $app->useEnvironmentPath(__DIR__.'/..');
