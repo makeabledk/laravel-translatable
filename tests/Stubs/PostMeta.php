@@ -2,7 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Stubs;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Makeable\LaravelTranslatable\Translatable;
 

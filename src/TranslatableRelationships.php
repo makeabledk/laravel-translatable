@@ -67,5 +67,4 @@ trait TranslatableRelationships
     {
         return new TranslatedHasMany($query, $parent, $foreignKey, $localKey);
     }
-
 }

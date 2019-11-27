@@ -30,7 +30,7 @@ trait HasCurrentLanguage
      */
     public static function getCurrentLanguage()
     {
-        return static::$currentLanguage ?? app()[__TRAIT__ . '@globalLanguage'] ?? null;
+        return static::$currentLanguage ?? app()[__TRAIT__.'@globalLanguage'] ?? null;
     }
 
     /**
@@ -46,8 +46,9 @@ trait HasCurrentLanguage
      */
     public static function setGlobalLanguage($language)
     {
-        app()[__TRAIT__ . '@globalLanguage'] = $language;
+        app()[__TRAIT__.'@globalLanguage'] = $language;
     }
+
 //
 //    /**
 //     * @return array|null

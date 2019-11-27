@@ -2,7 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
-use Illuminate\Support\Facades\DB;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 

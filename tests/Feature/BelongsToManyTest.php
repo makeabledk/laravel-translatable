@@ -73,7 +73,7 @@ class BelongsToManyTest extends TestCase
             ->times(2)
             ->create();
 
-        $load = function($language) {
+        $load = function ($language) {
             return Category::latest()
                 ->language($language)
                 ->with('posts.categories.posts')

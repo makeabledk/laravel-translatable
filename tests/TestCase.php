@@ -8,7 +8,6 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Makeable\LaravelFactory\Factory;
 use Makeable\LaravelFactory\FactoryServiceProvider;
 
 class TestCase extends BaseTestCase

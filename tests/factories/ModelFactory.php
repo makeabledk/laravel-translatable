@@ -5,8 +5,7 @@ use Makeable\LaravelTranslatable\Tests\Stubs\Category;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
 
-new class ($factory)
-{
+new class($factory) {
     /**
      * @var Factory
      */

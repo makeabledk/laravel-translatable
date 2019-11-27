@@ -3,9 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Makeable\LaravelFactory\Factory;
-use Makeable\LaravelTranslatable\Tests\Stubs\Category;
-use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 
 class CreateTestTables extends Migration
 {

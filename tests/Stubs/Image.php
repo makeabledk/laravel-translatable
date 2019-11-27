@@ -3,7 +3,6 @@
 namespace Makeable\LaravelTranslatable\Tests\Stubs;
 
 use Illuminate\Database\Eloquent\Model;
-use Makeable\LaravelTranslatable\Translatable;
 use Makeable\LaravelTranslatable\TranslatableRelationships;
 
 class Image extends Model

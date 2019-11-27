@@ -13,7 +13,8 @@ class LanguageScope
     /**
      * @var array
      */
-    protected static $queryHistory, $modelHistory = [];
+    protected static $queryHistory;
+    protected static $modelHistory = [];
 
     /**
      * @var Builder
@@ -131,7 +132,7 @@ class LanguageScope
     }
 
     /**
-     * Reset previous variables that may interfere with new results
+     * Reset previous variables that may interfere with new results.
      *
      * @return void
      */
@@ -170,7 +171,7 @@ class LanguageScope
             })
             // Now union the language queries
             ->pipe(function (Collection $queries) {
-                return $queries->implode(' UNION DISTINCT ') . ' ORDER BY master_key asc, priority asc';
+                return $queries->implode(' UNION DISTINCT ').' ORDER BY master_key asc, priority asc';
             });
 
         // Now we'll use the previous priorities and select the best match.
