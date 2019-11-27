@@ -2,7 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
-use Illuminate\Database\Events\QueryExecuted;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
 use Makeable\LaravelTranslatable\Tests\Stubs\Team;
