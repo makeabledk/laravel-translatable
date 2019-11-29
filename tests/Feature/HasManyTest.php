@@ -42,7 +42,6 @@ class HasManyTest extends TestCase
     /** @test **/
     public function the_has_many_translatable_models_always_selects_best_matching_language()
     {
-
         $postMaster = factory(Post::class)
             ->with(1, 'english', 'translations')
             ->andWith(1, 'swedish', 'translations')
