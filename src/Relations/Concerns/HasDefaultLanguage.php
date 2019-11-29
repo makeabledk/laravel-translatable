@@ -14,7 +14,7 @@ trait HasDefaultLanguage
     /**
      * @var bool
      */
-    protected $applyDefaultLanguage = true;
+    protected $applyLanguageScope = true;
 
     /**
      * Fetch all related models in relationship including translations.
@@ -25,7 +25,19 @@ trait HasDefaultLanguage
      */
     public function withoutLanguageScope()
     {
-        $this->applyDefaultLanguage = false;
+        $this->applyLanguageScope = false;
+
+        return $this;
+    }
+
+    /**
+     * Re-enable language scope after being disabled.
+     *
+     * @return $this
+     */
+    public function withLanguageScope()
+    {
+        $this->applyLanguageScope = true;
 
         return $this;
     }
@@ -71,20 +83,6 @@ trait HasDefaultLanguage
         }
 
         $this->setDefaultLanguage([$model->language_code, '*']);
-
-//        if (ModelChecker::checkTranslatable($model)) {
-//            // We'll check what was actually requested latest for the model.
-//            // Only in case we can't retrieve that, we'll default to the
-//            // language of the current model.
-//            $language = LanguageScope::getLatestRequestedLanguage($model) ?: [$model->language_code];
-//
-//            // Ensure we always default to master
-//            $this->setDefaultLanguage(array_merge($language, ['*']));
-//
-//            return;
-//        }
-//
-//        $this->setDefaultLanguage('*');
     }
 
     /**
@@ -94,12 +92,32 @@ trait HasDefaultLanguage
      */
     protected function setDefaultLanguage($language)
     {
-        $this->beforeGetting(function (Builder $query) use ($language) {
-            if ($this->applyDefaultLanguage &&
-                ModelChecker::checkTranslatable($query->getModel()) &&
+        $this->whenLanguageScopeEnabled(function (Builder $query) use ($language) {
+            if (ModelChecker::checkTranslatable($query->getModel()) &&
                 LanguageScope::wasntApplied($query)
             ) {
                 LanguageScope::apply($query, $language);
+            }
+        });
+
+//        $this->beforeGetting(function (Builder $query) use ($language) {
+//            if ($this->applyLanguageScope &&
+//                ModelChecker::checkTranslatable($query->getModel()) &&
+//                LanguageScope::wasntApplied($query)
+//            ) {
+//                LanguageScope::apply($query, $language);
+//            }
+//        });
+    }
+
+    /**
+     * @param callable $callable
+     */
+    protected function whenLanguageScopeEnabled($callable)
+    {
+        $this->beforeGetting(function (Builder $query) use ($callable) {
+            if ($this->applyLanguageScope) {
+                call_user_func($callable, $query);
             }
         });
     }

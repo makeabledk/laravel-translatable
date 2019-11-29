@@ -42,4 +42,15 @@ class TranslatableTest extends TestCase
         $this->assertEquals(['da', 'en', 'sv'], $master->versions->pluck('language_code')->toArray());
         $this->assertEquals(['da', 'en', 'sv'], $master->getTranslation('en')->versions->pluck('language_code')->toArray());
     }
+
+    /** @test **/
+    public function the_master_relation_returns_the_master_version()
+    {
+        $english = factory(Post::class)
+            ->state('english')
+            ->with('master')
+            ->create();
+
+        $this->assertEquals('da', $english->refresh()->master->language_code);
+    }
 }

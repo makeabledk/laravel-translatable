@@ -24,23 +24,27 @@ class TranslatedBelongsTo extends BelongsTo
             return;
         }
 
-        $this->query->where(function ($query) {
-            $table = $this->related->getTable();
+        $this->beforeGetting(function ($query) {
+            $query->where(function ($query) {
+                $table = $this->related->getTable();
 
-            // If parent is not a translatable table we can match directly on the foreign keys.
-            // Ie. select * from posts WHERE posts.id = {$meta->post_id}
-            $query->where($table.'.'.$this->ownerKey, '=', $this->child->{$this->foreignKey});
+                // If parent is not a translatable table we can match directly on the foreign keys.
+                // Ie. select * from posts WHERE posts.id = {$meta->post_id}
+                $query->where($table.'.'.$this->ownerKey, '=', $this->child->{$this->foreignKey});
 
-            // If parent is translatable we'll also accept that it matches on master_id in
-            // case we're querying for a translation.
-            // Ie. select * from posts WHERE posts.id = {$meta->post_id} or (posts.master_id = {$meta->post_id} and posts.master_id is not null)
-            if (ModelChecker::checkTranslatable($this->related)) {
-                $query->orWhere(function ($query) use ($table) {
-                    $query->where($table.'.'.$this->related->getMasterKeyName(), '=', $this->child->{$this->foreignKey})
-                        ->whereNotNull($table.'.'.$this->related->getMasterKeyName());
-                });
-            }
+                // If parent is translatable we'll also accept that it matches on master_id in case we're querying for a translation.
+                // Ie. select * from posts WHERE posts.id = {$meta->post_id} or (posts.master_id = {$meta->post_id} and posts.master_id is not null)
+                // If language scope has been explicitly disabled we'll avoid corrupting the query.
+                if (ModelChecker::checkTranslatable($this->related) && $this->applyLanguageScope) {
+                    $query->orWhere(function ($query) use ($table) {
+                        $query->where($table.'.'.$this->related->getMasterKeyName(), '=', $this->child->{$this->foreignKey})
+                            ->whereNotNull($table.'.'.$this->related->getMasterKeyName());
+                    });
+                }
+            });
+
         });
+
 
         // Finally we wish to default to only fetch the parent best matching the
         // current language of the child, unless otherwise specified.
@@ -55,22 +59,26 @@ class TranslatedBelongsTo extends BelongsTo
      */
     public function addEagerConstraints(array $models)
     {
-        $this->query->where(function ($query) use ($models) {
-            // We'll grab the primary key name of the related models since it could be set to
-            // a non-standard name and not "id". We will then construct the constraint for
-            // our eagerly loading query so it returns the proper models from execution.
-            $key = $this->related->getTable().'.'.$this->ownerKey;
+        $this->beforeGetting(function ($query) use ($models) {
+            $query->where(function ($query) use ($models) {
+                // We'll grab the primary key name of the related models since it could be set to
+                // a non-standard name and not "id". We will then construct the constraint for
+                // our eagerly loading query so it returns the proper models from execution.
+                $key = $this->related->getTable().'.'.$this->ownerKey;
 
-            $whereIn = $this->whereInMethod($this->related, $this->ownerKey);
+                $whereIn = $this->whereInMethod($this->related, $this->ownerKey);
 
-            $query->{$whereIn}($key, $modelKeys = $this->getEagerModelKeys($models));
+                $query->{$whereIn}($key, $modelKeys = $this->getEagerModelKeys($models));
 
-            if (ModelChecker::checkTranslatable($this->related)) {
-                $query->orWhere(function ($query) use ($modelKeys) {
-                    $query->whereIn($this->related->getTable().'.'.$this->related->getMasterKeyName(), $modelKeys)
-                        ->whereNotNull($this->related->getTable().'.'.$this->related->getMasterKeyName());
-                });
-            }
+                // We'll check if related is translatable & we should apply language scope on this query.
+                // If language scope has been explicitly disabled we'll avoid corrupting the query.
+                if (ModelChecker::checkTranslatable($this->related) && $this->applyLanguageScope) {
+                    $query->orWhere(function ($query) use ($modelKeys) {
+                        $query->whereIn($this->related->getTable().'.'.$this->related->getMasterKeyName(), $modelKeys)
+                            ->whereNotNull($this->related->getTable().'.'.$this->related->getMasterKeyName());
+                    });
+                }
+            });
         });
 
         $this->setDefaultLanguageFromLatestQuery(Arr::first($models));

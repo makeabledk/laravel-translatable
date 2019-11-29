@@ -30,7 +30,7 @@ trait Translatable
      */
     public function master()
     {
-        return $this->belongsTo(get_class($this), $this->getMasterKeyName());
+        return $this->belongsTo(get_class($this), $this->getMasterKeyName())->withoutLanguageScope();
     }
 
     /**
