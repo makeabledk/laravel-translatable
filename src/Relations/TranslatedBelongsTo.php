@@ -42,9 +42,7 @@ class TranslatedBelongsTo extends BelongsTo
                     });
                 }
             });
-
         });
-
 
         // Finally we wish to default to only fetch the parent best matching the
         // current language of the child, unless otherwise specified.
