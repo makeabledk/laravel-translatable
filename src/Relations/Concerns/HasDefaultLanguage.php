@@ -99,15 +99,6 @@ trait HasDefaultLanguage
                 LanguageScope::apply($query, $language);
             }
         });
-
-//        $this->beforeGetting(function (Builder $query) use ($language) {
-//            if ($this->applyLanguageScope &&
-//                ModelChecker::checkTranslatable($query->getModel()) &&
-//                LanguageScope::wasntApplied($query)
-//            ) {
-//                LanguageScope::apply($query, $language);
-//            }
-//        });
     }
 
     /**

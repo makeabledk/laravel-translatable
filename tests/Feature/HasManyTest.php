@@ -42,6 +42,7 @@ class HasManyTest extends TestCase
     /** @test **/
     public function the_has_many_translatable_models_always_selects_best_matching_language()
     {
+
         $postMaster = factory(Post::class)
             ->with(1, 'english', 'translations')
             ->andWith(1, 'swedish', 'translations')
@@ -116,6 +117,29 @@ class HasManyTest extends TestCase
         // On self (separate implementation)
         $this->assertEquals(1, Post::whereKey($translation->id)->whereHas('translations', $this->ofLanguage('en'))->get()->count());
         $this->assertEquals(0, Post::whereKey($translation->id)->whereHas('translations', $this->ofLanguage('sv'))->get()->count());
+    }
+
+    /** @test * */
+    public function language_scope_may_be_disabled()
+    {
+        $translation = factory(Post::class)
+            ->state('english')
+            ->with(2, 'master.meta')
+            ->create();
+
+        // Relation
+        $this->assertEquals(2, $translation->meta()->count());
+        $this->assertEquals(0, $translation->meta()->withoutLanguageScope()->count());
+
+        // Eager load
+        $this->assertEquals(2, $translation->load('meta')->meta->count());
+        $this->assertEquals(0, $translation->load(['meta' => function ($query) {
+            $query->withoutLanguageScope();
+
+            // Let's also check if the query actually returns any results, but just didn't
+            // match on model hydration!
+            $this->assertEquals(0, $query->count());
+        }])->meta->count());
     }
 
     /**

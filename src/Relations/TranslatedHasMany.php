@@ -27,7 +27,16 @@ class TranslatedHasMany extends HasMany
      */
     public function addConstraints()
     {
-        parent::addConstraints();
+        if (! static::$constraints) {
+            return;
+        }
+
+        // Allow for disabling language scope before applying constraints
+        $this->beforeGetting(function () {
+            $this->query->where($this->foreignKey, '=', $this->getParentKey());
+
+            $this->query->whereNotNull($this->foreignKey);
+        });
 
         $this->setDefaultLanguageFromModel($this->parent);
     }
@@ -40,11 +49,11 @@ class TranslatedHasMany extends HasMany
      */
     public function addEagerConstraints(array $models)
     {
-        $whereIn = $this->whereInMethod($this->parent, $this->localKey);
+        $this->beforeGetting(function ($query) use ($models) {
+            $whereIn = $this->whereInMethod($this->parent, $this->localKey);
 
-        $this->query->{$whereIn}(
-            $this->foreignKey, $this->getMasterKeys($models, $this->localKey)
-        );
+            $this->query->{$whereIn}($this->foreignKey, $this->getMasterKeys($models, $this->localKey));
+        });
 
         $this->setDefaultLanguageFromLatestQuery(Arr::first($models));
     }
