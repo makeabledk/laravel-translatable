@@ -88,7 +88,6 @@ class BelongsToTest extends TestCase
         }])->post->language_code);
     }
 
-
 //
 //    /** @test **/
 //    public function it_can_eager_load_has_many_from_translated_model()
