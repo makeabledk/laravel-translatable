@@ -72,15 +72,15 @@ class BelongsToTest extends TestCase
             ->with('english', 'master.post.translations')
             ->create();
 
-            // Relation
-            $this->assertEquals('en', $translation->post()->first()->language_code);
-            $this->assertEquals('da', $translation->post()->withoutLanguageScope()->first()->language_code);
+        // Relation
+        $this->assertEquals('en', $translation->post()->first()->language_code);
+        $this->assertEquals('da', $translation->post()->withoutLanguageScope()->first()->language_code);
 
-            // Eager load
-            $this->assertEquals('en', $translation->load('post')->post->language_code);
-            $this->assertEquals('da', $translation->load(['post' => function ($query) {
-                $query->withoutLanguageScope();
-            }])->post->language_code);
+        // Eager load
+        $this->assertEquals('en', $translation->load('post')->post->language_code);
+        $this->assertEquals('da', $translation->load(['post' => function ($query) {
+            $query->withoutLanguageScope();
+        }])->post->language_code);
     }
 
 //
