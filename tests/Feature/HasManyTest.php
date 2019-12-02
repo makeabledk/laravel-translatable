@@ -118,6 +118,29 @@ class HasManyTest extends TestCase
         $this->assertEquals(0, Post::whereKey($translation->id)->whereHas('translations', $this->ofLanguage('sv'))->get()->count());
     }
 
+    /** @test * */
+    public function has_many_language_scope_may_be_disabled()
+    {
+        $translation = factory(Post::class)
+            ->state('english')
+            ->with(2, 'master.meta')
+            ->create();
+
+        // Relation
+        $this->assertEquals(2, $translation->meta()->count());
+        $this->assertEquals(0, $translation->meta()->withoutLanguageScope()->count());
+
+        // Eager load
+        $this->assertEquals(2, $translation->load('meta')->meta->count());
+        $this->assertEquals(0, $translation->load(['meta' => function ($query) {
+            $query->withoutLanguageScope();
+
+            // Let's also check if the query actually returns any results, but just didn't
+            // match on model hydration!
+            $this->assertEquals(0, $query->count());
+        }])->meta->count());
+    }
+
     /**
      * @param $lang
      * @return \Closure

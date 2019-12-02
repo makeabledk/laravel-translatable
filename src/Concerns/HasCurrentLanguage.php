@@ -3,16 +3,21 @@
 namespace Makeable\LaravelTranslatable\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait HasCurrentLanguage
 {
-//    public static function bootHasCurrentLanguage()
-//    {
-//        static::retrieved(function (Model $model) {
-//
-//        });
-//    }
-//
+    public static function bootHasCurrentLanguage()
+    {
+        static::retrieved(function (Model $model) {
+            $model->requestedLanguage = LanguageScope::getLatestRequestedLanguage($model);
+//            dump('retrieved', $model->ins);
+        });
+    }
+
+    public $requestedLanguage;
+
     /**
      * @var string|null
      */

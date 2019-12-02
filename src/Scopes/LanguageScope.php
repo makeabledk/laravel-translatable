@@ -14,6 +14,10 @@ class LanguageScope
      * @var array
      */
     protected static $queryHistory;
+
+    /**
+     * @var array
+     */
     protected static $modelHistory = [];
 
     /**

@@ -63,6 +63,26 @@ class BelongsToTest extends TestCase
         $this->assertEquals('sv', data_get($result, 'meta.0.post.language_code'));
     }
 
+    /** @test * */
+    public function belongs_to_language_scope_may_be_disabled()
+    {
+        $translation = factory(PostMeta::class)
+            ->state('english')
+            ->with('master.post')
+            ->with('english', 'master.post.translations')
+            ->create();
+
+        // Relation
+        $this->assertEquals('en', $translation->post()->first()->language_code);
+        $this->assertEquals('da', $translation->post()->withoutLanguageScope()->first()->language_code);
+
+        // Eager load
+        $this->assertEquals('en', $translation->load('post')->post->language_code);
+        $this->assertEquals('da', $translation->load(['post' => function ($query) {
+            $query->withoutLanguageScope();
+        }])->post->language_code);
+    }
+
 //
 //    /** @test **/
 //    public function it_can_eager_load_has_many_from_translated_model()

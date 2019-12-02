@@ -105,4 +105,27 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals('sv', data_get($result, 'posts.0.categories.0.language_code'));
         $this->assertEquals('da', data_get($result, 'posts.0.categories.0.posts.0.language_code'));
     }
+
+    /** @test * */
+    public function belongs_to_many_language_scope_may_be_disabled()
+    {
+        $translation = factory(Post::class)
+            ->state('english')
+            ->with(2, 'master.categories')
+            ->create();
+
+        // Relation
+        $this->assertEquals(2, $translation->categories()->count());
+        $this->assertEquals(0, $translation->categories()->withoutLanguageScope()->count());
+
+        // Eager load
+        $this->assertEquals(2, $translation->load('categories')->categories->count());
+        $this->assertEquals(0, $translation->load(['categories' => function ($query) {
+            $query->withoutLanguageScope();
+
+            // Let's also check if the query actually returns any results, but just didn't
+            // match on model hydration!
+            $this->assertEquals(0, $query->count());
+        }])->categories->count());
+    }
 }

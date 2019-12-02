@@ -7,7 +7,7 @@ use Makeable\LaravelTranslatable\ModelChecker;
 
 trait TranslatedRelation
 {
-    use HasDefaultLanguage;
+    use AppliesLanguageScopes;
 
     /**
      * @param  array  $models
@@ -28,7 +28,7 @@ trait TranslatedRelation
      */
     protected function getMasterKey(Model $model, $keyName = null)
     {
-        if (ModelChecker::checkTranslatable($model)) {
+        if (ModelChecker::checkTranslatable($model) && $this->applyLanguageScope) {
             return $model->getMasterKey();
         }
 
