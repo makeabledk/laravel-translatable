@@ -12,7 +12,7 @@ trait RelationQueryHooks
      * @return array
      */
     public static $knownQueryBuilderGetters = [
-        'chunk', 'count', 'dd', 'each', 'first', 'firstOrFail', 'get', 'getQuery', 'paginate', 'simplePaginate', 'toSql'
+        'chunk', 'count', 'dd', 'each', 'first', 'firstOrFail', 'get', 'getQuery', 'paginate', 'simplePaginate', 'toSql',
     ];
 
     protected $hooks = [
