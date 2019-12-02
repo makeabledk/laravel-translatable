@@ -47,11 +47,13 @@ class TranslatedBelongsToMany extends BelongsToMany
      */
     protected function addWhereConstraints()
     {
-        $this->query->where($this->getQualifiedForeignPivotKeyName(), '=', $this->getParentKey());
+        return $this->beforeGetting(function ($query) {
+            $query->where($this->getQualifiedForeignPivotKeyName(), '=', $this->getParentKey());
 
-        $this->setDefaultLanguageFromModel($this->parent);
+            $this->setDefaultLanguageFromModel($query, $this->parent);
+        });
 
-        return $this;
+//        return $this;
     }
 
     /**
@@ -62,14 +64,16 @@ class TranslatedBelongsToMany extends BelongsToMany
      */
     public function addEagerConstraints(array $models)
     {
-        $whereIn = $this->whereInMethod($this->parent, $this->parentKey);
+        $this->beforeGetting(function ($query) use ($models) {
+            $whereIn = $this->whereInMethod($this->parent, $this->parentKey);
 
-        $this->query->{$whereIn}(
-            $this->getQualifiedForeignPivotKeyName(),
-            $this->getMasterKeys($models, $this->parentKey)
-        );
+            $query->{$whereIn}(
+                $this->getQualifiedForeignPivotKeyName(),
+                $this->getMasterKeys($models, $this->parentKey)
+            );
 
-        $this->setDefaultLanguageFromLatestQuery(Arr::first($models));
+            $this->setDefaultLanguageFromLatestQuery($query, Arr::first($models));
+        });
     }
 
     /**

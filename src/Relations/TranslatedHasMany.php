@@ -32,13 +32,13 @@ class TranslatedHasMany extends HasMany
         }
 
         // Allow for disabling language scope before applying constraints
-        $this->beforeGetting(function () {
-            $this->query->where($this->foreignKey, '=', $this->getParentKey());
+        $this->beforeGetting(function ($query) {
+            $query->where($this->foreignKey, '=', $this->getParentKey());
 
-            $this->query->whereNotNull($this->foreignKey);
+            $query->whereNotNull($this->foreignKey);
+
+            $this->setDefaultLanguageFromModel($query, $this->parent);
         });
-
-        $this->setDefaultLanguageFromModel($this->parent);
     }
 
     /**
@@ -52,10 +52,10 @@ class TranslatedHasMany extends HasMany
         $this->beforeGetting(function ($query) use ($models) {
             $whereIn = $this->whereInMethod($this->parent, $this->localKey);
 
-            $this->query->{$whereIn}($this->foreignKey, $this->getMasterKeys($models, $this->localKey));
-        });
+            $query->{$whereIn}($this->foreignKey, $this->getMasterKeys($models, $this->localKey));
 
-        $this->setDefaultLanguageFromLatestQuery(Arr::first($models));
+            $this->setDefaultLanguageFromLatestQuery($query, Arr::first($models));
+        });
     }
 
     /**

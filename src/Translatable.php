@@ -4,7 +4,6 @@ namespace Makeable\LaravelTranslatable;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
@@ -44,7 +43,7 @@ trait Translatable
      */
     public function translations()
     {
-        return $this->hasMany(static::class, $this->getMasterKeyName())->withoutLanguageScope();
+        return $this->hasMany(static::class, $this->getMasterKeyName())->withoutDefaultLanguageScope();
     }
 
     /**

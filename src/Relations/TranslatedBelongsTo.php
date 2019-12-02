@@ -42,11 +42,11 @@ class TranslatedBelongsTo extends BelongsTo
                     });
                 }
             });
-        });
 
-        // Finally we wish to default to only fetch the parent best matching the
-        // current language of the child, unless otherwise specified.
-        $this->setDefaultLanguageFromModel($this->child);
+            // Finally we wish to default to only fetch the parent best matching the
+            // current language of the child, unless otherwise specified.
+            $this->setDefaultLanguageFromModel($query, $this->child);
+        });
     }
 
     /**
@@ -77,9 +77,9 @@ class TranslatedBelongsTo extends BelongsTo
                     });
                 }
             });
-        });
 
-        $this->setDefaultLanguageFromLatestQuery(Arr::first($models));
+            $this->setDefaultLanguageFromLatestQuery($query, Arr::first($models));
+        });
     }
 
     /**

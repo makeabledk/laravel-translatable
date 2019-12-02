@@ -7,7 +7,7 @@ use Makeable\LaravelTranslatable\ModelChecker;
 
 trait TranslatedRelation
 {
-    use HasDefaultLanguage;
+    use AppliesLanguageScopes;
 
     /**
      * @param  array  $models
