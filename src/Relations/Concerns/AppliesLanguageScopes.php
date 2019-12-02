@@ -85,11 +85,11 @@ trait AppliesLanguageScopes
      * @param  \Illuminate\Database\Eloquent\Model|null  $model
      * @return void
      */
-    protected function setDefaultLanguageFromLatestQuery(Builder $query, Model $model = null)
+    protected function setDefaultLanguageFromModelQuery(Builder $query, Model $model = null)
     {
         if ($model &&
             ModelChecker::checkTranslatable($model) &&
-            $language = LanguageScope::getLatestRequestedLanguage($model)
+            $language = $model->requestedLanguage
         ) {
             // Ensure we always default to master
             $this->setDefaultLanguage($query, array_merge($language, ['*']));
@@ -97,7 +97,7 @@ trait AppliesLanguageScopes
             return;
         }
 
-        $this->setDefaultLanguageFromModel($query, $model);
+        $this->setDefaultLanguageFromModelLanguage($query, $model);
     }
 
     /**
@@ -107,7 +107,7 @@ trait AppliesLanguageScopes
      * @param  \Illuminate\Database\Eloquent\Model|null  $model
      * @return void
      */
-    protected function setDefaultLanguageFromModel(Builder $query, Model $model = null)
+    protected function setDefaultLanguageFromModelLanguage(Builder $query, Model $model = null)
     {
         // Sometimes the parent will be an empty instance. In this case
         // we won't set any default language based on that.
@@ -134,17 +134,4 @@ trait AppliesLanguageScopes
             LanguageScope::apply($query, $language);
         }
     }
-
-//
-//    /**
-//     * @param callable $callable
-//     */
-//    protected function whenLanguageScopeEnabled($callable)
-//    {
-//        $this->beforeGetting(function (Builder $query) use ($callable) {
-//            if ($this->applyLanguageScope) {
-//                call_user_func($callable, $query);
-//            }
-//        });
-//    }
 }

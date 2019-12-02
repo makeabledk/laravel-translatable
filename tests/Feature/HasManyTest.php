@@ -119,7 +119,7 @@ class HasManyTest extends TestCase
     }
 
     /** @test * */
-    public function language_scope_may_be_disabled()
+    public function has_many_language_scope_may_be_disabled()
     {
         $translation = factory(Post::class)
             ->state('english')

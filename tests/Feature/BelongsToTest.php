@@ -64,7 +64,7 @@ class BelongsToTest extends TestCase
     }
 
     /** @test * */
-    public function language_scope_may_be_disabled()
+    public function belongs_to_language_scope_may_be_disabled()
     {
         $translation = factory(PostMeta::class)
             ->state('english')
@@ -72,20 +72,15 @@ class BelongsToTest extends TestCase
             ->with('english', 'master.post.translations')
             ->create();
 
-//        dump(Post::all()->toArray(), PostMeta::all()->toArray());
+            // Relation
+            $this->assertEquals('en', $translation->post()->first()->language_code);
+            $this->assertEquals('da', $translation->post()->withoutLanguageScope()->first()->language_code);
 
-        // Relation
-        $this->assertEquals('en', $translation->post()->first()->language_code);
-        $this->assertEquals('da', $translation->post()->withoutLanguageScope()->first()->language_code);
-
-//        $translation->refresh();
-
-        // Eager load
-        $this->assertEquals('en', $translation->load('post')->post->language_code);
-        $this->assertEquals('da', $translation->load(['post' => function ($query) {
-//            dd($query->get()->toArray());
-            $query->withoutLanguageScope();
-        }])->post->language_code);
+            // Eager load
+            $this->assertEquals('en', $translation->load('post')->post->language_code);
+            $this->assertEquals('da', $translation->load(['post' => function ($query) {
+                $query->withoutLanguageScope();
+            }])->post->language_code);
     }
 
 //

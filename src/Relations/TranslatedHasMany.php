@@ -37,7 +37,7 @@ class TranslatedHasMany extends HasMany
 
             $query->whereNotNull($this->foreignKey);
 
-            $this->setDefaultLanguageFromModel($query, $this->parent);
+            $this->setDefaultLanguageFromModelLanguage($query, $this->parent);
         });
     }
 
@@ -54,7 +54,7 @@ class TranslatedHasMany extends HasMany
 
             $query->{$whereIn}($this->foreignKey, $this->getMasterKeys($models, $this->localKey));
 
-            $this->setDefaultLanguageFromLatestQuery($query, Arr::first($models));
+            $this->setDefaultLanguageFromModelQuery($query, Arr::first($models));
         });
     }
 
