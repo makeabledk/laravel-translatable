@@ -4,7 +4,6 @@ namespace Makeable\LaravelTranslatable\Builder;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Makeable\LaravelTranslatable\Concerns\BuilderGetterHooks;
-use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 class Builder extends EloquentBuilder
 {

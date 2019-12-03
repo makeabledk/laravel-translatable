@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait BuilderGetterHooks
 {
-
 //    TODO check
 //            'insert', 'insertOrIgnore', 'insertGetId', 'insertUsing', 'getBindings', 'toSql', 'dump', 'dd',
 //        'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum', 'getConnection',

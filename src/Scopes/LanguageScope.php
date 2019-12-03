@@ -42,7 +42,6 @@ class LanguageScope
 
         return $scope($languages, $fallbackMaster);
 
-
         return call_user_func(new static($query), $languages, $fallbackMaster);
     }
 

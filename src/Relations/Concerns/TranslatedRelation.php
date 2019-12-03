@@ -3,8 +3,8 @@
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
-use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
+use Makeable\LaravelTranslatable\ModelChecker;
 
 trait TranslatedRelation
 {
