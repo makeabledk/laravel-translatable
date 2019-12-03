@@ -12,23 +12,18 @@ trait HasCurrentLanguage
     {
         static::retrieved(function (Model $model) {
             $model->requestedLanguage = LanguageScope::getLatestRequestedLanguage($model);
-//            dump('retrieved', $model->ins);
         });
     }
 
+    /**
+     * @var array|null
+     */
     public $requestedLanguage;
 
     /**
      * @var string|null
      */
     protected static $currentLanguage;
-//
-//    protected static $latestRequestedLanguage;
-
-//    /**
-//     * @var null|array
-//     */
-//    protected $requestedLanguage;
 
     /**
      * @return string|null

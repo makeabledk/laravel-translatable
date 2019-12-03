@@ -38,6 +38,11 @@ class LanguageScope
      */
     public static function apply(Builder $query, $languages, $fallbackMaster = false)
     {
+        $scope = new static($query);
+
+        return $scope($languages, $fallbackMaster);
+
+
         return call_user_func(new static($query), $languages, $fallbackMaster);
     }
 
@@ -86,15 +91,11 @@ class LanguageScope
     {
         $languages = $this->normalizeLanguages($languages, $fallbackMaster);
 
-//        dump($languages);
+        $this->pushHistory($languages);
 
         $this->clearVariables();
 
-        $this->pushHistory($languages);
-
         $this->query->whereRaw("{$this->model->getQualifiedKeyName()} IN ({$this->getBestIdsQuery($languages)})");
-
-//        dump('matches', $this->query->count());
     }
 
     /**
@@ -142,7 +143,7 @@ class LanguageScope
      */
     protected function clearVariables()
     {
-        $this->query->getConnection()->select('SELECT NULL, NULL INTO @prevMasterKey, @priority');
+        $this->query->getQuery()->getConnection()->select('SELECT NULL, NULL INTO @prevMasterKey, @priority');
     }
 
     /**

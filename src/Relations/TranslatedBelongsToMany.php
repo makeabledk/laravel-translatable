@@ -65,6 +65,7 @@ class TranslatedBelongsToMany extends BelongsToMany
     public function addEagerConstraints(array $models)
     {
         $this->beforeGetting(function ($query) use ($models) {
+            dump('Executing before getting');
             $whereIn = $this->whereInMethod($this->parent, $this->parentKey);
 
             $query->{$whereIn}(

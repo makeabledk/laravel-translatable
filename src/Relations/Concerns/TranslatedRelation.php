@@ -4,10 +4,20 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Makeable\LaravelTranslatable\ModelChecker;
+use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
 
 trait TranslatedRelation
 {
-    use AppliesLanguageScopes;
+    use AppliesDefaultLanguage;
+//
+//    protected function beforeGetting(callable $callable)
+//    {
+//        if ($this->query instanceof TranslatableBuilder) {
+//            return $this->__call('beforeGetting', [$callable]);
+//        }
+//
+//        return $this->tap($callable);
+//    }
 
     /**
      * @param  array  $models
@@ -28,7 +38,7 @@ trait TranslatedRelation
      */
     protected function getMasterKey(Model $model, $keyName = null)
     {
-        if (ModelChecker::checkTranslatable($model) && $this->applyLanguageScope) {
+        if (ModelChecker::checkTranslatable($model) && $this->query->languageScopeEnabled) {
             return $model->getMasterKey();
         }
 

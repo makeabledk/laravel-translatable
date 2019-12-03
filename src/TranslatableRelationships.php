@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
 use Makeable\LaravelTranslatable\Relations\TranslatedBelongsTo;
 use Makeable\LaravelTranslatable\Relations\TranslatedBelongsToMany;
 use Makeable\LaravelTranslatable\Relations\TranslatedHasMany;
@@ -66,5 +67,16 @@ trait TranslatableRelationships
     protected function newHasMany(Builder $query, Model $parent, $foreignKey, $localKey)
     {
         return new TranslatedHasMany($query, $parent, $foreignKey, $localKey);
+    }
+
+    /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return \Makeable\LaravelTranslatable\Builder\Builder
+     */
+    public function newEloquentBuilder($query)
+    {
+        return new \Makeable\LaravelTranslatable\Builder\Builder($query);
     }
 }

@@ -18,7 +18,12 @@ class BelongsToManyTest extends TestCase
             ->create()
             ->images()->attach($image = factory(Image::class)->create());
 
+//        \DB::listen(function ($e) {
+//            dump($e->sql, $e->bindings);
+//        });
+
         $image = Image::whereKey($image->id)->with(['posts' => function ($query) {
+//            dump('Setting language');
             $query->language('sv');
         }])->first();
 
@@ -127,5 +132,18 @@ class BelongsToManyTest extends TestCase
             // match on model hydration!
             $this->assertEquals(0, $query->count());
         }])->categories->count());
+    }
+
+    /** @test **/
+    public function regression_it_works_with_simple_pagination_on_belongs_to_many()
+    {
+        $post = factory(Post::class)->with(2, 'translations.categories')->create();
+
+//        dd($post->categories()->take(5)->simplePaginate(25));
+
+        $this->assertEquals(2, $post->categories()->count());
+        $this->assertEquals(2, count($post->categories()->simplePaginate()));
+//        $this->assertEquals(2, count($post->categories()->take(5)->simplePaginate()));
+//        $this->assertEquals(2, $post->categories()->take(5)->get()->count());
     }
 }

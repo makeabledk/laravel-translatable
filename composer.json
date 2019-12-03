@@ -17,7 +17,7 @@
         "illuminate/support": "^5.7|^6.0"
     },
     "require-dev": {
-        "laravel/laravel": "^6.0",
+        "laravel/laravel": "^5.8",
         "makeabledk/laravel-factory-enhanced": "dev-master",
         "fzaninotto/faker": "^1.4",
         "mockery/mockery": "^1.0",

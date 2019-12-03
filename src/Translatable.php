@@ -4,7 +4,9 @@ namespace Makeable\LaravelTranslatable;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
 use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
 use Makeable\LaravelTranslatable\Relations\VersionsRelation;
@@ -90,6 +92,7 @@ trait Translatable
      */
     public function scopeLanguage($query, $languagePriority, $fallbackMaster = false)
     {
+        dump('WHAT');
         return LanguageScope::apply($query, $languagePriority, $fallbackMaster);
     }
 
@@ -186,5 +189,16 @@ trait Translatable
     public function newQuery()
     {
         return tap(parent::newQuery(), Closure::fromCallable([$this, 'applyCurrentLanguage']));
+    }
+
+    /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return \Makeable\LaravelTranslatable\Builder\TranslatableBuilder
+     */
+    public function newEloquentBuilder($query)
+    {
+        return new TranslatableBuilder($query);
     }
 }
