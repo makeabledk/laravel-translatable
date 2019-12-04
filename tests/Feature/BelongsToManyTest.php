@@ -2,8 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
-use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
-use Makeable\LaravelTranslatable\Relations\TranslatedBelongsToMany;
 use Makeable\LaravelTranslatable\Tests\Stubs\Category;
 use Makeable\LaravelTranslatable\Tests\Stubs\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;

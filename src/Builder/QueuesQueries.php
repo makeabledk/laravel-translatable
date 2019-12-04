@@ -3,7 +3,6 @@
 namespace Makeable\LaravelTranslatable\Builder;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
 use Makeable\LaravelTranslatable\ProxiesGetterFunctions;
 
 trait QueuesQueries
@@ -54,12 +53,12 @@ trait QueuesQueries
             $this->applyQueuedQueries();
 
             if (static::$TEST) {
-                dump("Applied queued queries");
+                dump('Applied queued queries');
             }
         }
 
         if (static::$TEST) {
-            dump("__calling ".$method);
+            dump('__calling '.$method);
         }
 
         return parent::__call($method, $parameters);
@@ -76,7 +75,6 @@ trait QueuesQueries
 //        return parent::getModels($columns);
 //    }
 
-
     public static $TEST = false;
 
 //    public function get($column = ['*'])
@@ -89,9 +87,9 @@ trait QueuesQueries
 //            dump($this->query->toSql());
 //        }
 //
-////        if (spl_object_id($this->getQuery()) === 289) {
-////            dd($this->toSql());
-////        }
+    ////        if (spl_object_id($this->getQuery()) === 289) {
+    ////            dd($this->toSql());
+    ////        }
 //
 //        return parent::get($column);
 //    }
@@ -104,15 +102,15 @@ trait QueuesQueries
 //        $this->fireBeforeGetting();
 //
 //            dump($this->query->toSql());
-////        if ($this->getModel()->getTable() === 'categories') {
-////        }
+    ////        if ($this->getModel()->getTable() === 'categories') {
+    ////        }
 //
 //        return $this;
 //
 //        return parent::applyScopes();
 //
 //        $query = parent::applyScopes()->getQuery();
-////        $this;
+    ////        $this;
 //
 //        return (new static($query))->fireBeforeGetting();
 //    }
@@ -140,6 +138,7 @@ trait QueuesQueries
 
         return $this;
     }
+
 //
 //    public function applyQueuedQueries()
 //    {
@@ -171,5 +170,4 @@ trait QueuesQueries
             call_user_func_array($callback, $args);
         }
     }
-
 }

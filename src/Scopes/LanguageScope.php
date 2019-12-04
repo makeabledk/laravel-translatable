@@ -2,10 +2,10 @@
 
 namespace Makeable\LaravelTranslatable\Scopes;
 
-use \Makeable\LaravelTranslatable\Builder\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Makeable\LaravelTranslatable\Builder\Builder;
 use Makeable\LaravelTranslatable\ModelChecker;
 
 class LanguageScope
@@ -115,6 +115,7 @@ class LanguageScope
 //        Arr::set(static::$queryHistory, $this->getQueryId(), $languages->toArray());
         Arr::set(static::$modelHistory, get_class($this->query->getModel()), $languages->toArray());
     }
+
 //
 //    protected function getQueryId()
 //    {
