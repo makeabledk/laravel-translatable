@@ -5,6 +5,7 @@ namespace Makeable\LaravelTranslatable\Tests\Feature;
 use Makeable\LaravelTranslatable\Tests\Stubs\Category;
 use Makeable\LaravelTranslatable\Tests\Stubs\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
+use Makeable\LaravelTranslatable\Tests\Stubs\Team;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class BelongsToManyTest extends TestCase
@@ -138,6 +139,14 @@ class BelongsToManyTest extends TestCase
 
         $this->assertEquals(2, $post->categories()->count());
         $this->assertEquals(2, count($post->categories()->simplePaginate()));
+    }
+
+    /** @test * */
+    public function regression_belongs_to_many_works_between_non_translatable_models()
+    {
+        $team = factory(Team::class)->with(1, 'servers')->create();
+
+        $this->assertEquals(1, $team->servers()->get()->count());
     }
 
 //    TODO implement BelongsToMany existence query

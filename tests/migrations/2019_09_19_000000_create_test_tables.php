@@ -23,13 +23,17 @@ class CreateTestTables extends Migration
             $table->string('language_code');
             $table->timestamps();
         });
+        Schema::create('category_post', function (Blueprint $table) {
+            $table->unsignedInteger('category_id');
+            $table->unsignedInteger('post_id');
+        });
         Schema::create('images', function (Blueprint $table) {
             $table->increments('id');
             $table->string('src')->nullable();
             $table->timestamps();
         });
-        Schema::create('category_post', function (Blueprint $table) {
-            $table->unsignedInteger('category_id');
+        Schema::create('image_post', function (Blueprint $table) {
+            $table->unsignedInteger('image_id');
             $table->unsignedInteger('post_id');
         });
         Schema::create('posts', function (Blueprint $table) {
@@ -48,9 +52,13 @@ class CreateTestTables extends Migration
             $table->string('key')->nullable();
             $table->timestamps();
         });
-        Schema::create('image_post', function (Blueprint $table) {
-            $table->unsignedInteger('image_id');
-            $table->unsignedInteger('post_id');
+        Schema::create('servers', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
+        });
+        Schema::create('server_team', function (Blueprint $table) {
+            $table->unsignedInteger('team_id');
+            $table->unsignedInteger('server_id');
         });
         Schema::create('tags', function (Blueprint $table) {
             $table->increments('id');
@@ -64,6 +72,10 @@ class CreateTestTables extends Migration
         Schema::create('team_user', function (Blueprint $table) {
             $table->unsignedInteger('team_id');
             $table->unsignedInteger('user_id');
+        });
+        Schema::create('users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
         });
     }
 }

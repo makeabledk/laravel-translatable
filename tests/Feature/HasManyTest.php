@@ -127,7 +127,7 @@ class HasManyTest extends TestCase
             ->create();
 
         $this->assertEquals(2, Post::whereKey($englishPost->id)->withCount('meta')->first()->meta_count);
-        $this->assertEquals(2, Post::whereKey($englishPost->id)->withCount('directMeta')->first()->direct_meta_count);
+        $this->assertEquals(0, Post::whereKey($englishPost->id)->withCount('directMeta')->first()->direct_meta_count);
     }
 
     /** @test * */

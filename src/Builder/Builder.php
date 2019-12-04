@@ -44,10 +44,6 @@ class Builder extends EloquentBuilder
      */
     public function withoutLanguageScope()
     {
-        if (defined('TEST')) {
-            dump('disabled language scope');
-        }
-
         $this->languageScopeEnabled = false;
 
         return $this;
