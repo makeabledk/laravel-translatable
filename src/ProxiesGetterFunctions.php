@@ -94,6 +94,16 @@ trait ProxiesGetterFunctions
     }
 
     /**
+     * Get a base query builder instance.
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function toBase()
+    {
+        return $this->fireHookAndProxyToParent('toBase');
+    }
+
+    /**
      * @param $name
      * @param  mixed  ...$args
      * @return mixed
