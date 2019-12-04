@@ -92,7 +92,6 @@ trait Translatable
      */
     public function scopeLanguage($query, $languagePriority, $fallbackMaster = false)
     {
-        dump('WHAT');
         return LanguageScope::apply($query, $languagePriority, $fallbackMaster);
     }
 

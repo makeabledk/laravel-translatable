@@ -3,21 +3,17 @@
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
+use Makeable\LaravelTranslatable\Builder\Builder;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
+use Makeable\LaravelTranslatable\ProxiesGetterFunctions;
+use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait TranslatedRelation
 {
-    use AppliesDefaultLanguage;
-//
-//    protected function beforeGetting(callable $callable)
-//    {
-//        if ($this->query instanceof TranslatableBuilder) {
-//            return $this->__call('beforeGetting', [$callable]);
-//        }
-//
-//        return $this->tap($callable);
-//    }
+    use
+//        AppliesDefaultLanguage,
+        ProxiesGetterFunctions;
 
     /**
      * @param  array  $models
@@ -47,5 +43,67 @@ trait TranslatedRelation
         }
 
         return $model->getKey();
+    }
+
+    /**
+     * Check what was actually the latest requested language for the model.
+     * Only in case we can't retrieve that, we'll default to the
+     * language of the current model.
+     *
+     * This is useful for eager-loaded queries where we wish to persist
+     * the same language preferences throughout the entire nested queries.
+     *
+     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model|null  $model
+     * @return void
+     */
+    protected function setDefaultLanguageFromModelQuery(Builder $query, Model $model = null)
+    {
+        if ($model &&
+            ModelChecker::checkTranslatable($model) &&
+            $language = $model->requestedLanguage
+        ) {
+            // Ensure we always default to master
+            $this->setDefaultLanguage($query, array_merge($language, ['*']));
+
+            return;
+        }
+
+        $this->setDefaultLanguageFromModelLanguage($query, $model);
+    }
+
+    /**
+     * Set the default language to match the parent model.
+     *
+     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model|null  $model
+     * @return void
+     */
+    protected function setDefaultLanguageFromModelLanguage(Builder $query, Model $model = null)
+    {
+        // Sometimes the parent will be an empty instance. In this case
+        // we won't set any default language based on that.
+        if (! optional($model)->exists) {
+            return;
+        }
+
+        $this->setDefaultLanguage($query, [$model->language_code, '*']);
+    }
+
+    /**
+     * Apply a default language scope unless already set by user.
+     *
+     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
+     * @param $language
+     */
+    public function setDefaultLanguage(Builder $query, $language)
+    {
+        if ($query->languageScopeEnabled &&
+            $query->defaultLanguageScopeEnabled &&
+            ModelChecker::checkTranslatable($query->getModel()) &&
+            LanguageScope::wasntApplied($query)
+        ) {
+            LanguageScope::apply($query, $language);
+        }
     }
 }

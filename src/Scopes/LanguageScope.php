@@ -2,7 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Scopes;
 
-use Illuminate\Database\Eloquent\Builder;
+use \Makeable\LaravelTranslatable\Builder\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -10,10 +10,10 @@ use Makeable\LaravelTranslatable\ModelChecker;
 
 class LanguageScope
 {
-    /**
-     * @var array
-     */
-    protected static $queryHistory;
+//    /**
+//     * @var array
+//     */
+//    protected static $queryHistory;
 
     /**
      * @var array
@@ -31,18 +31,13 @@ class LanguageScope
     protected $model;
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
      * @param  string|array  $languages
      * @param  bool|null  $fallbackMaster
      * @return Builder
      */
     public static function apply(Builder $query, $languages, $fallbackMaster = false)
     {
-        $scope = new static($query);
-
-        return $scope($languages, $fallbackMaster);
-
-
         return call_user_func(new static($query), $languages, $fallbackMaster);
     }
 
@@ -56,16 +51,17 @@ class LanguageScope
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
      * @return bool
      */
     public static function wasApplied(Builder $query)
     {
-        return (new static($query))->getQueryHistory() !== null;
+        return $query->languageScopeWasApplied;
+//        return (new static($query))->getQueryHistory() !== null;
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
      * @return bool
      */
     public static function wasntApplied(Builder $query)
@@ -74,7 +70,7 @@ class LanguageScope
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
      */
     public function __construct(Builder $query)
     {
@@ -96,15 +92,17 @@ class LanguageScope
         $this->clearVariables();
 
         $this->query->whereRaw("{$this->model->getQualifiedKeyName()} IN ({$this->getBestIdsQuery($languages)})");
+
+        return $this->query;
     }
 
-    /**
-     * @return array|null
-     */
-    public function getQueryHistory()
-    {
-        return Arr::get(static::$queryHistory, spl_object_id($this->query));
-    }
+//    /**
+//     * @return array|null
+//     */
+//    public function getQueryHistory()
+//    {
+//        return Arr::get(static::$queryHistory, $this->getQueryId());
+//    }
 
     /**
      * @param  \Illuminate\Support\Collection  $languages
@@ -112,9 +110,16 @@ class LanguageScope
      */
     protected function pushHistory(Collection $languages)
     {
-        Arr::set(static::$queryHistory, spl_object_id($this->query), $languages->toArray());
+        $this->query->languageScopeWasApplied = true;
+
+//        Arr::set(static::$queryHistory, $this->getQueryId(), $languages->toArray());
         Arr::set(static::$modelHistory, get_class($this->query->getModel()), $languages->toArray());
     }
+//
+//    protected function getQueryId()
+//    {
+//        return spl_object_id($this->query->getQuery());
+//    }
 
     /**
      * @param $languages

@@ -2,6 +2,8 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
+use Makeable\LaravelTranslatable\Relations\TranslatedBelongsToMany;
 use Makeable\LaravelTranslatable\Tests\Stubs\Category;
 use Makeable\LaravelTranslatable\Tests\Stubs\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
@@ -137,13 +139,11 @@ class BelongsToManyTest extends TestCase
     /** @test **/
     public function regression_it_works_with_simple_pagination_on_belongs_to_many()
     {
-        $post = factory(Post::class)->with(2, 'translations.categories')->create();
-
-//        dd($post->categories()->take(5)->simplePaginate(25));
+        $post = factory(Post::class)
+            ->state('english')
+            ->with(2, 'master.categories')->create();
 
         $this->assertEquals(2, $post->categories()->count());
         $this->assertEquals(2, count($post->categories()->simplePaginate()));
-//        $this->assertEquals(2, count($post->categories()->take(5)->simplePaginate()));
-//        $this->assertEquals(2, $post->categories()->take(5)->get()->count());
     }
 }
