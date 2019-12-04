@@ -22,6 +22,8 @@ class TranslatedBelongsToMany extends BelongsToMany
      */
     protected function performJoin($query = null)
     {
+        $this->getRelationExistenceQuery()
+
         $query = $query ?: $this->query;
 
         // We need to join to the intermediate table on the related model's primary
