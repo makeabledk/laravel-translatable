@@ -44,6 +44,10 @@ class Builder extends EloquentBuilder
      */
     public function withoutLanguageScope()
     {
+        if (defined('TEST')) {
+            dump('disabled language scope');
+        }
+
         $this->languageScopeEnabled = false;
 
         return $this;
@@ -73,5 +77,30 @@ class Builder extends EloquentBuilder
         $this->defaultLanguageScopeEnabled = false;
 
         return $this;
+    }
+
+    /**
+     * Dump a stack trace at given point in query.
+     */
+    public function getTrace()
+    {
+        dd($this->normalizeStackTrace(debug_backtrace()));
+    }
+
+    /**
+     * @param $stack
+     * @return array|string
+     */
+    protected function normalizeStackTrace($stack)
+    {
+        if (is_object($stack)) {
+            return get_class($stack);
+        }
+
+        if (is_array($stack)) {
+            return array_map(\Closure::fromCallable([$this, 'normalizeStackTrace']), $stack);
+        }
+
+        return $stack;
     }
 }

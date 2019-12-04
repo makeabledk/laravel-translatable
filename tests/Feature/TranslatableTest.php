@@ -46,11 +46,16 @@ class TranslatableTest extends TestCase
     /** @test **/
     public function the_master_relation_returns_the_master_version()
     {
-        $english = factory(Post::class)
-            ->state('english')
-            ->with('master')
+        $master = factory(Post::class)
+            ->with(1, 'english', 'translations')
+            ->andWith(1, 'swedish', 'translations')
             ->create();
 
-        $this->assertEquals('da', $english->refresh()->master->language_code);
+        $this->assertNull($master->master);
+        $this->assertEquals($master->id, $master->getTranslation('en')->master->id);
+        $this->assertEquals($master->id, $master->getTranslation('sv')->master->id);
+
+        // Regression - ensure that there is only 1 match
+        $this->assertEquals(1, $master->getTranslation('en')->master()->take(5)->count());
     }
 }

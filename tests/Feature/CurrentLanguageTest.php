@@ -39,4 +39,6 @@ class CurrentLanguageTest extends TestCase
 
         Tag::setGlobalLanguage(null);
     }
+
+    // TODO: ensure that it does not apply if language scope disabled
 }

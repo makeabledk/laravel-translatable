@@ -4,7 +4,6 @@ namespace Makeable\LaravelTranslatable\Tests\Feature;
 
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
-use Makeable\LaravelTranslatable\Tests\Stubs\Team;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class BelongsToTest extends TestCase
@@ -63,7 +62,7 @@ class BelongsToTest extends TestCase
         $this->assertEquals('sv', data_get($result, 'meta.0.post.language_code'));
     }
 
-    /** @test * */
+    /** @test **/
     public function belongs_to_language_scope_may_be_disabled()
     {
         $translation = factory(PostMeta::class)
@@ -74,7 +73,9 @@ class BelongsToTest extends TestCase
 
         // Relation
         $this->assertEquals('en', $translation->post()->first()->language_code);
+        $this->assertEquals(1, $translation->post()->take(5)->count());
         $this->assertEquals('da', $translation->post()->withoutLanguageScope()->first()->language_code);
+        $this->assertEquals(1, $translation->post()->withoutLanguageScope()->take(5)->count());
 
         // Eager load
         $this->assertEquals('en', $translation->load('post')->post->language_code);

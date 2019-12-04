@@ -35,7 +35,10 @@ class TranslatedBelongsTo extends BelongsTo
                 // If parent is translatable we'll also accept that it matches on master_id in case we're querying for a translation.
                 // Ie. select * from posts WHERE posts.id = {$meta->post_id} or (posts.master_id = {$meta->post_id} and posts.master_id is not null)
                 // If language scope has been explicitly disabled we'll avoid corrupting the query.
-                if (ModelChecker::checkTranslatable($this->related) && $query->languageScopeEnabled) {
+                if (ModelChecker::checkTranslatable($this->related) && $this->query->languageScopeEnabled) {
+                    if (defined('TEST')) {
+                        $query->getTrace();
+                    }
                     $query->orWhere(function ($query) use ($table) {
                         $query->where($table.'.'.$this->related->getMasterKeyName(), '=', $this->child->{$this->foreignKey})
                             ->whereNotNull($table.'.'.$this->related->getMasterKeyName());
