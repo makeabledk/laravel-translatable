@@ -31,7 +31,7 @@ class LanguageScope
      * @param  bool|null  $fallbackMaster
      * @return Builder
      */
-    public static function apply(Builder $query, $languages, $fallbackMaster = false)
+    public static function apply($query, $languages, $fallbackMaster = false)
     {
         return call_user_func(new static($query), $languages, $fallbackMaster);
     }
@@ -49,7 +49,7 @@ class LanguageScope
      * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
      * @return bool
      */
-    public static function wasApplied(Builder $query)
+    public static function wasApplied($query)
     {
         return $query->languageScopeWasApplied;
     }
@@ -58,7 +58,7 @@ class LanguageScope
      * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
      * @return bool
      */
-    public static function wasntApplied(Builder $query)
+    public static function wasntApplied($query)
     {
         return ! static::wasApplied($query);
     }
@@ -66,7 +66,7 @@ class LanguageScope
     /**
      * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
      */
-    public function __construct(Builder $query)
+    public function __construct($query)
     {
         $this->query = $query;
         $this->model = ModelChecker::ensureTranslatable($query->getModel());
