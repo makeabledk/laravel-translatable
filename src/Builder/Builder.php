@@ -3,9 +3,6 @@
 namespace Makeable\LaravelTranslatable\Builder;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Makeable\LaravelTranslatable\Builder\QueuesQueries;
-use Makeable\LaravelTranslatable\ModelChecker;
-use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 class Builder extends EloquentBuilder
 {
@@ -21,6 +18,9 @@ class Builder extends EloquentBuilder
      */
     public $defaultLanguageScopeEnabled = true;
 
+    /**
+     * @var bool
+     */
     public $languageScopeWasApplied = false;
 
     /**

@@ -10,11 +10,6 @@ use Makeable\LaravelTranslatable\ModelChecker;
 
 class LanguageScope
 {
-//    /**
-//     * @var array
-//     */
-//    protected static $queryHistory;
-
     /**
      * @var array
      */
@@ -57,7 +52,6 @@ class LanguageScope
     public static function wasApplied(Builder $query)
     {
         return $query->languageScopeWasApplied;
-//        return (new static($query))->getQueryHistory() !== null;
     }
 
     /**
@@ -96,14 +90,6 @@ class LanguageScope
         return $this->query;
     }
 
-//    /**
-//     * @return array|null
-//     */
-//    public function getQueryHistory()
-//    {
-//        return Arr::get(static::$queryHistory, $this->getQueryId());
-//    }
-
     /**
      * @param  \Illuminate\Support\Collection  $languages
      * @return void
@@ -112,14 +98,8 @@ class LanguageScope
     {
         $this->query->languageScopeWasApplied = true;
 
-//        Arr::set(static::$queryHistory, $this->getQueryId(), $languages->toArray());
         Arr::set(static::$modelHistory, get_class($this->query->getModel()), $languages->toArray());
     }
-//
-//    protected function getQueryId()
-//    {
-//        return spl_object_id($this->query->getQuery());
-//    }
 
     /**
      * @param $languages

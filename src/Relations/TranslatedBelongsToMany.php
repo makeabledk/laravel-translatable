@@ -54,8 +54,6 @@ class TranslatedBelongsToMany extends BelongsToMany
         });
 
         return $this;
-
-//        return $this;
     }
 
     /**

@@ -4,7 +4,6 @@ namespace Makeable\LaravelTranslatable;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
 use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;

@@ -2,8 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
-use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
-use Makeable\LaravelTranslatable\Relations\TranslatedBelongsToMany;
 use Makeable\LaravelTranslatable\Tests\Stubs\Category;
 use Makeable\LaravelTranslatable\Tests\Stubs\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
@@ -20,12 +18,7 @@ class BelongsToManyTest extends TestCase
             ->create()
             ->images()->attach($image = factory(Image::class)->create());
 
-//        \DB::listen(function ($e) {
-//            dump($e->sql, $e->bindings);
-//        });
-
         $image = Image::whereKey($image->id)->with(['posts' => function ($query) {
-//            dump('Setting language');
             $query->language('sv');
         }])->first();
 

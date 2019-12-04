@@ -2,8 +2,6 @@
 
 namespace Makeable\LaravelTranslatable;
 
-use Illuminate\Database\Eloquent\Builder;
-
 /**
  * @property \Makeable\LaravelTranslatable\Builder\TranslatableBuilder $query
  */
