@@ -119,6 +119,18 @@ class HasManyTest extends TestCase
     }
 
     /** @test * */
+    public function regression_when_disabling_language_scope_it_also_applies_to_with_count_method()
+    {
+        $englishPost = factory(Post::class)
+            ->state('english')
+            ->with(2, 'master.meta')
+            ->create();
+
+        $this->assertEquals(2, Post::whereKey($englishPost->id)->withCount('meta')->first()->meta_count);
+        $this->assertEquals(2, Post::whereKey($englishPost->id)->withCount('directMeta')->first()->direct_meta_count);
+    }
+
+    /** @test * */
     public function has_many_language_scope_may_be_disabled()
     {
         $translation = factory(Post::class)

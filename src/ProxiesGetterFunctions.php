@@ -2,6 +2,8 @@
 
 namespace Makeable\LaravelTranslatable;
 
+use Illuminate\Database\Eloquent\Concerns\QueriesRelationships;
+
 /**
  * @property \Makeable\LaravelTranslatable\Builder\TranslatableBuilder $query
  */
@@ -100,7 +102,25 @@ trait ProxiesGetterFunctions
      */
     public function toBase()
     {
-        return $this->fireHookAndProxyToParent('toBase');
+        return $this->fireHookAndProxyToParent('toBase', ...func_get_args());
+    }
+
+    /**
+     * Add subselect queries to count the relations.
+     *
+     * @param  mixed  $relations
+     * @return $this
+     */
+    public function withCount($relations)
+    {
+        if (empty($relations)) {
+            return $this;
+        }
+
+//        dd(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
+//        dump('with count', $relations);
+
+        return $this->fireHookAndProxyToParent('withCount', ...func_get_args());
     }
 
     /**

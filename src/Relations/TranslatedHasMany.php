@@ -132,7 +132,7 @@ class TranslatedHasMany extends HasMany
         return function (Builder $query) use ($compareKey) {
             $query->whereColumn($this->getQualifiedParentKeyName(), '=', $compareKey);
 
-            if (ModelChecker::checkTranslatable($this->parent)) {
+            if (ModelChecker::checkTranslatable($this->parent) && $query->languageScopeEnabled) {
                 $query->orWhere(function ($query) use ($compareKey) {
                     $query->whereNotNull($qualifiedMasterKey = $this->parent->qualifyColumn($this->parent->getMasterKeyName()))
                         ->whereColumn($qualifiedMasterKey, '=', $compareKey);

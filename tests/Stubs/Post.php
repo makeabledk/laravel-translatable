@@ -33,6 +33,11 @@ class Post extends Model
         return $this->hasMany(PostMeta::class);
     }
 
+    public function directMeta()
+    {
+        return $this->hasMany(PostMeta::class)->withoutLanguageScope();
+    }
+
     public function images()
     {
         return $this->belongsToMany(Image::class);
