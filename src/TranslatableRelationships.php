@@ -103,19 +103,22 @@ trait TranslatableRelationships
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $relatedModel
      * @param  string  $originalRelation
      * @param  string  $translatableRelation
      * @param  array  $args
      * @return mixed
      */
-    protected function appropriateRelation(Model $model, $originalRelation, $translatableRelation, array $args)
+    protected function appropriateRelation(Model $relatedModel, $originalRelation, $translatableRelation, array $args)
     {
         $allowTranslatableRelationship = tap(! $this->nextRelationWithoutTranslations, function () {
             $this->nextRelationWithoutTranslations = false; // Reset if was set
         });
 
-        return ModelChecker::checkTranslatable($model) && $allowTranslatableRelationship
+        return $allowTranslatableRelationship && (
+                ModelChecker::checkTranslatable($this) ||
+                ModelChecker::checkTranslatable($relatedModel)
+            )
             ? new $translatableRelation(...$args)
             : new $originalRelation(...$args);
     }

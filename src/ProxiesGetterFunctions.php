@@ -114,10 +114,7 @@ trait ProxiesGetterFunctions
         if (empty($relations)) {
             return $this;
         }
-
-//        dd(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
-//        dump('with count', $relations);
-
+        
         return $this->fireHookAndProxyToParent('withCount', ...func_get_args());
     }
 

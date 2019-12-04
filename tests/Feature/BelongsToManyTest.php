@@ -54,7 +54,6 @@ class BelongsToManyTest extends TestCase
     {
         $translation = factory(Post::class)
             ->state('english')
-            ->with('master')
             ->with(1, 'master.images', ['src' => 'Foo'])
             ->create();
 

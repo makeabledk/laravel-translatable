@@ -10,6 +10,7 @@ class Builder extends EloquentBuilder
 
     /**
      * @var bool
+     * @deprecated
      */
     public $languageScopeEnabled = true;
 
@@ -27,6 +28,7 @@ class Builder extends EloquentBuilder
      * Re-enable language scope after being disabled.
      *
      * @return $this
+     * @deprecated
      */
     public function withLanguageScope()
     {
@@ -41,6 +43,7 @@ class Builder extends EloquentBuilder
      * the actual 'id' and not 'master_id'.
      *
      * @return $this
+     * @deprecated
      */
     public function withoutLanguageScope()
     {
