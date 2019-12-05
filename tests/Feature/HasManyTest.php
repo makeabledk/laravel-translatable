@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Makeable\LaravelTranslatable\Tests\Stubs\Category;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
 use Makeable\LaravelTranslatable\Tests\Stubs\Team;
@@ -152,6 +153,24 @@ class HasManyTest extends TestCase
             $this->assertEquals(0, $query->count());
         }])->meta->count());
     }
+
+//    TODO make this test pass
+//
+//    /** @test * */
+//    public function regression_order_does_not_matter_when_using_with_count_with_language()
+//    {
+//        $category = factory(Category::class)
+//            ->with(1, 'english', 'posts.translations')
+//            ->with(2, 'posts.translations.meta')
+//            ->create();
+//
+//        $results = Category::whereKey($category->id)->with(['posts' => function ($query) {
+//            $query->withCount('meta');
+//            $query->language('en'); // it works if language is invoked before withCount
+//        }])->get();
+//
+//        $this->assertEquals(1, $results[0]->posts->count());
+//    }
 
     /**
      * @param $lang
