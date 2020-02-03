@@ -3,12 +3,12 @@
 namespace Makeable\LaravelTranslatable;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class TranslatableObserver
 {
     /**
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @throws \Throwable
      */
     public function creating(Model $model)
     {
@@ -17,6 +17,32 @@ class TranslatableObserver
         if (! $model->isMaster()) {
             $model->forceFillMissing($model->master->getSyncAttributes());
         }
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     */
+    public function created(Model $model)
+    {
+        // Set the master_key attribute for the first time. We'll ensure
+        // to do it completely silently so we don't interfere with
+        // other listeners and change-tracking features.
+        Model::withoutEvents(function () use ($model) {
+            DB::table($model->getTable())->where($model->getKeyName(), $model->getKey())->update([
+                'master_key' => $masterKey =  $model->master_id ?? $model->getKey()
+            ]);
+
+            $model->master_key = $masterKey;
+            $model->syncOriginalAttribute('master_key');
+        });
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     */
+    public function updating(Model $model)
+    {
+        $model->master_key = $model->master_id ?? $model->id;
     }
 
     /**

@@ -132,16 +132,17 @@ trait Translatable
      */
     public function getMasterKey()
     {
-        return $this->getAttribute($this->getMasterKeyName()) ?: $this->getKey();
+        return $this->master_key;
+//        return $this->getAttribute($this->getMasterKeyName()) ?: $this->getKey();
     }
-
-    /**
-     * @return int
-     */
-    public function getMasterKeyAttribute()
-    {
-        return $this->getMasterKey();
-    }
+//
+//    /**
+//     * @return int
+//     */
+//    public function getMasterKeyAttribute()
+//    {
+//        return $this->getMasterKey();
+//    }
 
     /**
      * @return string

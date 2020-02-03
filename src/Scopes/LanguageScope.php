@@ -145,11 +145,7 @@ class LanguageScope
         // along with a specified priority.
         $prioritizedIdsQuery = $languages
             ->map(function ($language, $priority) use ($primaryKeyName, $masterKeyName, $languages) {
-                $select = trim("
-                    SELECT {$primaryKeyName}, language_code, ( 
-                        SELECT IF({$masterKeyName} is NULL, {$primaryKeyName}, {$masterKeyName})
-                    ) as master_key, {$priority} as priority FROM {$this->query->getQuery()->from}
-                ");
+                $select = "SELECT {$primaryKeyName}, language_code, master_key, {$priority} as priority FROM {$this->query->getQuery()->from}";
 
                 // Fetch posts of specified language
                 if ($language !== '*') {
@@ -166,12 +162,10 @@ class LanguageScope
 
         // Now we'll use the previous priorities and select the best match.
         // We'll return all the actual id's of the posts we want to fetch.
-        return "
-            SELECT {$primaryKeyName} FROM (
-                SELECT {$primaryKeyName}, @priority := IF(@prevMasterKey <> master_key OR @prevMasterKey IS NULL, 1, @priority + 1) AS priority, @prevMasterKey:=master_key as master_key, language_code
-                FROM ({$prioritizedIdsQuery}) as prioritized_query 
-                HAVING priority = 1
-            ) as best_ids_query
-        ";
+        return "SELECT {$primaryKeyName} FROM (
+            SELECT {$primaryKeyName}, @priority := IF(@prevMasterKey <> master_key OR @prevMasterKey IS NULL, 1, @priority + 1) AS priority, @prevMasterKey:=master_key as master_key, language_code
+            FROM ({$prioritizedIdsQuery}) as prioritized_query 
+            HAVING priority = 1
+        ) as best_ids_query";
     }
 }

@@ -58,4 +58,21 @@ class TranslatableTest extends TestCase
         // Regression - ensure that there is only 1 match
         $this->assertEquals(1, $master->getTranslation('en')->master()->take(5)->count());
     }
+
+    /** @test **/
+    public function it_sets_the_master_key_attribute_on_saving()
+    {
+        // When master: master_id = NULL, master_key = id
+        $master = factory(Post::class)->create();
+        $this->assertNull($master->master_id);
+        $this->assertEquals($master->id, $master->master_key);
+
+        // When translation: master_id = master.id, master_key = master.id
+        $translation = factory(Post::class)->create(['master_id' => $master->id]);
+        $this->assertEquals($master->id, $translation->master_key);
+
+        // Check updating
+        $translation->update(['master_id' => null]);
+        $this->assertEquals($translation->id, $translation->master_key);
+    }
 }

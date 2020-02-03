@@ -70,4 +70,14 @@ class SyncMasterAttributesTest extends TestCase
         $this->assertEquals($team_2->id, $english->team_id);
         $this->assertEquals($team_2->id, $danish->refresh()->team_id);
     }
+
+    /** @test **/
+    public function it_detects_relationship_names_and_expands_them_to_foreign_keys()
+    {
+        $post = new Post;
+        $post->sync = ['team'];
+
+        $this->assertEquals(['team'], $post->sync);
+        $this->assertEquals(['team_id'], $post->getSyncAttributeNames());
+    }
 }

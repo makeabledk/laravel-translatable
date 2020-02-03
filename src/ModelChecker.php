@@ -13,7 +13,7 @@ class ModelChecker
      */
     public static function checkTranslatable(Model $model)
     {
-        return array_key_exists(Translatable::class, class_uses($model));
+        return array_key_exists(Translatable::class, class_uses_recursive($model));
     }
 
     /**

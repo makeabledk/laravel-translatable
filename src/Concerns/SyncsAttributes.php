@@ -2,6 +2,8 @@
 
 namespace Makeable\LaravelTranslatable\Concerns;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
 
 trait SyncsAttributes
@@ -43,7 +45,29 @@ trait SyncsAttributes
      */
     public function getSyncAttributeNames()
     {
-        return $this->sync ?? [];
+        $attributes = [];
+
+        foreach ($this->sync ?? [] as $attribute) {
+            if (Arr::has($this->attributes, $attribute) || ! method_exists($this, $attribute)) {
+                $attributes[] = $attribute;
+                continue;
+            }
+
+            // If a belongs-to relation was passed, we'll use the underlying foreign keys
+            $relation = $this->$attribute();
+
+            if ($relation instanceof BelongsTo) {
+                $attributes[] = method_exists($relation, 'getForeignKey')
+                    ? $relation->getForeignKey()
+                    : $relation->getForeignKeyName();
+            }
+
+            if ($this->$attribute() instanceof MorphTo) {
+                $attributes[] = $this->$attribute()->getMorphType();
+            }
+        }
+
+        return $attributes;
     }
 
     /**
@@ -54,7 +78,7 @@ trait SyncsAttributes
     {
         foreach ($attributes as $attribute => $value) {
             if (Arr::get($this->attributes, $attribute) === null) {
-                $this->{$attribute} = $value;
+                $this->setAttribute($attribute, $value);
             }
         }
 
