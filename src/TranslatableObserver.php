@@ -29,7 +29,7 @@ class TranslatableObserver
         // other listeners and change-tracking features.
         Model::withoutEvents(function () use ($model) {
             DB::table($model->getTable())->where($model->getKeyName(), $model->getKey())->update([
-                'master_key' => $masterKey =  $model->master_id ?? $model->getKey()
+                'master_key' => $masterKey = $model->master_id ?? $model->getKey(),
             ]);
 
             $model->master_key = $masterKey;
