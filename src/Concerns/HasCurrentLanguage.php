@@ -42,7 +42,7 @@ trait HasCurrentLanguage
     }
 
     /**
-     * @param  string|null  $language
+     * @param  mixed|null  $language
      */
     public static function setGlobalLanguage($language)
     {

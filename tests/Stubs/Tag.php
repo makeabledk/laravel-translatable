@@ -11,6 +11,8 @@ class Tag extends Model
 
     protected $guarded = [];
 
+    protected $sync = ['taggable']; // Should automatically expand to foreign keys
+
     public function taggable()
     {
         return $this->morphTo();

@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Makeable\LaravelTranslatable\Relations\TranslatedBelongsTo;
 use Makeable\LaravelTranslatable\Relations\TranslatedBelongsToMany;
 use Makeable\LaravelTranslatable\Relations\TranslatedHasMany;
+use Makeable\LaravelTranslatable\Relations\TranslatedMorphTo;
 
 trait TranslatableRelationships
 {
@@ -98,6 +100,27 @@ trait TranslatableRelationships
             $query->getModel(),
             HasMany::class,
             TranslatedHasMany::class,
+            func_get_args()
+        );
+    }
+
+    /**
+     * Instantiate a new MorphTo relationship.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param  string  $foreignKey
+     * @param  string  $ownerKey
+     * @param  string  $type
+     * @param  string  $relation
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    protected function newMorphTo(Builder $query, Model $parent, $foreignKey, $ownerKey, $type, $relation)
+    {
+        return $this->appropriateRelation(
+            $query->getModel(),
+            MorphTo::class,
+            TranslatedMorphTo::class,
             func_get_args()
         );
     }

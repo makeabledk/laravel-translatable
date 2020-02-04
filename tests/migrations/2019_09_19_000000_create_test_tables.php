@@ -65,7 +65,10 @@ class CreateTestTables extends Migration
         });
         Schema::create('tags', function (Blueprint $table) {
             $table->increments('id');
-            $table->morphs('taggable');
+            $table->unsignedInteger('master_id')->nullable();
+            $table->unsignedInteger('master_key')->nullable();
+            $table->string('language_code');
+            $table->nullableMorphs('taggable');
             $table->timestamps();
         });
         Schema::create('teams', function (Blueprint $table) {
