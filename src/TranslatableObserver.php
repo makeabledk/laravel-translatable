@@ -4,6 +4,7 @@ namespace Makeable\LaravelTranslatable;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Makeable\LaravelTranslatable\Tests\Stubs\Tag;
 
 class TranslatableObserver
 {

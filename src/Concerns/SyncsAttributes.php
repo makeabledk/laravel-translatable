@@ -20,11 +20,11 @@ trait SyncsAttributes
     public function getChangedSyncAttributes(array $original = null)
     {
         if ($original !== null) {
-            $changes = [];
+            [$changes, $syncAttributesNames] = [[], $this->getSyncAttributeNames()];
 
-            foreach ($original as $key => $value) {
-                if ($this->getAttribute($key) !== $value) {
-                    $changes[$key] = $this->getAttribute($key);
+            foreach ($syncAttributesNames as $attributeName) {
+                if ($this->getAttribute($attributeName) !== Arr::get($original, $attributeName)) {
+                    $changes[$attributeName] = $this->getAttribute($attributeName);
                 }
             }
         }

@@ -33,15 +33,31 @@ trait TranslatedRelation
      */
     protected function getMasterKey(Model $model, $keyName = null)
     {
+        return $model->getAttribute($this->getMasterKeyName($model, $keyName));
+//
+//        if (ModelChecker::checkTranslatable($model) && $this->query->languageScopeEnabled) {
+//            return $model->getMasterKey();
+//        }
+//
+//        if ($keyName !== null) {
+//            return $model->getAttribute($keyName);
+//        }
+//
+//        return $model->getKey();
+    }
+
+    /**
+     * @param Model $model
+     * @param null $keyName
+     * @return mixed
+     */
+    protected function getMasterKeyName(Model $model, $keyName = null)
+    {
         if (ModelChecker::checkTranslatable($model) && $this->query->languageScopeEnabled) {
-            return $model->getMasterKey();
+            return 'master_key';
         }
 
-        if ($keyName !== null) {
-            return $model->getAttribute($keyName);
-        }
-
-        return $model->getKey();
+        return $keyName ?? $model->getKeyName();
     }
 
     /**

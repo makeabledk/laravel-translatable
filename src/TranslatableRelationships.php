@@ -139,9 +139,9 @@ trait TranslatableRelationships
         });
 
         return $allowTranslatableRelationship && (
-                ModelChecker::checkTranslatable($this) ||
-                ModelChecker::checkTranslatable($relatedModel)
-            )
+            ModelChecker::checkTranslatable($this) ||
+            ModelChecker::checkTranslatable($relatedModel)
+        )
             ? new $translatableRelation(...$args)
             : new $originalRelation(...$args);
     }
