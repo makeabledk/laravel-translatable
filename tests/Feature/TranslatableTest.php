@@ -17,6 +17,11 @@ class TranslatableTest extends TestCase
 
         $this->assertEquals(['en', 'sv'], $master->siblings->pluck('language_code')->toArray());
         $this->assertEquals(['da', 'sv'], $master->getTranslation('en')->siblings->pluck('language_code')->toArray());
+
+        // Test eager load
+        $master->setRelations([])->load('siblings');
+
+        $this->assertEquals(['en', 'sv'], $master->siblings->pluck('language_code')->toArray());
     }
 
     /** @test * */

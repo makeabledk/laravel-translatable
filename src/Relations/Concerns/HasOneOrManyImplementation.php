@@ -4,10 +4,8 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Makeable\LaravelTranslatable\ModelChecker;
-use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedRelation;
 
 trait HasOneOrManyImplementation
 {
@@ -23,19 +21,24 @@ trait HasOneOrManyImplementation
     }
 
     /**
+     * @param  callable|null  $extraConstraint
      * @return void
      */
-    public function addConstraints()
+    public function addConstraints(callable $extraConstraint = null)
     {
         if (! static::$constraints) {
             return;
         }
 
         // Allow for disabling language scope before applying constraints
-        $this->beforeGetting(function ($query) {
+        $this->beforeGetting(function ($query) use ($extraConstraint) {
             $query->where($this->foreignKey, '=', $this->getParentKey());
 
             $query->whereNotNull($this->foreignKey);
+
+            if ($extraConstraint) {
+                call_user_func($extraConstraint, $query);
+            }
 
             $this->setDefaultLanguageFromModelLanguage($query, $this->parent);
         });
@@ -45,14 +48,19 @@ trait HasOneOrManyImplementation
      * Set the constraints for an eager load of the relation.
      *
      * @param  array  $models
+     * @param  callable|null  $extraConstraint
      * @return void
      */
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models, callable $extraConstraint = null)
     {
-        $this->beforeGetting(function ($query) use ($models) {
+        $this->beforeGetting(function ($query) use ($models, $extraConstraint) {
             $whereIn = $this->whereInMethod($this->parent, $this->localKey);
 
             $query->{$whereIn}($this->foreignKey, $this->getMasterKeys($models, $this->localKey));
+
+            if ($extraConstraint) {
+                call_user_func($extraConstraint, $query);
+            }
 
             $this->setDefaultLanguageFromModelQuery($query, Arr::first($models));
         });
@@ -77,7 +85,8 @@ trait HasOneOrManyImplementation
         foreach ($models as $model) {
             if (isset($dictionary[$key = $this->getMasterKey($model, $this->localKey)])) {
                 $model->setRelation(
-                    $relation, $this->getRelationValue($dictionary, $key, $type)
+                    $relation,
+                    $this->getRelationValue($dictionary, $key, $type)
                 );
             }
         }

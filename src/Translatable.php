@@ -31,7 +31,6 @@ trait Translatable
     public function master()
     {
         return $this->nonTranslatable()->belongsTo(get_class($this), $this->getMasterKeyName());
-//        return $this->belongsTo(get_class($this), $this->getMasterKeyName())->withoutLanguageScope();
     }
 
     /**
@@ -73,7 +72,7 @@ trait Translatable
      * - Swedish <-- VERSION
      *
      * This relation should only be used for query purposes and not attaching
-     * new translations as it relies on a sub-selected foreign key.
+     * new translations as it relies on a denormalized foreign key.
      *
      * @return VersionsRelation
      */

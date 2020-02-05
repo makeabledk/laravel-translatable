@@ -2,15 +2,51 @@
 
 namespace Makeable\LaravelTranslatable\Relations;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Makeable\LaravelTranslatable\Relations\Concerns\HasOneOrManyImplementation;
 
 /**
  * This is a special HasMany relation that allows us to
  * query both master and translations in a single query.
  */
-class VersionsRelation extends TranslatedHasMany
+class VersionsRelation extends HasMany
 {
+    use HasOneOrManyImplementation {
+        addConstraints as traitAddConstraints;
+        addEagerConstraints as traitAddEagerConstraints;
+    }
+
+    /**
+     * @var bool
+     */
+    protected $withoutSelf = false;
+
+    /**
+     * @return void
+     */
+    public function addConstraints()
+    {
+        $this->withoutDefaultLanguageScope()->traitAddConstraints(function ($query) {
+            if ($this->withoutSelf) {
+                $query->where($this->localKey, '<>', $this->parent->getKey());
+            }
+        });
+    }
+
+    /**
+     * @param  array  $models
+     * @return void
+     */
+    public function addEagerConstraints(array $models)
+    {
+        $this->withoutDefaultLanguageScope()->traitAddEagerConstraints($models, function ($query) use ($models) {
+            if ($this->withoutSelf) {
+                $query->whereNotIn($this->getLocalKeyName(), $this->getKeys($models, $this->getLocalKeyName()));
+            }
+        });
+    }
+
     /**
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return static
@@ -26,40 +62,7 @@ class VersionsRelation extends TranslatedHasMany
             }
         });
 
-        return new static($related->newQuery(), $model);
-    }
-
-    /**
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @param  string|null  $foreignKey
-     * @param  string|null  $localKey
-     * @return void
-     */
-    public function __construct(Builder $query, Model $parent, $foreignKey = null, $localKey = null)
-    {
-        $localKey = $localKey ?: $parent->qualifyColumn($parent->getKeyName());
-        $foreignKey = $foreignKey ?: 'master_key'; // Don't qualify master_key as is not an actual table column
-
-        parent::__construct($query, $parent, $foreignKey, $localKey);
-    }
-
-    /**
-     * Set the base constraints on the relation query.
-     *
-     * We'll use having because master_key is a virtual field
-     *
-     * @return void
-     */
-    public function addConstraints()
-    {
-        if (static::$constraints) {
-            $this->query->withMasterKey();
-
-            $this->query->having($this->foreignKey, '=', $this->getParentKey());
-
-            $this->query->havingRaw("{$this->foreignKey} IS NOT NULL");
-        }
+        return new static($related->newQuery(), $model, 'master_key', $model->getKeyName());
     }
 
     /**
@@ -67,7 +70,7 @@ class VersionsRelation extends TranslatedHasMany
      */
     public function withoutSelf()
     {
-        $this->query->where($this->localKey, '<>', $this->parent->getKey());
+        $this->withoutSelf = true;
 
         return $this;
     }
