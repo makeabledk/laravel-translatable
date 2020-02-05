@@ -9,12 +9,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedBelongsToConstraints;
+use Makeable\LaravelTranslatable\Relations\Concerns\BelongsToImplementation;
 use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedRelation;
 
 class TranslatedMorphTo extends MorphTo
 {
-    use TranslatedRelation,
-        TranslatedBelongsToConstraints;
+    use BelongsToImplementation;
 
     /**
      * Get all of the relation results for a type.
@@ -26,7 +26,7 @@ class TranslatedMorphTo extends MorphTo
     {
         $this->ownerKey = $this->getMasterKeyName($this->createModelByType($type), $this->ownerKey);
 
-        return $this->frameworkGetResultsByType($type);
+        return parent::getResultsByType($type);
     }
 
     /**
@@ -40,7 +40,7 @@ class TranslatedMorphTo extends MorphTo
     {
         $this->ownerKey = $this->getMasterKeyName($this->createModelByType($type), $this->ownerKey);
 
-        return $this->frameworkMatchToMorphParents($type, $results);
+        return parent::matchToMorphParents($type, $results);
     }
 
     /**

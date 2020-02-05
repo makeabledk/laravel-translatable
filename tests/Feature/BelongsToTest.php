@@ -70,6 +70,10 @@ class BelongsToTest extends TestCase
             ->with('master.post')
             ->with('english', 'master.post.translations')
             ->create();
+//
+//        dd(
+//            $translation->toArray()
+//        );
 
         // Relation
         $this->assertEquals('en', $translation->post()->first()->language_code);
