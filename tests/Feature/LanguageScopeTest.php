@@ -1,171 +1,75 @@
 <?php
 
-namespace Makeable\LaravelTranslatable\Scopes;
+namespace Makeable\LaravelTranslatable\Tests\Feature;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Makeable\LaravelTranslatable\Builder\Builder;
-use Makeable\LaravelTranslatable\ModelChecker;
+use Makeable\LaravelTranslatable\Scopes\LanguageScope;
+use Makeable\LaravelTranslatable\Tests\Stubs\Post;
+use Makeable\LaravelTranslatable\Tests\TestCase;
 
-class LanguageScope
+class LanguageScopeTest extends TestCase
 {
-    /**
-     * @var array
-     */
-    protected static $modelHistory = [];
-
-    /**
-     * @var Builder
-     */
-    protected $query;
-
-    /**
-     * @var \Illuminate\Database\Eloquent\Model|\Makeable\LaravelTranslatable\Translatable
-     */
-    protected $model;
-
-    /**
-     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
-     * @param  string|array  $languages
-     * @param  bool|null  $fallbackMaster
-     * @return Builder
-     */
-    public static function apply($query, $languages, $fallbackMaster = false)
+    /** @test * */
+    public function it_keeps_track_of_the_queries_it_was_applied_on()
     {
-        return call_user_func(new static($query), $languages, $fallbackMaster);
+        $model = new Post();
+
+        $this->assertFalse(LanguageScope::wasApplied($query = $model->newQuery()));
+
+        LanguageScope::apply($query, 'en', true);
+
+        $this->assertTrue(LanguageScope::wasApplied($query));
+        $this->assertEquals(['en', '*'], LanguageScope::getLatestRequestedLanguage($model));
     }
 
-    /**
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return array|null
-     */
-    public static function getLatestRequestedLanguage(Model $model)
+    /** @test **/
+    public function when_using_language_scope_it_finds_the_best_matching_model()
     {
-        return Arr::get(static::$modelHistory, get_class($model));
+        $this->seedTranslatedModels();
+
+        $posts = Post::language(['sv', 'en'])->get();
+
+        $this->assertEquals(2, $posts->count());
+
+        [$en, $sv] = [$posts->get(0), $posts->get(1)];
+
+        $this->assertEquals('en', $en->language_code);
+        $this->assertEquals('sv', $sv->language_code);
+
+        // Since they are both translations of each their post, they should have a master_id set
+        $this->assertEquals('da', Post::findOrFail($en->master_id)->language_code);
+        $this->assertEquals('da', Post::findOrFail($sv->master_id)->language_code);
     }
 
-    /**
-     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
-     * @return bool
-     */
-    public static function wasApplied($query)
+    /** @test **/
+    public function it_can_fallback_to_master_when_no_language_matches()
     {
-        return $query->languageScopeWasApplied;
+        $this->seedTranslatedModels();
+
+        $posts = Post::language(['sv', 'en'], true)->get();
+
+        $this->assertEquals(3, $posts->count());
+
+        [$da, $en, $sv] = [$posts->get(0), $posts->get(1), $posts->get(2)];
+
+        $this->assertEquals('da', $da->language_code);
+        $this->assertEquals('en', $en->language_code);
+        $this->assertEquals('sv', $sv->language_code);
+
+        // This should give us the exact same thing
+        $this->assertEquals(3, Post::language(['sv', 'en', '*'])->get()->count());
     }
 
-    /**
-     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
-     * @return bool
-     */
-    public static function wasntApplied($query)
+    protected function seedTranslatedModels()
     {
-        return ! static::wasApplied($query);
-    }
+        factory(Post::class)->create(); // danish
 
-    /**
-     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
-     */
-    public function __construct($query)
-    {
-        $this->query = $query;
-        $this->model = ModelChecker::ensureTranslatable($query->getModel());
-    }
+        factory(Post::class)
+            ->with(1, 'english', 'translations')
+            ->create();
 
-    /**
-     * @param  array  $languages
-     * @param  bool  $fallbackMaster
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function __invoke($languages, $fallbackMaster = false)
-    {
-        $languages = $this->normalizeLanguages($languages, $fallbackMaster);
-
-        $this->pushHistory($languages);
-
-        $this->clearVariables();
-
-        $this->query->whereRaw("{$this->model->getQualifiedKeyName()} IN ({$this->getBestIdsQuery($languages)})");
-
-        return $this->query;
-    }
-
-    /**
-     * @param  \Illuminate\Support\Collection  $languages
-     * @return void
-     */
-    protected function pushHistory(Collection $languages)
-    {
-        $this->query->languageScopeWasApplied = true;
-
-        Arr::set(static::$modelHistory, get_class($this->query->getModel()), $languages->toArray());
-    }
-
-    /**
-     * @param $languages
-     * @param $fallbackMaster
-     * @return \Illuminate\Support\Collection|mixed
-     */
-    protected function normalizeLanguages($languages, $fallbackMaster)
-    {
-        return collect($languages)
-            ->values()
-            ->when($fallbackMaster, function (Collection $languages) {
-                // Push an * as a last-priority wildcard to indicate master fallback
-                return $languages->push('*');
-            })
-            ->filter(function ($language) {
-                // Do some simple validation so we can inline language in SQL later on
-                return preg_match('/^[a-zA-Z\*]{1,5}/', $language);
-            })
-            ->unique();
-    }
-
-    /**
-     * Reset previous variables that may interfere with new results.
-     *
-     * @return void
-     */
-    protected function clearVariables()
-    {
-        $this->query->getQuery()->getConnection()->select('SELECT NULL, NULL INTO @prevMasterKey, @priority');
-    }
-
-    /**
-     * @param  \Illuminate\Support\Collection  $languages
-     * @return string
-     */
-    protected function getBestIdsQuery(Collection $languages)
-    {
-        $primaryKeyName = $this->model->getKeyName();
-        $masterKeyName = $this->model->getMasterKeyName();
-
-        // Create sub-queries for each language. The queries
-        // fetches id's for posts of their language
-        // along with a specified priority.
-        $prioritizedIdsQuery = $languages
-            ->map(function ($language, $priority) use ($primaryKeyName, $masterKeyName, $languages) {
-                $select = "SELECT {$primaryKeyName}, language_code, master_key, {$priority} as priority FROM {$this->query->getQuery()->from}";
-
-                // Fetch posts of specified language
-                if ($language !== '*') {
-                    return "{$select} WHERE language_code = '{$language}'";
-                }
-
-                // If master fallback: get master posts except the for the languages we've already fetched
-                return "{$select} WHERE language_code NOT IN ('{$languages->implode("','")}') && {$masterKeyName} IS NULL";
-            })
-            // Now union the language queries
-            ->pipe(function (Collection $queries) {
-                return $queries->implode(' UNION DISTINCT ').' ORDER BY master_key asc, priority asc';
-            });
-
-        // Now we'll use the previous priorities and select the best match.
-        // We'll return all the actual id's of the posts we want to fetch.
-        return str_replace("\n", "", "SELECT {$primaryKeyName} FROM (
-            SELECT {$primaryKeyName}, @priority := IF(@prevMasterKey <> master_key OR @prevMasterKey IS NULL, 1, @priority + 1) AS priority, @prevMasterKey:=master_key as master_key, language_code
-            FROM ({$prioritizedIdsQuery}) as prioritized_query 
-            HAVING priority = 1
-        ) as best_ids_query");
+        factory(Post::class)
+            ->with(1, 'english', 'translations')
+            ->andWith(1, 'swedish', 'translations')
+            ->create();
     }
 }

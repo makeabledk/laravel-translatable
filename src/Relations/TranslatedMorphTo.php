@@ -5,12 +5,11 @@ namespace Makeable\LaravelTranslatable\Relations;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedBelongsToConstraints;
-use Makeable\LaravelTranslatable\Relations\Concerns\BelongsToImplementation;
+use Makeable\LaravelTranslatable\Relations\Concerns\BelongsToBaseImplementation;
 
 class TranslatedMorphTo extends MorphTo
 {
-    use BelongsToImplementation;
+    use BelongsToBaseImplementation;
 
     /**
      * Get all of the relation results for a type.

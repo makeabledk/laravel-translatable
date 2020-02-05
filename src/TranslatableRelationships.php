@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Makeable\LaravelTranslatable\Relations\TranslatedBelongsTo;
 use Makeable\LaravelTranslatable\Relations\TranslatedBelongsToMany;
 use Makeable\LaravelTranslatable\Relations\TranslatedHasMany;
+use Makeable\LaravelTranslatable\Relations\TranslatedMorphMany;
 use Makeable\LaravelTranslatable\Relations\TranslatedMorphTo;
 
 trait TranslatableRelationships
@@ -102,6 +104,28 @@ trait TranslatableRelationships
             TranslatedHasMany::class,
             func_get_args()
         );
+    }
+
+    /**
+     * Instantiate a new MorphMany relationship.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param  string  $type
+     * @param  string  $id
+     * @param  string  $localKey
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    protected function newMorphMany(Builder $query, Model $parent, $type, $id, $localKey)
+    {
+        return $this->appropriateRelation(
+            $query->getModel(),
+            MorphMany::class,
+            TranslatedMorphMany::class,
+            func_get_args()
+        );
+
+//        return new MorphMany($query, $parent, $type, $id, $localKey);
     }
 
     /**

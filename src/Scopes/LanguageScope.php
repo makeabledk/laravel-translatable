@@ -13,7 +13,7 @@ class LanguageScope
     /**
      * @var array
      */
-    protected static $modelHistory = [];
+    public static $modelHistory = [];
 
     /**
      * @var Builder

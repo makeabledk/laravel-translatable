@@ -48,22 +48,27 @@ class MorphToTest extends TestCase
         $load = function ($language) {
             return Post::latest()
                 ->language($language)
-                ->with('tags.post')
+                ->with('tags.taggable')
                 ->first()
                 ->toArray();
         };
 
+//        \DB::listen(function ($e) {
+//            dump($e->sql, $e->bindings);
+//        });
+
         $result = $load('en');
+
         $this->assertEquals(1, count(data_get($result, 'tags')));
         $this->assertEquals('en', data_get($result, 'language_code'));
         $this->assertEquals('en', data_get($result, 'tags.0.language_code'));
-        $this->assertEquals('en', data_get($result, 'tags.0.post.language_code'));
+        $this->assertEquals('en', data_get($result, 'tags.0.taggable.language_code'));
 
         $result = $load('sv');
         $this->assertEquals(1, count(data_get($result, 'tags')));
         $this->assertEquals('sv', data_get($result, 'language_code'));
         $this->assertEquals('da', data_get($result, 'tags.0.language_code'), 'Fallback to master (da)');
-        $this->assertEquals('sv', data_get($result, 'tags.0.post.language_code'));
+        $this->assertEquals('sv', data_get($result, 'tags.0.taggable.language_code'));
     }
 
 
