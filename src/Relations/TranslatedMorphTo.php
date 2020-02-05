@@ -58,7 +58,7 @@ class TranslatedMorphTo extends MorphTo
     }
 
     /**
-     * Polyfill for different Laravel versions
+     * Polyfill for different Laravel versions.
      *
      * @return mixed|string
      */

@@ -78,7 +78,6 @@ trait TranslatedRelation
             ModelChecker::checkTranslatable($model) &&
             $language = $model->requestedLanguage
         ) {
-
             if (defined('DUMPNOW')) {
                 dump('setDefaultLanguageFromModelQuery', get_class($model));
             }
