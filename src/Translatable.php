@@ -135,6 +135,7 @@ trait Translatable
         return $this->master_key;
 //        return $this->getAttribute($this->getMasterKeyName()) ?: $this->getKey();
     }
+
 //
 //    /**
 //     * @return int
