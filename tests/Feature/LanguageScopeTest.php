@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 use Makeable\LaravelTranslatable\Builder\Builder;
 use Makeable\LaravelTranslatable\ModelChecker;
 
-class LanguageScope
+class LanguageScopeTest
 {
     /**
      * @var array
@@ -162,7 +162,7 @@ class LanguageScope
 
         // Now we'll use the previous priorities and select the best match.
         // We'll return all the actual id's of the posts we want to fetch.
-        return str_replace("\n", "", "SELECT {$primaryKeyName} FROM (
+        return str_replace("\n", '', "SELECT {$primaryKeyName} FROM (
             SELECT {$primaryKeyName}, @priority := IF(@prevMasterKey <> master_key OR @prevMasterKey IS NULL, 1, @priority + 1) AS priority, @prevMasterKey:=master_key as master_key, language_code
             FROM ({$prioritizedIdsQuery}) as prioritized_query 
             HAVING priority = 1

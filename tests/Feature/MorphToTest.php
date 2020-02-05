@@ -3,7 +3,6 @@
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
-use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
 use Makeable\LaravelTranslatable\Tests\Stubs\Tag;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
@@ -65,7 +64,6 @@ class MorphToTest extends TestCase
         $this->assertEquals('da', data_get($result, 'tags.0.language_code'), 'Fallback to master (da)');
         $this->assertEquals('sv', data_get($result, 'tags.0.post.language_code'));
     }
-
 
 //    /** @test **/
 //    public function it_eager_loads_translated_morph_to()

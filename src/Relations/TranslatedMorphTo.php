@@ -5,7 +5,6 @@ namespace Makeable\LaravelTranslatable\Relations;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedBelongsToConstraints;
 use Makeable\LaravelTranslatable\Relations\Concerns\BelongsToImplementation;
 
 class TranslatedMorphTo extends MorphTo
@@ -59,7 +58,7 @@ class TranslatedMorphTo extends MorphTo
     }
 
     /**
-     * Polyfill for different Laravel versions
+     * Polyfill for different Laravel versions.
      *
      * @return mixed|string
      */
