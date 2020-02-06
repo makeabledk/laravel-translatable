@@ -81,6 +81,7 @@ class CreateTestTables extends Migration
         });
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
+            $table->nullableMorphs('photo');
             $table->timestamps();
         });
     }

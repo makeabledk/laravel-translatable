@@ -25,4 +25,9 @@ class Team extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function tags()
+    {
+        return $this->morphMany(Tag::class, 'taggable');
+    }
 }

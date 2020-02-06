@@ -11,6 +11,11 @@ class User extends Model
 
     protected $guarded = [];
 
+    public function photo()
+    {
+        return $this->morphTo();
+    }
+
     public function posts()
     {
         return $this->hasMany(Post::class);

@@ -4,6 +4,8 @@ namespace Makeable\LaravelTranslatable\Tests\Feature;
 
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\Tag;
+use Makeable\LaravelTranslatable\Tests\Stubs\Team;
+use Makeable\LaravelTranslatable\Tests\Stubs\User;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class MorphToTest extends TestCase
@@ -64,6 +66,23 @@ class MorphToTest extends TestCase
         $this->assertEquals('sv', data_get($result, 'language_code'));
         $this->assertEquals('da', data_get($result, 'tags.0.language_code'), 'Fallback to master (da)');
         $this->assertEquals('sv', data_get($result, 'tags.0.taggable.language_code'));
+    }
+
+    /** @test **/
+    public function regression_a_none_translatable_model_can_morph_to_translatable_parent()
+    {
+        $user = factory(User::class)->create();
+        $user->photo()->associate(
+            $master = factory(Post::class) // it doesn't matter which translated model we morph to in this example
+                ->with(1, 'english', 'translations')
+                ->create()
+        )->save();
+
+        $inEnglish = function ($model) {
+            $model->language('en');
+        };
+
+        $this->assertEquals('en', data_get($user->load(['photo' => $inEnglish]), 'photo.language_code'));
     }
 
 //    /** @test **/

@@ -141,12 +141,11 @@ trait TranslatableRelationships
      */
     protected function newMorphTo(Builder $query, Model $parent, $foreignKey, $ownerKey, $type, $relation)
     {
-        return $this->appropriateRelation(
-            $query->getModel(),
-            MorphTo::class,
-            TranslatedMorphTo::class,
-            func_get_args()
-        );
+        // For morph-to query-model and parent model is the same, so we don't know
+        // at this point whether or not we'll be needing translatable.
+        return $this->translatableRelationshipAllowed()
+            ? new TranslatedMorphTo(...func_get_args())
+            : new MorphTo(...func_get_args());
     }
 
     /**
@@ -158,15 +157,18 @@ trait TranslatableRelationships
      */
     protected function appropriateRelation(Model $relatedModel, $originalRelation, $translatableRelation, array $args)
     {
-        $allowTranslatableRelationship = tap(! $this->nextRelationWithoutTranslations, function () {
-            $this->nextRelationWithoutTranslations = false; // Reset if was set
-        });
-
-        return $allowTranslatableRelationship && (
+        return $this->translatableRelationshipAllowed() && (
             ModelChecker::checkTranslatable($this) ||
             ModelChecker::checkTranslatable($relatedModel)
         )
             ? new $translatableRelation(...$args)
             : new $originalRelation(...$args);
+    }
+
+    protected function translatableRelationshipAllowed()
+    {
+        return tap(! $this->nextRelationWithoutTranslations, function () {
+            $this->nextRelationWithoutTranslations = false; // Reset if was set
+        });
     }
 }
