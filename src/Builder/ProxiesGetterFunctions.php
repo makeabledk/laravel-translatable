@@ -1,8 +1,13 @@
 <?php
 
-namespace Makeable\LaravelTranslatable;
+namespace Makeable\LaravelTranslatable\Builder;
 
 /**
+ * The methods in this trait may exist on both the query builder
+ * as well as directly on certain relations. For this reason
+ * we'll overwrite them here so we ensure they invoke the
+ * queued hooks before executing the actually query.
+ *
  * @property \Makeable\LaravelTranslatable\Builder\TranslatableBuilder $query
  */
 trait ProxiesGetterFunctions

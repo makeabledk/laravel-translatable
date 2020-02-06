@@ -52,11 +52,7 @@ class MorphToTest extends TestCase
                 ->first()
                 ->toArray();
         };
-
-//        \DB::listen(function ($e) {
-//            dump($e->sql, $e->bindings);
-//        });
-
+        
         $result = $load('en');
 
         $this->assertEquals(1, count(data_get($result, 'tags')));

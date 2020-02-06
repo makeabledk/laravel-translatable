@@ -3,6 +3,7 @@
 namespace Makeable\LaravelTranslatable\Builder;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 class Builder extends EloquentBuilder
 {
@@ -23,6 +24,14 @@ class Builder extends EloquentBuilder
      * @var bool
      */
     public $languageScopeWasApplied = false;
+
+    public function hydrate(array $items)
+    {
+        return tap(parent::hydrate($items), function () {
+            // Clear language history after hydrating models
+            LanguageScope::clearHistory();
+        });
+    }
 
     /**
      * Re-enable language scope after being disabled.

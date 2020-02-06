@@ -2,8 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Builder;
 
-use Makeable\LaravelTranslatable\ProxiesGetterFunctions;
-
 trait QueuesQueries
 {
     use ProxiesGetterFunctions;

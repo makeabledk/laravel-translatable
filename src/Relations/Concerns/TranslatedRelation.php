@@ -5,7 +5,7 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 use Illuminate\Database\Eloquent\Model;
 use Makeable\LaravelTranslatable\Builder\Builder;
 use Makeable\LaravelTranslatable\ModelChecker;
-use Makeable\LaravelTranslatable\ProxiesGetterFunctions;
+use Makeable\LaravelTranslatable\Builder\ProxiesGetterFunctions;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait TranslatedRelation
@@ -74,20 +74,20 @@ trait TranslatedRelation
      */
     protected function setDefaultLanguageFromModelQuery(Builder $query, Model $model = null)
     {
-        if ($model &&
-            ModelChecker::checkTranslatable($model) &&
-            $language = $model->requestedLanguage
-        ) {
-
-            if (defined('DUMPNOW')) {
-                dump('setDefaultLanguageFromModelQuery', get_class($model));
-            }
-
-            // Ensure we always default to master
-            $this->setDefaultLanguage($query, array_merge($language, ['*']));
-
-            return;
-        }
+//        if ($model &&
+//            ModelChecker::checkTranslatable($model) &&
+//            $language = $model->requestedLanguage
+//        ) {
+//
+//            if (defined('DUMPNOW')) {
+//                dump('setDefaultLanguageFromModelQuery', get_class($model));
+//            }
+//
+//            // Ensure we always default to master
+//            $this->setDefaultLanguage($query, array_merge($language, ['*']));
+//
+//            return;
+//        }
 
         $this->setDefaultLanguageFromModelLanguage($query, $model);
     }
@@ -107,7 +107,10 @@ trait TranslatedRelation
             return;
         }
 
-        $this->setDefaultLanguage($query, [$model->language_code, '*']);
+        $language = $model->requestedLanguage ?? [$model->language_code];
+
+        $this->setDefaultLanguage($query, array_merge($language, ['*']));
+//        $this->setDefaultLanguage($query, [$model->language_code, '*']);
     }
 
     /**

@@ -25,6 +25,11 @@ class LanguageScope
      */
     protected $model;
 
+    public static function clearHistory()
+    {
+        static::$modelHistory = [];
+    }
+
     /**
      * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
      * @param  string|array  $languages

@@ -12,7 +12,7 @@ use Makeable\LaravelFactory\FactoryServiceProvider;
 
 class TestCase extends BaseTestCase
 {
-//    use RefreshDatabase;
+    use RefreshDatabase;
 
     /**
      * Creates the application.

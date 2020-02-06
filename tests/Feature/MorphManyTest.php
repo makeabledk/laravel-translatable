@@ -42,23 +42,6 @@ class MorphManyTest extends TestCase
         $masterPost->setRelations([])->load('tags');
         $this->assertEquals($masterTag->id, $masterPost->tags->first()->id ?? null);
 
-        dump($masterTag->id.' --> '.$translatedTag->id);
-
-        define('DUMPNOW', true);
-
-        \DB::listen(function ($e) {
-            dump($e->sql, $e->bindings);
-        });
-
-        dump (
-            $translatedPost->setRelations([])->load(['tags'])->tags->toArray()
-        );
-
-        dd(
-            LanguageScope::$modelHistory
-        );
-
-
         $translatedPost->setRelations([])->load('tags');
         $this->assertEquals($translatedTag->id, $translatedPost->tags->first()->id ?? null);
     }
