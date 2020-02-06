@@ -4,8 +4,8 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Makeable\LaravelTranslatable\Builder\Builder;
-use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Builder\ProxiesGetterFunctions;
+use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait TranslatedRelation

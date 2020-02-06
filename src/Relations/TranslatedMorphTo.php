@@ -57,8 +57,6 @@ class TranslatedMorphTo extends MorphTo
         return $query->get();
     }
 
-
-
     /**
      * Match the results for a given type to their parents.
      *
@@ -93,7 +91,7 @@ class TranslatedMorphTo extends MorphTo
     }
 
     /**
-     * Polyfill for different Laravel versions
+     * Polyfill for different Laravel versions.
      *
      * @return mixed|string
      */

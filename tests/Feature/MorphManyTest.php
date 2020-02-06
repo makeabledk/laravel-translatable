@@ -2,12 +2,8 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
-use Makeable\LaravelTranslatable\Scopes\LanguageScope;
-use Makeable\LaravelTranslatable\Tests\Stubs\Category;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
-use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
 use Makeable\LaravelTranslatable\Tests\Stubs\Tag;
-use Makeable\LaravelTranslatable\Tests\Stubs\Team;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class MorphManyTest extends TestCase
