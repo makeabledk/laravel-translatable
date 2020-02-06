@@ -4,7 +4,6 @@ namespace Makeable\LaravelTranslatable\Tests\Feature;
 
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\Tag;
-use Makeable\LaravelTranslatable\Tests\Stubs\Team;
 use Makeable\LaravelTranslatable\Tests\Stubs\User;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
