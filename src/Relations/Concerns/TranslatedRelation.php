@@ -4,15 +4,13 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Makeable\LaravelTranslatable\Builder\Builder;
-use Makeable\LaravelTranslatable\Builder\ProxiesGetterFunctions;
+use Makeable\LaravelTranslatable\Builder\Concerns\ProxyGetterMethods;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait TranslatedRelation
 {
-    use
-//        AppliesDefaultLanguage,
-        ProxiesGetterFunctions;
+    use ProxyGetterMethods;
 
     /**
      * @param  array  $models
@@ -34,16 +32,6 @@ trait TranslatedRelation
     protected function getMasterKey(Model $model, $keyName = null)
     {
         return $model->getAttribute($this->getMasterKeyName($model, $keyName));
-//
-//        if (ModelChecker::checkTranslatable($model) && $this->query->languageScopeEnabled) {
-//            return $model->getMasterKey();
-//        }
-//
-//        if ($keyName !== null) {
-//            return $model->getAttribute($keyName);
-//        }
-//
-//        return $model->getKey();
     }
 
     /**
@@ -121,8 +109,9 @@ trait TranslatedRelation
      */
     public function setDefaultLanguage(Builder $query, $language)
     {
-        if ($query->languageScopeEnabled &&
-            $query->defaultLanguageScopeEnabled &&
+        if (
+//            $query->languageScopeEnabled &&
+//            $query->defaultLanguageScopeEnabled &&
             ModelChecker::checkTranslatable($query->getModel()) &&
             LanguageScope::wasntApplied($query)
         ) {

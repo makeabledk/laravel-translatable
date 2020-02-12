@@ -8,17 +8,17 @@ use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait HasCurrentLanguage
 {
-    public static function bootHasCurrentLanguage()
-    {
-        static::retrieved(function (Model $model) {
-            $model->requestedLanguage = LanguageScope::getLatestRequestedLanguage($model);
-        });
-    }
-
-    /**
-     * @var array|null
-     */
-    public $requestedLanguage;
+//    public static function bootHasCurrentLanguage()
+//    {
+//        static::retrieved(function (Model $model) {
+//            $model->requestedLanguage = LanguageScope::getLatestRequestedLanguage($model);
+//        });
+//    }
+//
+//    /**
+//     * @var array|null
+//     */
+//    public $requestedLanguage;
 
     /**
      * @var string|null

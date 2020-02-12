@@ -1,17 +1,18 @@
 <?php
 
-namespace Makeable\LaravelTranslatable\Builder;
+namespace Makeable\LaravelTranslatable\Builder\Concerns;
+
+use Makeable\LaravelTranslatable\Builder\Concerns\HasGetterHooks;
 
 /**
- * The methods in this trait may exist on both the query builder
- * as well as directly on certain relations. For this reason
- * we'll overwrite them here so we ensure they invoke the
- * queued hooks before executing the actually query.
- *
  * @property \Makeable\LaravelTranslatable\Builder\TranslatableBuilder $query
  */
-trait ProxiesGetterFunctions
+trait ProxyGetterMethods
 {
+    // The following methods may exist on both the query builder as well as directly
+    // overwritten on certain relations. For this reason we'll overwrite them here so
+    // we'll ensure they invoke the queued hooks before executing the actually query.
+
     /**
      * @param  int  $count
      * @param  callable  $callback

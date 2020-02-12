@@ -18,6 +18,11 @@ trait Translatable
         TranslatableRelationships;
 
     /**
+     * @var null|array
+     */
+    public $requestedLanguage;
+
+    /**
      * Register observer on model.
      */
     public static function bootTranslatable()
@@ -83,16 +88,16 @@ trait Translatable
 
     // _________________________________________________________________________________________________________________
 
-    /**
-     * @param Builder $query
-     * @param string|array $languagePriority
-     * @param bool $fallbackMaster
-     * @return Builder
-     */
-    public function scopeLanguage($query, $languagePriority, $fallbackMaster = false)
-    {
-        return LanguageScope::apply($query, $languagePriority, $fallbackMaster);
-    }
+//    /**
+//     * @param Builder $query
+//     * @param string|array $languagePriority
+//     * @param bool $fallbackMaster
+//     * @return Builder
+//     */
+//    public function scopeLanguage($query, $languagePriority, $fallbackMaster = false)
+//    {
+//        return LanguageScope::apply($query, $languagePriority, $fallbackMaster);
+//    }
 
     /**
      * @param Builder $query
@@ -102,19 +107,19 @@ trait Translatable
     {
         return $query->whereNull($this->getMasterKeyName());
     }
-
-    /**
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeWithMasterKey(Builder $query)
-    {
-        if ($query->getQuery()->columns === null) {
-            $query->select($query->getQuery()->from.'.*');
-        }
-
-        return $query->selectRaw("(SELECT IF({$this->getMasterKeyName()} is NULL, {$this->getKeyName()}, {$this->getMasterKeyName()})) as master_key");
-    }
+//
+//    /**
+//     * @param \Illuminate\Database\Eloquent\Builder $query
+//     * @return \Illuminate\Database\Eloquent\Builder
+//     */
+//    public function scopeWithMasterKey(Builder $query)
+//    {
+//        if ($query->getQuery()->columns === null) {
+//            $query->select($query->getQuery()->from.'.*');
+//        }
+//
+//        return $query->selectRaw("(SELECT IF({$this->getMasterKeyName()} is NULL, {$this->getKeyName()}, {$this->getMasterKeyName()})) as master_key");
+//    }
 
     // _________________________________________________________________________________________________________________
 

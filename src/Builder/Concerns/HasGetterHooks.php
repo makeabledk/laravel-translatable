@@ -1,10 +1,10 @@
 <?php
 
-namespace Makeable\LaravelTranslatable\Builder;
+namespace Makeable\LaravelTranslatable\Builder\Concerns;
 
-trait QueuesQueries
+trait HasGetterHooks
 {
-    use ProxiesGetterFunctions;
+    use ProxyGetterMethods;
 
     /**
      * When these methods are proxied through __call to the underlying query builder
