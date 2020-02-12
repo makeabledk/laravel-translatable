@@ -42,6 +42,7 @@ trait HasGetterHooks
 
         return parent::__call($method, $parameters);
     }
+
 //
 //    /**
 //     * Fire the queued callbacks for the before-getting hook.
@@ -78,7 +79,6 @@ trait HasGetterHooks
             });
 
         $this->beforeGettingCallbacks = [];
-
 
 //        foreach ($hooks as $callback) {
 //            call_user_func_array($callback, $args);

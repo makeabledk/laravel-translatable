@@ -91,7 +91,6 @@ trait HasLanguageScopes
         return $languages;
     }
 
-
     /**
      * Disable the language scope entirely, making it work exactly like
      * a normal non-translatable relation.
