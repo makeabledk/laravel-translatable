@@ -66,7 +66,11 @@ class TranslatedMorphTo extends MorphTo
      */
     protected function matchToMorphParents($type, Collection $results)
     {
-        $this->ownerKey = $this->getMasterKeyName($this->createModelByType($type), $this->ownerKey);
+        $this->ownerKey = $this->getMasterKeyName(
+            $model = $this->createModelByType($type),
+            $this->ownerKey,
+            $model->newQuery()
+        );
 
         return parent::matchToMorphParents($type, $results);
     }
@@ -80,7 +84,7 @@ class TranslatedMorphTo extends MorphTo
     public function associate($model)
     {
         $this->parent->setAttribute(
-            $this->foreignKey, $model instanceof Model ? $this->getMasterKey($model, $this->ownerKey) : null
+            $this->foreignKey, $model instanceof Model ? $this->getMasterKey($model, $this->ownerKey, $model->newQuery()) : null
         );
 
         $this->parent->setAttribute(

@@ -30,11 +30,13 @@ class TranslatedBelongsToMany extends BelongsToMany
         $query->join($this->table, function (JoinClause $join) {
             $baseTable = $this->related->getTable();
 
-            $join->on($baseTable.'.'.$this->relatedKey, '=', $this->getQualifiedRelatedPivotKeyName());
+            $relatedKey = $this->getMasterKeyName($this->related, $this->relatedKey);
 
-            if (ModelChecker::checkTranslatable($this->related)) {
-                $join->orOn($baseTable.'.master_id', '=', $this->getQualifiedRelatedPivotKeyName());
-            }
+            $join->on($baseTable.'.'.$relatedKey, '=', $this->getQualifiedRelatedPivotKeyName());
+
+//            if (ModelChecker::checkTranslatable($this->related)) {
+//                $join->orOn($baseTable.'.master_id', '=', $this->getQualifiedRelatedPivotKeyName());
+//            }
         });
 
         return $this;
@@ -50,8 +52,6 @@ class TranslatedBelongsToMany extends BelongsToMany
         $this
             ->setDefaultLanguageFromModel($this->parent)
             ->beforeGetting(function ($query) {
-
-
                 $query->where($this->getQualifiedForeignPivotKeyName(), '=', $this->getParentKey());
 
 //                $this->setDefaultLanguageFromModelLanguage($query, $this->parent);
@@ -98,7 +98,7 @@ class TranslatedBelongsToMany extends BelongsToMany
         // children back to their parent using the dictionary and the keys on the
         // the parent models. Then we will return the hydrated models back out.
         foreach ($models as $model) {
-            if (isset($dictionary[$key = $this->getMasterKey($model)])) {
+            if (isset($dictionary[$key = $this->getMasterKey($model, null, $model->newQuery())])) {
                 $model->setRelation(
                     $relation,
                     $this->related->newCollection($dictionary[$key])
@@ -110,11 +110,10 @@ class TranslatedBelongsToMany extends BelongsToMany
     }
 
     /**
-     * @param null $model
      * @return mixed
      */
-    protected function getParentKey($model = null)
+    protected function getParentKey()
     {
-        return $this->getMasterKey($model ?? $this->parent, $this->parentKey);
+        return $this->getMasterKey($this->parent, $this->parentKey, $this->parent->newQuery());
     }
 }

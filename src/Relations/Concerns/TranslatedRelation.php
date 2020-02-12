@@ -21,7 +21,7 @@ trait TranslatedRelation
     protected function getMasterKeys(array $models, $keyName = null)
     {
         return collect($models)->map(function ($model) use ($keyName) {
-            return $this->getMasterKey($model, $keyName);
+            return $this->getMasterKey($model, $keyName, $model->newQuery());
         })->values()->unique(null, true)->sort()->all();
     }
 
@@ -30,9 +30,9 @@ trait TranslatedRelation
      * @param null $keyName
      * @return mixed
      */
-    protected function getMasterKey(Model $model, $keyName = null)
+    protected function getMasterKey(Model $model, $keyName = null, $query = null)
     {
-        return $model->getAttribute($this->getMasterKeyName($model, $keyName));
+        return $model->getAttribute($this->getMasterKeyName($model, $keyName, $query));
     }
 
     /**
