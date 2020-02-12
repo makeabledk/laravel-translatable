@@ -50,8 +50,6 @@ class TranslatedBelongsToMany extends BelongsToMany
         $this
             ->setDefaultLanguageFromModel($this->parent)
             ->beforeGetting(function ($query) {
-
-
                 $query->where($this->getQualifiedForeignPivotKeyName(), '=', $this->getParentKey());
 
 //                $this->setDefaultLanguageFromModelLanguage($query, $this->parent);
@@ -78,7 +76,7 @@ class TranslatedBelongsToMany extends BelongsToMany
                     $this->getMasterKeys($models, $this->parentKey)
                 );
 
-    //            $this->setDefaultLanguageFromModelQuery($query, Arr::first($models));
+                //            $this->setDefaultLanguageFromModelQuery($query, Arr::first($models));
             });
     }
 
