@@ -5,6 +5,7 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 use Illuminate\Database\Eloquent\Model;
 use Makeable\LaravelTranslatable\Builder\Builder;
 use Makeable\LaravelTranslatable\Builder\Concerns\ProxyGetterMethods;
+use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
@@ -41,7 +42,7 @@ trait TranslatedRelation
      */
     protected function getMasterKeyName(Model $model, $keyName = null)
     {
-        if (ModelChecker::checkTranslatable($model) && $this->query->languageScopeEnabled) {
+        if (ModelChecker::checkTranslatable($model) && $this->query instanceof TranslatableBuilder && $this->query->languageScopeEnabled()) {
             return 'master_key';
         }
 
@@ -96,26 +97,28 @@ trait TranslatedRelation
         }
 
         $language = $model->requestedLanguage ?? [$model->language_code];
+        $language = array_merge($language, ['*']);
 
-        $this->setDefaultLanguage($query, array_merge($language, ['*']));
+        $this->defaultLanguage($language);
+
 //        $this->setDefaultLanguage($query, [$model->language_code, '*']);
     }
 
-    /**
-     * Apply a default language scope unless already set by user.
-     *
-     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
-     * @param $language
-     */
-    public function setDefaultLanguage(Builder $query, $language)
-    {
-        if (
-//            $query->languageScopeEnabled &&
-//            $query->defaultLanguageScopeEnabled &&
-            ModelChecker::checkTranslatable($query->getModel()) &&
-            LanguageScope::wasntApplied($query)
-        ) {
-            LanguageScope::apply($query, $language);
-        }
-    }
+//    /**
+//     * Apply a default language scope unless already set by user.
+//     *
+//     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
+//     * @param $language
+//     */
+//    public function setDefaultLanguage(Builder $query, $language)
+//    {
+//        if (
+////            $query->languageScopeEnabled &&
+////            $query->defaultLanguageScopeEnabled &&
+//            ModelChecker::checkTranslatable($query->getModel()) &&
+//            LanguageScope::wasntApplied($query)
+//        ) {
+//            LanguageScope::apply($query, $language);
+//        }
+//    }
 }

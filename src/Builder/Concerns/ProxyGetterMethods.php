@@ -131,7 +131,7 @@ trait ProxyGetterMethods
      */
     protected function fireHookAndProxyToParent($name, ...$args)
     {
-        $this->applyQueuedQueries();
+        $this->invokeBeforeGettingCallbacks();
 
         return parent::{$name}(...$args);
     }

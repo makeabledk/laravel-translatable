@@ -5,7 +5,7 @@ namespace Makeable\LaravelTranslatable\Builder\Concerns;
 use Illuminate\Support\Arr;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
-trait HasLanguageScope
+trait HasLanguageScopes
 {
     protected static $modelQueryHistory = [];
 
@@ -24,11 +24,21 @@ trait HasLanguageScope
      */
     protected function applyLanguageScope()
     {
-        if (is_array($language = $this->pendingLanguage ?? $this->pendingDefaultLanguage)) {
-            LanguageScope::apply($this, $language);
+//        dd(
+//            $this->pendingDefaultLanguage,
+//            $this->pendingLanguage
+//        );
+
+        if ($this->languageScopeEnabled()) {
+            LanguageScope::apply($this, $language = $this->pendingLanguage ?? $this->pendingDefaultLanguage);
 
             $this->setQueryLanguageHistory($language);
         }
+    }
+
+    public function languageScopeEnabled()
+    {
+        return is_array($language = $this->pendingLanguage ?? $this->pendingDefaultLanguage);
     }
 
     protected function setQueryLanguageHistory($language)
@@ -53,16 +63,34 @@ trait HasLanguageScope
      */
     public function language($languages, $fallbackMaster = false)
     {
+        $this->pendingLanguage = $this->getNormalizedLanguage($languages, $fallbackMaster);
+
+        return $this;
+    }
+
+    /**
+     * @param string|array $languages
+     * @param bool $fallbackMaster
+     * @return $this
+     */
+    public function defaultLanguage($languages, $fallbackMaster = false)
+    {
+        $this->pendingDefaultLanguage = $this->getNormalizedLanguage($languages, $fallbackMaster);
+
+        return $this;
+    }
+
+    protected function getNormalizedLanguage($languages, $fallbackMaster = false)
+    {
         $languages = Arr::wrap($languages);
 
         if ($fallbackMaster) {
             $languages[] = '*';
         }
 
-        $this->pendingLanguage = $languages;
-
-        return $this;
+        return $languages;
     }
+
 
     /**
      * Disable the language scope entirely, making it work exactly like
@@ -78,17 +106,17 @@ trait HasLanguageScope
         return $this;
     }
 
-    /**
-     * Re-enable default language scope after being disabled.
-     *
-     * @return $this
-     */
-    public function withDefaultLanguageScope()
-    {
-        $this->pendingDefaultLanguage = null;
-
-        return $this;
-    }
+//    /**
+//     * Re-enable default language scope after being disabled.
+//     *
+//     * @return $this
+//     */
+//    public function withDefaultLanguageScope()
+//    {
+//        $this->pendingDefaultLanguage = null;
+//
+//        return $this;
+//    }
 
     /**
      * Fetch all related models in relationship including translations.

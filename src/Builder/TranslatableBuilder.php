@@ -3,12 +3,12 @@
 namespace Makeable\LaravelTranslatable\Builder;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Makeable\LaravelTranslatable\Builder\Concerns\HasLanguageScope;
+use Makeable\LaravelTranslatable\Builder\Concerns\HasLanguageScopes;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 class TranslatableBuilder extends Builder
 {
-    use HasLanguageScope;
+    use HasLanguageScopes;
 
     /**
      * @param  \Illuminate\Database\Query\Builder  $query
@@ -18,7 +18,7 @@ class TranslatableBuilder extends Builder
     {
         parent::__construct($query);
 
-        $this->beforeGetting([$this, 'applyLanguageScope']);
+        $this->beforeGetting([$this, 'applyLanguageScope'], 100);
     }
 
     public function hydrate(array $items)
@@ -26,8 +26,9 @@ class TranslatableBuilder extends Builder
         $instance = $this->newModelInstance();
 
         $models = $instance->newCollection(array_map(function ($item) use ($instance) {
-            $model = $instance->newFromBuilder($item);
-            $model->requestedLanguage = $this->getQueryLanguageHistory();
+            return tap($instance->newFromBuilder($item), function ($model) {
+                $model->requestedLanguage = $this->getQueryLanguageHistory();
+            });
         }, $items));
 
         $this->clearQueryLanguageHistory();

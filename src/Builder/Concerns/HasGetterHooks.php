@@ -17,12 +17,14 @@ trait HasGetterHooks
         'getBindings', 'toSql', 'dump', 'dd', 'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum',
     ];
 
-    /**
-     * @var array
-     */
-    protected $hooks = [
-        'beforeGetting' => [],
-    ];
+//    /**
+//     * @var array
+//     */
+//    protected $hooks = [
+//        'beforeGetting' => [],
+//    ];
+
+    protected $beforeGettingCallbacks = [];
 
     /**
      * Handle dynamic method calls to the relationship.
@@ -34,45 +36,52 @@ trait HasGetterHooks
     public function __call($method, $parameters)
     {
         if (in_array($method, static::$knownQueryBuilderGetters)) {
-            $this->applyQueuedQueries();
+            $this->invokeBeforeGettingCallbacks();
+//            $this->applyQueuedQueries();
         }
 
         return parent::__call($method, $parameters);
     }
-
-    /**
-     * Fire the queued callbacks for the before-getting hook.
-     */
-    public function applyQueuedQueries()
-    {
-        $this->performHookCallback('beforeGetting', [$this]);
-
-        return $this;
-    }
+//
+//    /**
+//     * Fire the queued callbacks for the before-getting hook.
+//     */
+//    public function applyQueuedQueries()
+//    {
+//        $this->performHookCallback('beforeGetting', [$this]);
+//
+//        return $this;
+//    }
 
     /**
      * @param  callable  $callback
+     * @param  int  $priority
      * @return $this
      */
-    public function beforeGetting(callable $callback)
+    public function beforeGetting(callable $callback, $priority = 10)
     {
-        $this->hooks['beforeGetting'][] = $callback;
+        $this->beforeGettingCallbacks[] = compact('callback', 'priority');
 
         return $this;
     }
 
-    /**
-     * @param  string  $name
-     * @param  array  $args
-     */
-    protected function performHookCallback($name, array $args)
+    public function invokeBeforeGettingCallbacks()
     {
-        $hooks = tap($this->hooks[$name], function () use ($name) {
-            $this->hooks[$name] = [];
-        });
+//        $hooks = tap($this->beforeGettingCallbacks, function () {
+//            $this->hooks[$name] = [];
+//        });
 
-        foreach ($hooks as $callback) {
-            call_user_func_array($callback, $args);
-        }
+        collect($this->beforeGettingCallbacks)
+            ->sortBy('priority')
+            ->each(function ($hook) {
+                call_user_func($hook['callback'], $this);
+            });
+
+        $this->beforeGettingCallbacks = [];
+
+
+//        foreach ($hooks as $callback) {
+//            call_user_func_array($callback, $args);
+//        }
     }
 }

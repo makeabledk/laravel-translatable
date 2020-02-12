@@ -5,6 +5,7 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
+use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;
 
 trait HasOneOrManyImplementation
@@ -141,7 +142,7 @@ trait HasOneOrManyImplementation
         return function (Builder $query) use ($compareKey) {
             $query->whereColumn($this->getQualifiedParentKeyName(), '=', $compareKey);
 
-            if (ModelChecker::checkTranslatable($this->parent) && $query->languageScopeEnabled) {
+            if (ModelChecker::checkTranslatable($this->parent) && $query->languageScopeEnabled()) {
                 $query->orWhere(function ($query) use ($compareKey) {
                     $query->whereNotNull($qualifiedMasterKey = $this->parent->qualifyColumn($this->parent->getMasterKeyName()))
                         ->whereColumn($qualifiedMasterKey, '=', $compareKey);

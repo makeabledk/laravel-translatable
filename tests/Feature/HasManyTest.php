@@ -13,12 +13,28 @@ class HasManyTest extends TestCase
     /** @test **/
     public function it_can_save_and_access_translated_has_many_relationships_from_translated_model()
     {
+//        factory(Post::class)->create();
+//
+//            dd(Post::language('da')->get());
+////        get_class(
+////        );
+////        dd(
+////        );
+
+
         $master = factory(Post::class)
             ->with(1, 'english', 'translations')
             ->create();
 
+
+        \DB::listen(function ($e) {
+            dump($e->sql, $e->bindings);
+        });
+
         $translation = $master->getTranslation('en');
         $translation->meta()->save($meta = factory(PostMeta::class)->make());
+
+        $translation->meta()->dd();
 
         $this->assertEquals($master->id, $meta->post_id);
         $this->assertEquals(1, $translation->meta()->count());
