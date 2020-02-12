@@ -29,7 +29,7 @@ trait BelongsToBaseImplementation
 
                     $query->where($table.'.'.$ownerKey, '=', $this->child->{$this->foreignKey});
 
-    //                // If parent is translatable we'll also accept that it matches on master_id in case we're querying for a translation.
+                    //                // If parent is translatable we'll also accept that it matches on master_id in case we're querying for a translation.
     //                // Ie. select * from posts WHERE posts.id = {$meta->post_id} or (posts.master_id = {$meta->post_id} and posts.master_id is not null)
     //                // If language scope has been explicitly disabled we'll avoid corrupting the query.
     //                if (ModelChecker::checkTranslatable($this->related) && $this->query->languageScopeEnabled) {
@@ -40,7 +40,7 @@ trait BelongsToBaseImplementation
     //                }
                 });
 
-            // Finally we wish to default to only fetch the parent best matching the
+                // Finally we wish to default to only fetch the parent best matching the
             // current language of the child, unless otherwise specified.
 //            $this->setDefaultLanguageFromModelLanguage($query, $this->child);
             });
