@@ -99,7 +99,7 @@ trait TranslatedRelation
         $language = $model->requestedLanguage ?? [$model->language_code];
         $language = array_merge($language, ['*']);
 
-        $this->defaultLanguage($language);
+        $this->defaultLanguageUnlessDisabled($language);
 
 //        $this->setDefaultLanguage($query, [$model->language_code, '*']);
     }

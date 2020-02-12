@@ -28,6 +28,10 @@ trait HasLanguageScopes
 //            $this->pendingDefaultLanguage,
 //            $this->pendingLanguage
 //        );
+//
+//        if (defined('OK_TEST')) {
+//            dd($this->pendingLanguage, $this->pendingDefaultLanguage);
+//        }
 
         if ($this->languageScopeEnabled()) {
             LanguageScope::apply($this, $language = $this->pendingLanguage ?? $this->pendingDefaultLanguage);
@@ -64,6 +68,20 @@ trait HasLanguageScopes
     public function language($languages, $fallbackMaster = false)
     {
         $this->pendingLanguage = $this->getNormalizedLanguage($languages, $fallbackMaster);
+
+        return $this;
+    }
+
+    /**
+     * @param string|array $languages
+     * @param bool $fallbackMaster
+     * @return $this
+     */
+    public function defaultLanguageUnlessDisabled($languages, $fallbackMaster = false)
+    {
+        if ($this->pendingDefaultLanguage !== false) {
+            $this->defaultLanguage($languages, $fallbackMaster);
+        }
 
         return $this;
     }

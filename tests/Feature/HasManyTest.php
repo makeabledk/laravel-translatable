@@ -27,6 +27,8 @@ class HasManyTest extends TestCase
             ->create();
 
 
+//        define('OK_TEST', true);
+
         \DB::listen(function ($e) {
             dump($e->sql, $e->bindings);
         });
