@@ -35,15 +35,15 @@ class TranslatedMorphTo extends MorphTo
     {
         $instance = $this->createModelByType($type);
 
-        // Ensure master key for translatable models
-        $ownerKey = $this->getMasterKeyName($this->createModelByType($type), $this->ownerKey);
-
         $query = $this->replayMacros($instance->newQuery())
             ->mergeConstraintsFrom($this->getQuery())
             ->with(array_merge(
                 $this->getQuery()->getEagerLoads(),
                 (array) ($this->morphableEagerLoads[get_class($instance)] ?? [])
             ));
+
+        // Ensure master key for translatable models
+        $ownerKey = $this->getMasterKeyName($this->createModelByType($type), $this->ownerKey, $query);
 
         $whereIn = $this->whereInMethod($instance, $ownerKey);
 
@@ -52,7 +52,7 @@ class TranslatedMorphTo extends MorphTo
         );
 
         // Add default language
-        $this->setDefaultLanguageFromModelLanguage($query, Arr::first(Arr::first($this->dictionary[$type])));
+        $this->setDefaultLanguageFromModel(Arr::first(Arr::first($this->dictionary[$type])), $query);
 
         return $query->get();
     }

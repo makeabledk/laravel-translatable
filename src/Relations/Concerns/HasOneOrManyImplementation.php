@@ -32,17 +32,19 @@ trait HasOneOrManyImplementation
         }
 
         // Allow for disabling language scope before applying constraints
-        $this->beforeGetting(function ($query) use ($extraConstraint) {
-            $query->where($this->foreignKey, '=', $this->getParentKey());
+        $this
+            ->setDefaultLanguageFromModel($this->parent)
+            ->beforeGetting(function ($query) use ($extraConstraint) {
+                $query->where($this->foreignKey, '=', $this->getParentKey());
 
-            $query->whereNotNull($this->foreignKey);
+                $query->whereNotNull($this->foreignKey);
 
-            if ($extraConstraint) {
-                call_user_func($extraConstraint, $query);
-            }
+                if ($extraConstraint) {
+                    call_user_func($extraConstraint, $query);
+                }
 
-            $this->setDefaultLanguageFromModelLanguage($query, $this->parent);
-        });
+//                $this->setDefaultLanguageFromModelLanguage($query, $this->parent);
+            });
     }
 
     /**
@@ -54,17 +56,19 @@ trait HasOneOrManyImplementation
      */
     public function addEagerConstraints(array $models, callable $extraConstraint = null)
     {
-        $this->beforeGetting(function ($query) use ($models, $extraConstraint) {
-            $whereIn = $this->whereInMethod($this->parent, $this->localKey);
+        $this
+            ->setDefaultLanguageFromModel(Arr::first($models))
+            ->beforeGetting(function ($query) use ($models, $extraConstraint) {
+                $whereIn = $this->whereInMethod($this->parent, $this->localKey);
 
-            $query->{$whereIn}($this->foreignKey, $this->getMasterKeys($models, $this->localKey));
+                $query->{$whereIn}($this->foreignKey, $this->getMasterKeys($models, $this->localKey));
 
-            if ($extraConstraint) {
-                call_user_func($extraConstraint, $query);
-            }
+                if ($extraConstraint) {
+                    call_user_func($extraConstraint, $query);
+                }
 
-            $this->setDefaultLanguageFromModelQuery($query, Arr::first($models));
-        });
+//                $this->setDefaultLanguageFromModelQuery($query, Arr::first($models));
+            });
     }
 
     /**
@@ -142,7 +146,7 @@ trait HasOneOrManyImplementation
         return function (Builder $query) use ($compareKey) {
             $query->whereColumn($this->getQualifiedParentKeyName(), '=', $compareKey);
 
-            if (ModelChecker::checkTranslatable($this->parent) && $query->languageScopeEnabled()) {
+            if (ModelChecker::checkTranslatable($this->parent) && $this->queryLanguageScopeEnabled($query)) {
                 $query->orWhere(function ($query) use ($compareKey) {
                     $query->whereNotNull($qualifiedMasterKey = $this->parent->qualifyColumn($this->parent->getMasterKeyName()))
                         ->whereColumn($qualifiedMasterKey, '=', $compareKey);

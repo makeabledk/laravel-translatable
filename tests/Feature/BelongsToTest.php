@@ -19,6 +19,7 @@ class BelongsToTest extends TestCase
 
         $metaMaster = factory(PostMeta::class)->create();
         $metaTranslation = $metaMaster->getTranslationOrNew('en');
+
         $metaTranslation->post()->associate($postTranslation = $postMaster->getTranslation('en'))->save();
 
         $this->assertEquals($postMaster->id, $metaTranslation->post_id, 'It sets the master id');

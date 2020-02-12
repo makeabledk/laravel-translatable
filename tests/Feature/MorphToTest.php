@@ -68,6 +68,22 @@ class MorphToTest extends TestCase
     }
 
     /** @test **/
+    public function language_scope_can_be_disabled_for_morph_to()
+    {
+        $user = factory(User::class)->create();
+        $user->photo()->associate(
+            $master = factory(Post::class) // it doesn't matter which translated model we morph to in this example
+                ->with(1, 'english', 'translations')
+                ->create()
+        )->save();
+
+        Post::setGlobalLanguage('en');
+
+        $this->assertEquals('en', $user->photo()->first()->language_code);
+        $this->assertEquals('en', $user->photo()->withoutLanguageScope()->first()->language_code);
+    }
+
+    /** @test **/
     public function regression_a_none_translatable_model_can_morph_to_translatable_parent()
     {
         $user = factory(User::class)->create();
@@ -80,6 +96,10 @@ class MorphToTest extends TestCase
         $inEnglish = function ($model) {
             $model->language('en');
         };
+
+//        \DB::listen(function ($e) {
+//            dump($e->sql, $e->bindings);
+//        });
 
         $this->assertEquals('en', data_get($user->load(['photo' => $inEnglish]), 'photo.language_code'));
     }

@@ -12,12 +12,12 @@ trait HasLanguageScopes
     /**
      * @var bool
      */
-    protected $pendingLanguage = null;
+    public $pendingLanguage = null;
 
     /**
      * @var bool
      */
-    protected $pendingDefaultLanguage = null;
+    public $pendingDefaultLanguage = null;
 
     /**
      * @return void
@@ -33,16 +33,21 @@ trait HasLanguageScopes
 //            dd($this->pendingLanguage, $this->pendingDefaultLanguage);
 //        }
 
-        if ($this->languageScopeEnabled()) {
-            LanguageScope::apply($this, $language = $this->pendingLanguage ?? $this->pendingDefaultLanguage);
+        if (is_array($language = $this->getQueryLanguage())) {
+            LanguageScope::apply($this, $language);
 
             $this->setQueryLanguageHistory($language);
         }
     }
 
+    public function getQueryLanguage()
+    {
+        return $this->pendingLanguage ?? $this->pendingDefaultLanguage;
+    }
+
     public function languageScopeEnabled()
     {
-        return is_array($language = $this->pendingLanguage ?? $this->pendingDefaultLanguage);
+        return $this->pendingLanguage !== false;
     }
 
     protected function setQueryLanguageHistory($language)

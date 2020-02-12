@@ -29,14 +29,12 @@ class HasManyTest extends TestCase
 
 //        define('OK_TEST', true);
 
-        \DB::listen(function ($e) {
-            dump($e->sql, $e->bindings);
-        });
+//        \DB::listen(function ($e) {
+//            dump($e->sql, $e->bindings);
+//        });
 
         $translation = $master->getTranslation('en');
         $translation->meta()->save($meta = factory(PostMeta::class)->make());
-
-        $translation->meta()->dd();
 
         $this->assertEquals($master->id, $meta->post_id);
         $this->assertEquals(1, $translation->meta()->count());

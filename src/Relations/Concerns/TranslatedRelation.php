@@ -40,13 +40,48 @@ trait TranslatedRelation
      * @param null $keyName
      * @return mixed
      */
-    protected function getMasterKeyName(Model $model, $keyName = null)
+    protected function getMasterKeyName(Model $model, $keyName = null, $query = null)
     {
-        if (ModelChecker::checkTranslatable($model) && $this->query instanceof TranslatableBuilder && $this->query->languageScopeEnabled()) {
+        if (ModelChecker::checkTranslatable($model) && $this->queryLanguageScopeEnabled($query ?? $this->query)) {
             return 'master_key';
         }
 
         return $keyName ?? $model->getKeyName();
+    }
+
+    protected function queryLanguageScopeEnabled($query)
+    {
+        return $query instanceof TranslatableBuilder && $query->languageScopeEnabled();
+    }
+
+    /**
+     * Check what was actually the latest requested language for the model.
+     * Only in case we can't retrieve that, we'll default to the
+     * language of the current model.
+     *
+     * This is useful for eager-loaded queries where we wish to persist
+     * the same language preferences throughout the entire nested queries.
+     * @param  \Illuminate\Database\Eloquent\Model|null  $model
+     * @return $this
+     */
+    protected function setDefaultLanguageFromModel(Model $model = null, Builder $query = null)
+    {
+        // Sometimes the parent will be an empty instance. In this case
+        // we won't set any default language based on that.
+        if (! optional($model)->exists) {
+            return $this;
+        }
+
+        $language = $model->requestedLanguage ?? [$model->language_code];
+        $language = array_merge($language, ['*']);
+
+        $query = $query ?? $this->query;
+
+        if ($query instanceof TranslatableBuilder) {
+            $query->defaultLanguageUnlessDisabled($language);
+        }
+
+        return $this;
     }
 
     /**
@@ -100,6 +135,8 @@ trait TranslatedRelation
         $language = array_merge($language, ['*']);
 
         $this->defaultLanguageUnlessDisabled($language);
+
+        return $this;
 
 //        $this->setDefaultLanguage($query, [$model->language_code, '*']);
     }
