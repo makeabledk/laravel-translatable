@@ -4,7 +4,6 @@ namespace Makeable\LaravelTranslatable\Builder;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Makeable\LaravelTranslatable\Builder\Concerns\HasLanguageScopes;
-use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 class TranslatableBuilder extends Builder
 {

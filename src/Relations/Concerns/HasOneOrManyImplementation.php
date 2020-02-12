@@ -5,7 +5,6 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
-use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;
 
 trait HasOneOrManyImplementation
