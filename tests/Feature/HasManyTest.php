@@ -16,16 +16,14 @@ class HasManyTest extends TestCase
 //        factory(Post::class)->create();
 //
 //            dd(Post::language('da')->get());
-////        get_class(
-////        );
-////        dd(
-////        );
-
+        ////        get_class(
+        ////        );
+        ////        dd(
+        ////        );
 
         $master = factory(Post::class)
             ->with(1, 'english', 'translations')
             ->create();
-
 
 //        define('OK_TEST', true);
 

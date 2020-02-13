@@ -2,8 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Builder\Concerns;
 
-use Makeable\LaravelTranslatable\Builder\Concerns\HasGetterHooks;
-
 /**
  * @property \Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder $query
  */

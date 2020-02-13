@@ -5,12 +5,10 @@ namespace Makeable\LaravelTranslatable\Builder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Makeable\LaravelTranslatable\Builder\Concerns\HasLanguageScopes;
-use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 class TranslatableEloquentBuilder extends EloquentBuilder
 {
     use HasLanguageScopes;
-
 
     public function __construct(Builder $query)
     {
