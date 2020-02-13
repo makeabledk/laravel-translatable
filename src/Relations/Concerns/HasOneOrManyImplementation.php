@@ -13,12 +13,29 @@ trait HasOneOrManyImplementation
     use TranslatedRelation;
 
     /**
-     * @param null $model
      * @return mixed
      */
-    public function getParentKey($model = null)
+    public function getParentKey()
     {
-        return $this->getMasterKey($model ?? $this->parent, $this->localKey);
+        return $this->getMasterKey($this->parent, $this->localKey);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getParentKeyName()
+    {
+        return $this->getMasterKeyName($this->parent, $this->localKey);
+    }
+
+    /**
+     * Get the fully qualified parent key name.
+     *
+     * @return string
+     */
+    public function getQualifiedParentKeyName()
+    {
+        return $this->parent->qualifyColumn($this->getParentKeyName());
     }
 
     /**
@@ -42,8 +59,6 @@ trait HasOneOrManyImplementation
                 if ($extraConstraint) {
                     call_user_func($extraConstraint, $query);
                 }
-
-//                $this->setDefaultLanguageFromModelLanguage($query, $this->parent);
             });
     }
 
@@ -66,8 +81,6 @@ trait HasOneOrManyImplementation
                 if ($extraConstraint) {
                     call_user_func($extraConstraint, $query);
                 }
-
-//                $this->setDefaultLanguageFromModelQuery($query, Arr::first($models));
             });
     }
 
@@ -82,76 +95,8 @@ trait HasOneOrManyImplementation
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
     {
-        $dictionary = $this->buildDictionary($results);
+        $this->localKey = $this->getParentKeyName();
 
-        // Once we have the dictionary we can simply spin through the parent models to
-        // link them up with their children using the keyed dictionary to make the
-        // matching very convenient and easy work. Then we'll just return them.
-        foreach ($models as $model) {
-            if (isset($dictionary[$key = $this->getMasterKey($model, $this->localKey)])) {
-                $model->setRelation(
-                    $relation,
-                    $this->getRelationValue($dictionary, $key, $type)
-                );
-            }
-        }
-
-        return $models;
-    }
-
-    /**
-     * Add the constraints for a relationship query.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
-     * @param  array|mixed  $columns
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
-    {
-        if ($query->getQuery()->from == $parentQuery->getQuery()->from) {
-            return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
-        }
-
-        return $query->select($columns)->where(
-            $this->constrainExistenceQuery($this->getExistenceCompareKey())
-        );
-    }
-
-    /**
-     * Add the constraints for a relationship query on the same table.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
-     * @param  array|mixed  $columns
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
-    {
-        $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
-
-        $query->getModel()->setTable($hash);
-
-        return $query->select($columns)->where(
-            $this->constrainExistenceQuery($hash.'.'.$this->getForeignKeyName())
-        );
-    }
-
-    /**
-     * @param $compareKey
-     * @return \Closure
-     */
-    protected function constrainExistenceQuery($compareKey)
-    {
-        return function (Builder $query) use ($compareKey) {
-            $query->whereColumn($this->getQualifiedParentKeyName(), '=', $compareKey);
-
-            if (ModelChecker::checkTranslatable($this->parent) && $this->queryLanguageScopeEnabled($query)) {
-                $query->orWhere(function ($query) use ($compareKey) {
-                    $query->whereNotNull($qualifiedMasterKey = $this->parent->qualifyColumn($this->parent->getMasterKeyName()))
-                        ->whereColumn($qualifiedMasterKey, '=', $compareKey);
-                });
-            }
-        };
+        return parent::matchOneOrMany($models, $results, $relation, $type);
     }
 }

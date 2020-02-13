@@ -9,6 +9,7 @@ use Makeable\LaravelTranslatable\Builder\Concerns\ProxyGetterMethods;
 use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
+use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 
 trait TranslatedRelation
 {
@@ -47,16 +48,16 @@ trait TranslatedRelation
     protected function getMasterKeyName(Model $model, $keyName = null, $query = null)
     {
 //        if (ModelChecker::checkTranslatable($model) && $this->queryLanguageScopeEnabled($query ?? $this->query)) {
-        if (ModelChecker::checkTranslatable($model) && $this->languageScopeEnabled()) {
+        if ($this->isTranslatableContext($model)) {
             return 'master_key';
         }
 
         return $keyName ?? $model->getKeyName();
     }
 
-    protected function queryLanguageScopeEnabled($query)
+    protected function isTranslatableContext(Model $model)
     {
-        return $query instanceof TranslatableEloquentBuilder && $query->languageScopeEnabled();
+        return ModelChecker::checkTranslatable($model) && $this->languageScopeEnabled();
     }
 
     /**
@@ -69,23 +70,31 @@ trait TranslatedRelation
      * @param  \Illuminate\Database\Eloquent\Model|null  $model
      * @return $this
      */
-    protected function setDefaultLanguageFromModel(Model $model = null, EloquentBuilder $query = null)
+    protected function setDefaultLanguageFromModel(Model $model = null)
     {
-        // Sometimes the parent will be an empty instance. In this case
-        // we won't set any default language based on that.
+        // Sometimes the parent will be an empty instance or null. In this
+        // case we won't attempt to set any default language based on that.
         if (! optional($model)->exists) {
             return $this;
         }
 
-        $language = $model->requestedLanguage ?? [$model->language_code];
-        $language = array_merge($language, ['*']);
+        // Before we attemt to set the language from the child / parent model,
+        // we'll first check if the related model already has language
+        // preference set directly through HasCurrentLanguage::class.
+        if (ModelChecker::checkTranslatable($this->related)) {
+            if ($language = call_user_func([get_class($this->related), 'getCurrentLanguage'])) {
+                return $this->defaultLanguageUnlessDisabled($language, true);
+            }
+        }
 
-//        $query = $query ?? $this->query;
-//
-//        if ($query instanceof TranslatableBuilder) {
-//            $query->defaultLanguageUnlessDisabled($language);
-//        }
-        $this->defaultLanguageUnlessDisabled($language);
+        // The model represents the child or parent from which we're loading the relation.
+        // The related model can still be translatable, but in this case it does not
+        // make sense to try and set the language from a non-translatable model.
+        if (ModelChecker::checkTranslatable($model)) {
+            $language = $model->requestedLanguage ?? [$model->language_code];
+
+            return $this->defaultLanguageUnlessDisabled($language, true);
+        }
 
         return $this;
     }

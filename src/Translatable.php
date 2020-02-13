@@ -186,15 +186,15 @@ trait Translatable
             ?: (new static)->forceFill(['language_code' => $language])->master()->associate($this->getMaster());
     }
 
-    /**
-     * Make sure to initialize new query with current language when set.
-     *
-     * @return Builder
-     */
-    public function newQuery()
-    {
-        return tap(parent::newQuery(), Closure::fromCallable([$this, 'applyCurrentLanguage']));
-    }
+//    /**
+//     * Make sure to initialize new query with current language when set.
+//     *
+//     * @return Builder
+//     */
+//    public function newQuery()
+//    {
+//        return tap(parent::newQuery(), Closure::fromCallable([$this, 'applyCurrentLanguage']));
+//    }
 
     /**
      * Create a new Eloquent query builder for the model.

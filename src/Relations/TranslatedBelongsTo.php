@@ -44,8 +44,6 @@ class TranslatedBelongsTo extends BelongsTo
     //                    });
     //                }
                 });
-
-//            $this->setDefaultLanguageFromModelQuery($query, Arr::first($models));
             });
     }
 

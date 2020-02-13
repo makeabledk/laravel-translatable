@@ -42,10 +42,10 @@ class TranslatedMorphTo extends MorphTo
                 (array) ($this->morphableEagerLoads[get_class($instance)] ?? [])
             ));
 
-        // Ensure master key for translatable models
-        $ownerKey = $this->getMasterKeyName($this->createModelByType($type), $this->ownerKey, $query);
+        $whereIn = $this->whereInMethod($instance, $this->ownerKey);
 
-        $whereIn = $this->whereInMethod($instance, $ownerKey);
+        // Ensure master key for translatable models
+        $ownerKey = $this->getMasterKeyName($this->createModelByType($type), $this->ownerKey);
 
         $query = $query->{$whereIn}(
             $instance->getTable().'.'.$ownerKey, $this->gatherKeysByType($type)
@@ -53,8 +53,11 @@ class TranslatedMorphTo extends MorphTo
 
         // Add default language
 //        $this->setDefaultLanguageFromModel(Arr::first(Arr::first($this->dictionary[$type])), $query);
-        $this->setDefaultLanguageFromModel(Arr::first(Arr::first($this->dictionary[$type])));
-        $this->applyLanguageScope($query);
+
+        if ($this->isTranslatableContext($instance)) {
+            $this->setDefaultLanguageFromModel(Arr::first(Arr::first($this->dictionary[$type])));
+            $this->applyLanguageScope($query);
+        }
 
         return $query->get();
     }
@@ -70,8 +73,7 @@ class TranslatedMorphTo extends MorphTo
     {
         $this->ownerKey = $this->getMasterKeyName(
             $model = $this->createModelByType($type),
-            $this->ownerKey,
-            $model->newQuery()
+            $this->ownerKey
         );
 
         return parent::matchToMorphParents($type, $results);
@@ -86,7 +88,7 @@ class TranslatedMorphTo extends MorphTo
     public function associate($model)
     {
         $this->parent->setAttribute(
-            $this->foreignKey, $model instanceof Model ? $this->getMasterKey($model, $this->ownerKey, $model->newQuery()) : null
+            $this->foreignKey, $model instanceof Model ? $this->getMasterKey($model, $this->ownerKey) : null
         );
 
         $this->parent->setAttribute(

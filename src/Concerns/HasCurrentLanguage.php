@@ -67,13 +67,13 @@ trait HasCurrentLanguage
 //        static::$latestRequestedLanguage = $languages;
 //    }
 
-    /**
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     */
-    protected function applyCurrentLanguage(Builder $query)
-    {
-        if (($language = static::getCurrentLanguage()) !== null) {
-            $query->language($language);
-        }
-    }
+//    /**
+//     * @param  \Illuminate\Database\Eloquent\Builder  $query
+//     */
+//    protected function applyCurrentLanguage(Builder $query)
+//    {
+//        if (($language = static::getCurrentLanguage()) !== null) {
+//            $query->language($language);
+//        }
+//    }
 }

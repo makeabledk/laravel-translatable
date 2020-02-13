@@ -21,8 +21,6 @@ trait HasBufferedLanguageScopes
 
     protected $hasGetterHook = false;
 
-//    abstract public function beforeGetting(callable $callback, $priority = null);
-
 
     public function getQueryLanguage()
     {
@@ -45,6 +43,7 @@ trait HasBufferedLanguageScopes
 
         return $this->applyLanguageScopeBeforeGetting();
     }
+
     /**
      * @param string|array $languages
      * @param bool $fallbackMaster
