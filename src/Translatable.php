@@ -9,6 +9,7 @@ use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
 use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
 use Makeable\LaravelTranslatable\Relations\VersionsRelation;
+use Makeable\LaravelTranslatable\Scopes\ApplyCurrentLanguage;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait Translatable

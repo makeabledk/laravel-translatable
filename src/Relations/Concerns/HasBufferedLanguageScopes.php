@@ -99,18 +99,6 @@ trait HasBufferedLanguageScopes
         return $this;
     }
 
-    /**
-     * @return void
-     */
-    protected function applyLanguageScope($query = null)
-    {
-        $query = $query ?? $this->query;
-
-        if (is_array($language = $this->getQueryLanguage()) && $query instanceof TranslatableEloquentBuilder) {
-            $query->language($language);
-        }
-    }
-
     protected function applyLanguageScopeBeforeGetting()
     {
         if (! $this->hasGetterHook) {
@@ -122,5 +110,19 @@ trait HasBufferedLanguageScopes
         }
 
         return $this;
+    }
+
+    /**
+     * @return void
+     */
+    protected function applyLanguageScope($query = null)
+    {
+        $query = $query ?? $this->query;
+
+        if ($query instanceof TranslatableEloquentBuilder) {
+            is_array($language = $this->getQueryLanguage())
+                ? $query->language($language) // apply the correct language from the relation
+                : $query->withoutLanguageScope(); // prevent the builder to default to 'current language' when disabled
+        }
     }
 }

@@ -34,10 +34,10 @@ class EloquentBuilder extends Builder
 //     */
 //    public $defaultLanguageScopeEnabled = true;
 
-    /**
-     * @var bool
-     */
-    public $languageScopeWasApplied = false;
+//    /**
+//     * @var bool
+//     */
+//    public $languageScopeWasApplied = false;
 //
 //    public function hydrate(array $items)
 //    {

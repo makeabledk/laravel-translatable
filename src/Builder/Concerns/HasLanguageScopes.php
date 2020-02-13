@@ -3,11 +3,16 @@
 namespace Makeable\LaravelTranslatable\Builder\Concerns;
 
 use Illuminate\Support\Arr;
+use Makeable\LaravelTranslatable\Relations\Concerns\HasBufferedLanguageScopes;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait HasLanguageScopes
 {
     protected static $modelQueryHistory = [];
+
+    protected $languageScopeWasApplied = false;
+
+    protected $languageScopeWasDisabled = false;
 
 //    /**
 //     * @var bool
@@ -41,6 +46,15 @@ trait HasLanguageScopes
 //        return $this->pendingLanguage !== false;
 //    }
 
+    protected function applyCurrentLanguageWhenApplicable()
+    {
+        if (! $this->languageScopeWasDisabled && ! $this->languageScopeWasApplied) {
+            if ($language = call_user_func([get_class($this->getModel()), 'getCurrentLanguage'])) {
+                $this->language($language);
+            }
+        }
+    }
+
     protected function setQueryLanguageHistory($language)
     {
         static::$modelQueryHistory[get_class($this->getModel())] = $language;
@@ -71,8 +85,22 @@ trait HasLanguageScopes
             LanguageScope::getNormalizedLanguages($languages, $fallbackMaster)->values()->toArray()
         );
 
+        $this->languageScopeWasApplied = true;
+
         return $this;
     }
+
+    /**
+     * @return $this
+     */
+    public function withoutLanguageScope()
+    {
+        $this->languageScopeWasDisabled = true;
+
+        return $this;
+    }
+
+
 //
 //    /**
 //     * @param string|array $languages
