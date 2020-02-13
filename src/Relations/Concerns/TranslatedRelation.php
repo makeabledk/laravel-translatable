@@ -3,13 +3,10 @@
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
-use Makeable\LaravelTranslatable\Builder\EloquentBuilder;
 use Makeable\LaravelTranslatable\Builder\Concerns\HasGetterHooks;
 use Makeable\LaravelTranslatable\Builder\Concerns\ProxyGetterMethods;
-use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
-use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 
 trait TranslatedRelation
 {
@@ -98,6 +95,7 @@ trait TranslatedRelation
 
         return $this;
     }
+
 //
 //    /**
 //     * Check what was actually the latest requested language for the model.

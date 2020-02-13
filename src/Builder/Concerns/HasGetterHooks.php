@@ -27,6 +27,5 @@ trait HasGetterHooks
             });
 
         $this->beforeGettingCallbacks = [];
-
     }
 }

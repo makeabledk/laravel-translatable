@@ -3,7 +3,6 @@
 namespace Makeable\LaravelTranslatable\Builder\Concerns;
 
 use Illuminate\Support\Arr;
-use Makeable\LaravelTranslatable\Relations\Concerns\HasBufferedLanguageScopes;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait HasLanguageScopes
@@ -99,7 +98,6 @@ trait HasLanguageScopes
 
         return $this;
     }
-
 
 //
 //    /**

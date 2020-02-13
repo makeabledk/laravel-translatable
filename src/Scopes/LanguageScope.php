@@ -94,6 +94,7 @@ class LanguageScope
 
         return $this->query;
     }
+
 //
 //    /**
 //     * @param  \Illuminate\Support\Collection  $languages
@@ -101,7 +102,7 @@ class LanguageScope
 //     */
 //    protected function pushHistory(Collection $languages)
 //    {
-////        $this->query->languageScopeWasApplied = true;
+    ////        $this->query->languageScopeWasApplied = true;
 //
 //        Arr::set(static::$modelHistory, get_class($this->query->getModel()), $languages->toArray());
 //    }
