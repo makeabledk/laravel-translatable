@@ -15,7 +15,7 @@ class TranslatableEloquentBuilder extends EloquentBuilder
         parent::__construct($query);
 
         $this->beforeGetting(function () {
-            $this->applyCurrentLanguageWhenApplicable();
+            $this->applyDefaultLanguageScopesWhenNotApplied();
         }, 1000);
     }
 

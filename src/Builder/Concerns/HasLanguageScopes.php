@@ -9,9 +9,11 @@ trait HasLanguageScopes
 {
     protected static $modelQueryHistory = [];
 
-    protected $languageScopeWasApplied = false;
+    public $languageScopeWasApplied = false;
 
-    protected $languageScopeWasDisabled = false;
+    public $languageScopeWasDisabled = false;
+
+    public $defaultLanguageScopeWasDisabled = false;
 
 //    /**
 //     * @var bool
@@ -45,12 +47,21 @@ trait HasLanguageScopes
 //        return $this->pendingLanguage !== false;
 //    }
 
-    protected function applyCurrentLanguageWhenApplicable()
+    /**
+     * @return mixed|void
+     */
+    protected function applyDefaultLanguageScopesWhenNotApplied()
     {
-        if (! $this->languageScopeWasDisabled && ! $this->languageScopeWasApplied) {
-            if ($language = call_user_func([get_class($this->getModel()), 'getCurrentLanguage'])) {
-                $this->language($language);
-            }
+        if ($this->languageScopeWasApplied || $this->languageScopeWasDisabled) {
+            return;
+        }
+
+        if ($language = call_user_func([get_class($this->getModel()), 'getCurrentLanguage'])) {
+            return $this->language($language);
+        }
+
+        if (! $this->defaultLanguageScopeWasDisabled) {
+            return $this->whereNull('master_id');
         }
     }
 
@@ -95,6 +106,16 @@ trait HasLanguageScopes
     public function withoutLanguageScope()
     {
         $this->languageScopeWasDisabled = true;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function withoutDefaultLanguageScope()
+    {
+        $this->defaultLanguageScopeWasDisabled = true;
 
         return $this;
     }

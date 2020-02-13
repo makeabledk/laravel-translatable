@@ -36,7 +36,7 @@ trait Translatable
      */
     public function master()
     {
-        return $this->nonTranslatable()->belongsTo(get_class($this), $this->getMasterKeyName());
+        return $this->belongsTo(get_class($this), 'master_id')->withoutLanguageScope();
     }
 
     /**
@@ -50,7 +50,7 @@ trait Translatable
      */
     public function translations()
     {
-        return $this->hasMany(static::class, $this->getMasterKeyName())->withoutDefaultLanguageScope();
+        return $this->hasMany(static::class, 'master_id')->withoutDefaultLanguageScope();
     }
 
     /**
@@ -106,7 +106,7 @@ trait Translatable
      */
     public function scopeMaster($query)
     {
-        return $query->whereNull($this->getMasterKeyName());
+        return $query->whereNull('master_id');
     }
 
 //
@@ -120,7 +120,7 @@ trait Translatable
 //            $query->select($query->getQuery()->from.'.*');
 //        }
 //
-//        return $query->selectRaw("(SELECT IF({$this->getMasterKeyName()} is NULL, {$this->getKeyName()}, {$this->getMasterKeyName()})) as master_key");
+//        return $query->selectRaw("(SELECT IF({'master_id'} is NULL, {$this->getKeyName()}, {'master_id'})) as master_key");
 //    }
 
     // _________________________________________________________________________________________________________________
@@ -139,7 +139,7 @@ trait Translatable
     public function getMasterKey()
     {
         return $this->master_key;
-//        return $this->getAttribute($this->getMasterKeyName()) ?: $this->getKey();
+//        return $this->getAttribute('master_id') ?: $this->getKey();
     }
 
 //
@@ -164,7 +164,7 @@ trait Translatable
      */
     public function isMaster()
     {
-        return $this->getAttribute($this->getMasterKeyName()) === null;
+        return $this->getAttribute('master_id') === null;
     }
 
     /**

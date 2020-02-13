@@ -19,16 +19,6 @@ trait HasBufferedLanguageScopes
 
     protected $hasGetterHook = false;
 
-    public function getQueryLanguage()
-    {
-        return $this->pendingLanguage ?? $this->pendingDefaultLanguage;
-    }
-
-    public function languageScopeEnabled()
-    {
-        return $this->pendingLanguage !== false;
-    }
-
     /**
      * @param string|array $languages
      * @param bool $fallbackMaster
@@ -60,40 +50,33 @@ trait HasBufferedLanguageScopes
      */
     public function defaultLanguageUnlessDisabled($languages, $fallbackMaster = false)
     {
-        if ($this->pendingDefaultLanguage !== false) {
-            $this->defaultLanguage($languages, $fallbackMaster);
-        }
-
-        return $this;
+        return $this->pendingDefaultLanguage !== false
+            ? $this->defaultLanguage($languages, $fallbackMaster)
+            : $this;
     }
 
     /**
-     * Disable the language scope entirely, making it work exactly like
-     * a normal non-translatable relation.
-     *
      * @return $this
-     * @deprecated
      */
     public function withoutLanguageScope()
     {
         $this->pendingLanguage = false;
 
-        return $this;
+        return $this->applyLanguageScopeBeforeGetting();
     }
 
     /**
-     * Fetch all related models in relationship including translations.
-     * Standard behavior is that it only fetches the best matching
-     * version to the current language of the parent.
-     *
      * @return $this
      */
     public function withoutDefaultLanguageScope()
     {
         $this->pendingDefaultLanguage = false;
 
-        return $this;
+        return $this->applyLanguageScopeBeforeGetting();
     }
+
+    // _________________________________________________________________________________________________________________
+
 
     protected function applyLanguageScopeBeforeGetting()
     {
@@ -109,16 +92,35 @@ trait HasBufferedLanguageScopes
     }
 
     /**
-     * @return void
+     * @return mixed
      */
     protected function applyLanguageScope($query = null)
     {
         $query = $query ?? $this->query;
 
         if ($query instanceof TranslatableEloquentBuilder) {
-            is_array($language = $this->getQueryLanguage())
-                ? $query->language($language) // apply the correct language from the relation
-                : $query->withoutLanguageScope(); // prevent the builder to default to 'current language' when disabled
+
+            // Apply the correct language resolved from the relation if was set
+            if (is_array($language = $this->pendingLanguage ?? $this->pendingDefaultLanguage)) {
+                return $query->language($language);
+            }
+
+            if ($this->pendingLanguage === false) {
+                return $query->withoutLanguageScope();
+            }
+
+            if ($this->pendingDefaultLanguage === false) {
+                return $query->withoutDefaultLanguageScope();
+            }
+
+            // If no language was set, but also not disabled, the TranslatedEloquentBuilder
+            // itself will default to master language
         }
+    }
+
+
+    protected function languageScopeEnabled()
+    {
+        return $this->pendingLanguage !== false;
     }
 }

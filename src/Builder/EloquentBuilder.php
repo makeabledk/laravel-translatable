@@ -10,18 +10,13 @@ use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 class EloquentBuilder extends Builder
 {
     use HasGetterHooks;
-//
+
+    //
 //    public function __construct(NativeQueryBuilder $query)
 //    {
 //        parent::__construct(QueryBuilder::fromNative($query));;
 //    }
 
-    public function applyScopes()
-    {
-        $this->invokeBeforeGettingCallbacks();
-
-        return parent::applyScopes();
-    }
 
 //    /**
 //     * @var bool

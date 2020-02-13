@@ -74,6 +74,12 @@ trait TranslatedRelation
         if (! optional($model)->exists) {
             return $this;
         }
+//
+//        dump(
+//            $model->getMorphClass(),
+//            $model->language_code
+//        );
+
 
         // Before we attemt to set the language from the child / parent model,
         // we'll first check if the related model already has language

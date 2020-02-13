@@ -7,7 +7,7 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class TranslatableTest extends TestCase
 {
-    /** @test * */
+    /** @test **/
     public function the_siblings_relation_returns_all_versions_but_the_current_instance()
     {
         $master = factory(Post::class)

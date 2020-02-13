@@ -144,7 +144,7 @@ class LanguageScope
     protected function getBestIdsQuery(Collection $languages)
     {
         $primaryKeyName = $this->model->getKeyName();
-        $masterKeyName = $this->model->getMasterKeyName();
+        $masterKeyName = 'master_id';
 
         // Create sub-queries for each language. The queries
         // fetches id's for posts of their language
