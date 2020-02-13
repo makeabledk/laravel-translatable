@@ -162,23 +162,24 @@ class HasManyTest extends TestCase
         }])->meta->count());
     }
 
-//    TODO make this test pass
-//
-//    /** @test * */
-//    public function regression_order_does_not_matter_when_using_with_count_with_language()
-//    {
-//        $category = factory(Category::class)
-//            ->with(1, 'english', 'posts.translations')
-//            ->with(2, 'posts.translations.meta')
-//            ->create();
-//
-//        $results = Category::whereKey($category->id)->with(['posts' => function ($query) {
-//            $query->withCount('meta');
-//            $query->language('en'); // it works if language is invoked before withCount
-//        }])->get();
-//
-//        $this->assertEquals(1, $results[0]->posts->count());
-//    }
+    /** @test * */
+    public function regression_order_does_not_matter_when_using_with_count_with_language()
+    {
+        $category = factory(Category::class)
+            ->with(1, 'english', 'posts.translations')
+            ->with(2, 'posts.translations.meta')
+            ->with(1, 'english', 'posts.translations.meta.translations')
+            ->create();
+
+        $category = Category::whereKey($category->id)->with(['posts' => function ($query) {
+            $query->withCount('meta');
+            $query->language('en'); // it works if language is invoked before withCount, however this order used to fail
+        }])->first();
+
+        $this->assertEquals(1, $category->posts->count());
+        $this->assertEquals(2, $category->posts->first()->meta_count);
+        $this->assertEquals('en', $category->posts->first()->language_code);
+    }
 
     /**
      * @param $lang
