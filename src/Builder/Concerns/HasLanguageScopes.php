@@ -73,6 +73,7 @@ trait HasLanguageScopes
 
         return $this;
     }
+
 //
 //    /**
 //     * @param string|array $languages
