@@ -8,7 +8,7 @@ use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 class Builder extends EloquentBuilder
 {
-    use HasGetterHooks;
+//    use HasGetterHooks;
 
 //    /**
 //     * @var bool

@@ -32,6 +32,14 @@ class TranslatableTest extends TestCase
             ->andWith(1, 'swedish', 'translations')
             ->create();
 
+        \DB::listen(function ($e) {
+            dump($e->sql, $e->bindings);
+        });
+
+        $master->translations()->getResults();
+
+        dd();
+
         $this->assertEquals(['en', 'sv'], $master->translations->pluck('language_code')->toArray());
         $this->assertEquals(['en', 'sv'], $master->getTranslation('en')->translations->pluck('language_code')->toArray());
     }

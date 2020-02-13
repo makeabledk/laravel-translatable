@@ -84,7 +84,7 @@ class LanguageScope
      */
     public function __invoke($languages, $fallbackMaster = false)
     {
-        $languages = $this->normalizeLanguages($languages, $fallbackMaster);
+        $languages = static::getNormalizedLanguages($languages, $fallbackMaster);
 
         $this->pushHistory($languages);
 
@@ -111,7 +111,7 @@ class LanguageScope
      * @param $fallbackMaster
      * @return \Illuminate\Support\Collection|mixed
      */
-    protected function normalizeLanguages($languages, $fallbackMaster)
+    public static function getNormalizedLanguages($languages, $fallbackMaster)
     {
         return collect($languages)
             ->values()

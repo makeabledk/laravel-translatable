@@ -52,7 +52,9 @@ class TranslatedMorphTo extends MorphTo
         );
 
         // Add default language
-        $this->setDefaultLanguageFromModel(Arr::first(Arr::first($this->dictionary[$type])), $query);
+//        $this->setDefaultLanguageFromModel(Arr::first(Arr::first($this->dictionary[$type])), $query);
+        $this->setDefaultLanguageFromModel(Arr::first(Arr::first($this->dictionary[$type])));
+        $this->applyLanguageScope($query);
 
         return $query->get();
     }

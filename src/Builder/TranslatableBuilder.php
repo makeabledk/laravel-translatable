@@ -10,16 +10,16 @@ class TranslatableBuilder extends Builder
 {
     use HasLanguageScopes;
 
-    /**
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return void
-     */
-    public function __construct(QueryBuilder $query)
-    {
-        parent::__construct($query);
-
-        $this->beforeGetting([$this, 'applyLanguageScope'], 100);
-    }
+//    /**
+//     * @param  \Illuminate\Database\Query\Builder  $query
+//     * @return void
+//     */
+//    public function __construct(QueryBuilder $query)
+//    {
+//        parent::__construct($query);
+//
+//        $this->beforeGetting([$this, 'applyLanguageScope'], 100);
+//    }
 
     public function hydrate(array $items)
     {
