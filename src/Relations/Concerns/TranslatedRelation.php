@@ -4,10 +4,7 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Makeable\LaravelTranslatable\Builder\Concerns\HasGetterHooks;
-use Makeable\LaravelTranslatable\Builder\Concerns\ProxyGetterMethods;
 use Makeable\LaravelTranslatable\ModelChecker;
-use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait TranslatedRelation
 {
@@ -96,7 +93,6 @@ trait TranslatedRelation
 //            $model->getMorphClass(),
 //            $model->language_code
 //        );
-
 
         // Before we attemt to set the language from the child / parent model,
         // we'll first check if the related model already has language

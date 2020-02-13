@@ -72,7 +72,6 @@ trait HasLanguageScopes
 //        return parent::mergeConstraintsFrom($from);
 //    }
 
-
     protected function setQueryLanguageHistory($language)
     {
         static::$modelQueryHistory[get_class($this->getModel())] = $language;
