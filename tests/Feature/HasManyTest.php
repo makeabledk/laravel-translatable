@@ -136,7 +136,7 @@ class HasManyTest extends TestCase
         $this->assertEquals(2, Post::whereKey($post->id)->withCount('directMeta')->first()->direct_meta_count);
         $this->assertEquals(2, Post::whereKey($post->id)->withCount(['meta' => function ($meta) {
             $meta->withoutLanguageScope();
-        }])->first()->direct_meta_count);
+        }])->first()->meta_count);
     }
 
     /** @test * */

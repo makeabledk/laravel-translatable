@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Makeable\LaravelTranslatable\Builder\Concerns\HasGetterHooks;
 use Makeable\LaravelTranslatable\Builder\Concerns\ProxyGetterMethods;
@@ -11,9 +12,25 @@ use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 trait TranslatedRelation
 {
     use HasBufferedLanguageScopes;
-//        HasGetterHooks;
 
-    //        ProxyGetterMethods;
+    /**
+     * Add the constraints for a relationship count query.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getRelationExistenceCountQuery(Builder $query, Builder $parentQuery)
+    {
+        // In QueriesRelationships@withCount method it instantiates a new query rather than
+        // building on this one. That means if withoutLanguageScope() was called directly
+        // on the relationship it won't be applied unless we manually specify it here.
+        if (ModelChecker::checkTranslatable($query->getModel()) && ! $this->languageScopeEnabled()) {
+            $query->withoutLanguageScope();
+        }
+
+        return parent::getRelationExistenceCountQuery($query, $parentQuery);
+    }
 
     /**
      * @param  array  $models
@@ -101,80 +118,4 @@ trait TranslatedRelation
 
         return $this;
     }
-
-//
-//    /**
-//     * Check what was actually the latest requested language for the model.
-//     * Only in case we can't retrieve that, we'll default to the
-//     * language of the current model.
-//     *
-//     * This is useful for eager-loaded queries where we wish to persist
-//     * the same language preferences throughout the entire nested queries.
-//     *
-//     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
-//     * @param  \Illuminate\Database\Eloquent\Model|null  $model
-//     * @return void
-//     */
-//    protected function setDefaultLanguageFromModelQuery(Builder $query, Model $model = null)
-//    {
-////        if ($model &&
-////            ModelChecker::checkTranslatable($model) &&
-////            $language = $model->requestedLanguage
-////        ) {
-////
-////            if (defined('DUMPNOW')) {
-////                dump('setDefaultLanguageFromModelQuery', get_class($model));
-////            }
-////
-////            // Ensure we always default to master
-////            $this->setDefaultLanguage($query, array_merge($language, ['*']));
-////
-////            return;
-////        }
-//
-//        $this->setDefaultLanguageFromModelLanguage($query, $model);
-//    }
-//
-//    /**
-//     * Set the default language to match the parent model.
-//     *
-//     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
-//     * @param  \Illuminate\Database\Eloquent\Model|null  $model
-//     * @return void
-//     */
-//    protected function setDefaultLanguageFromModelLanguage(Builder $query, Model $model = null)
-//    {
-//        // Sometimes the parent will be an empty instance. In this case
-//        // we won't set any default language based on that.
-//        if (! optional($model)->exists) {
-//            return;
-//        }
-//
-//        $language = $model->requestedLanguage ?? [$model->language_code];
-//        $language = array_merge($language, ['*']);
-//
-//        $this->defaultLanguageUnlessDisabled($language);
-//
-//        return $this;
-//
-////        $this->setDefaultLanguage($query, [$model->language_code, '*']);
-//    }
-
-//    /**
-//     * Apply a default language scope unless already set by user.
-//     *
-//     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
-//     * @param $language
-//     */
-//    public function setDefaultLanguage(Builder $query, $language)
-//    {
-//        if (
-////            $query->languageScopeEnabled &&
-////            $query->defaultLanguageScopeEnabled &&
-//            ModelChecker::checkTranslatable($query->getModel()) &&
-//            LanguageScope::wasntApplied($query)
-//        ) {
-//            LanguageScope::apply($query, $language);
-//        }
-//    }
 }

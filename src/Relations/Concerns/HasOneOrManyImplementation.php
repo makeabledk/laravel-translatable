@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
@@ -80,6 +81,8 @@ trait HasOneOrManyImplementation
                 }
             });
     }
+
+
 
     /**
      * Match the eagerly loaded results to their many parents.

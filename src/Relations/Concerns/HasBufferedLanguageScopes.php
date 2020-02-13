@@ -82,7 +82,7 @@ trait HasBufferedLanguageScopes
     {
         if (! $this->hasGetterHook) {
             $this->query->beforeGetting(function () {
-                $this->applyLanguageScope();
+                $this->applyRelationLanguageOnQuery();
             }, 100); // ensure run last
 
             $this->hasGetterHook = true;
@@ -92,9 +92,10 @@ trait HasBufferedLanguageScopes
     }
 
     /**
+     * @param  null  $query
      * @return mixed
      */
-    protected function applyLanguageScope($query = null)
+    protected function applyRelationLanguageOnQuery($query = null)
     {
         $query = $query ?? $this->query;
 
