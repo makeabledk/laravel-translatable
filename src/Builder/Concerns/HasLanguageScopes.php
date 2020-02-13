@@ -53,7 +53,6 @@ trait HasLanguageScopes
         return $this;
     }
 
-
     protected function setQueryLanguageHistory($language)
     {
         static::$modelQueryHistory[get_class($this->getModel())] = $language;
