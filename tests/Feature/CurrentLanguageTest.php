@@ -14,8 +14,6 @@ class CurrentLanguageTest extends TestCase
     {
         factory(Post::class)->with(1, 'english', 'translations')->create();
 
-        $this->assertEquals(2, Post::all()->count());
-
         Post::setLanguage('en');
 
         $this->assertEquals('en', Post::getCurrentLanguage());
@@ -29,8 +27,6 @@ class CurrentLanguageTest extends TestCase
     public function when_a_global_language_is_set_it_always_fetches_that_language_across_models()
     {
         factory(Post::class)->with(1, 'english', 'translations')->create();
-
-        $this->assertEquals(2, Post::all()->count());
 
         Tag::setGlobalLanguage('en'); // Can be any translatable model
 

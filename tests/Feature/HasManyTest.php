@@ -103,32 +103,40 @@ class HasManyTest extends TestCase
     /** @test **/
     public function it_can_query_relation_existence_on_translated_has_many_relations()
     {
-        $translation = factory(Post::class)
-            ->state('english')
-            ->with('master')
+        $post = factory(Post::class)
+            ->with(1, 'english', 'translations')
             ->with(1, 'meta')
             ->with(1, 'english', 'meta.translations')
             ->create();
 
-        $this->assertEquals(1, Post::whereKey($translation->id)->has('meta', '>=', 2)->get()->count());
-        $this->assertEquals(1, Post::whereKey($translation->id)->whereHas('meta', $this->ofLanguage('en'))->get()->count());
-        $this->assertEquals(0, Post::whereKey($translation->id)->whereHas('meta', $this->ofLanguage('sv'))->get()->count());
+        $this->assertEquals(1, Post::whereKey($post->id)->has('meta', '=', 1)->get()->count());
+        $this->assertEquals(1, Post::whereKey($post->id)->whereHas('meta', $this->ofLanguage('en'))->get()->count());
+        $this->assertEquals(0, Post::whereKey($post->id)->whereHas('meta', $this->ofLanguage('sv'))->get()->count());
 
         // On self (separate implementation)
-        $this->assertEquals(1, Post::whereKey($translation->id)->whereHas('translations', $this->ofLanguage('en'))->get()->count());
-        $this->assertEquals(0, Post::whereKey($translation->id)->whereHas('translations', $this->ofLanguage('sv'))->get()->count());
+        $this->assertEquals(1, Post::whereKey($post->id)->whereHas('translations', $this->ofLanguage('en'))->get()->count());
+        $this->assertEquals(0, Post::whereKey($post->id)->whereHas('translations', $this->ofLanguage('sv'))->get()->count());
+
+        // It also works on translated models
+        $translations = $post->translations()->language('en')->has('meta', '=', 1)->get();
+        $this->assertEquals(1, $translations->count());
+        $this->assertEquals('en', $translations->first()->language_code);
     }
 
     /** @test * */
     public function regression_when_disabling_language_scope_it_also_applies_to_with_count_method()
     {
-        $englishPost = factory(Post::class)
-            ->state('english')
-            ->with(2, 'master.meta')
+        $post = factory(Post::class)
+            ->with(1, 'english', 'translations')
+            ->with(1, 'meta')
+            ->with(1, 'english', 'meta.translations')
             ->create();
 
-        $this->assertEquals(2, Post::whereKey($englishPost->id)->withCount('meta')->first()->meta_count);
-        $this->assertEquals(0, Post::whereKey($englishPost->id)->withCount('directMeta')->first()->direct_meta_count);
+        $this->assertEquals(1, Post::whereKey($post->id)->withCount('meta')->first()->meta_count);
+        $this->assertEquals(2, Post::whereKey($post->id)->withCount('directMeta')->first()->direct_meta_count);
+        $this->assertEquals(2, Post::whereKey($post->id)->withCount(['meta' => function ($meta) {
+            $meta->withoutLanguageScope();
+        }])->first()->direct_meta_count);
     }
 
     /** @test * */

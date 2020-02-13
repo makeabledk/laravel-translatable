@@ -6,23 +6,6 @@ trait HasGetterHooks
 {
     protected $beforeGettingCallbacks = [];
 
-
-//    /**
-//     * @param  string  $method
-//     * @param  array  $parameters
-//     * @return mixed
-//     */
-//    public function __call($method, $parameters)
-//    {
-//        dump('Call '.$method);
-//
-//        if (in_array($method, $this->passthru)) {
-//            $this->invokeBeforeGettingCallbacks();
-//        }
-//
-//        return parent::__call($method, $parameters);
-//    }
-
     /**
      * @return \Illuminate\Database\Eloquent\Builder
      */

@@ -2,33 +2,11 @@
 
 namespace Makeable\LaravelTranslatable\Builder;
 
-use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Makeable\LaravelTranslatable\Builder\Concerns\HasLanguageScopes;
 
 class TranslatableEloquentBuilder extends EloquentBuilder
 {
     use HasLanguageScopes;
-
-    public function __construct(Builder $query)
-    {
-        parent::__construct($query);
-
-        $this->beforeGetting(function () {
-            $this->applyDefaultLanguageScopesWhenNotApplied();
-        }, 1000);
-    }
-
-//    /**
-//     * @param  \Illuminate\Database\Query\Builder  $query
-//     * @return void
-//     */
-//    public function __construct(QueryBuilder $query)
-//    {
-//        parent::__construct($query);
-//
-//        $this->beforeGetting([$this, 'applyLanguageScope'], 100);
-//    }
 
     public function hydrate(array $items)
     {
