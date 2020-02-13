@@ -2,8 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
-use Illuminate\Support\Arr;
-use Makeable\LaravelTranslatable\Builder\Concerns\HasGetterHooks;
 use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
@@ -20,7 +18,6 @@ trait HasBufferedLanguageScopes
     public $pendingDefaultLanguage = null;
 
     protected $hasGetterHook = false;
-
 
     public function getQueryLanguage()
     {
@@ -69,7 +66,6 @@ trait HasBufferedLanguageScopes
 
         return $this;
     }
-
 
     /**
      * Disable the language scope entirely, making it work exactly like

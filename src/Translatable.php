@@ -107,6 +107,7 @@ trait Translatable
     {
         return $query->whereNull($this->getMasterKeyName());
     }
+
 //
 //    /**
 //     * @param \Illuminate\Database\Eloquent\Builder $query
