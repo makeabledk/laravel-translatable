@@ -86,6 +86,7 @@ trait TranslatedRelation
 
         return $this;
     }
+
 //
 //    /**
 //     * Check what was actually the latest requested language for the model.

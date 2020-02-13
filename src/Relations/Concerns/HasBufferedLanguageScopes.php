@@ -2,7 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
-use Illuminate\Support\Arr;
 use Makeable\LaravelTranslatable\Builder\Concerns\HasGetterHooks;
 use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
@@ -44,6 +43,7 @@ trait HasBufferedLanguageScopes
 
         return $this->applyLanguageScopeBeforeGetting();
     }
+
     /**
      * @param string|array $languages
      * @param bool $fallbackMaster
@@ -69,7 +69,6 @@ trait HasBufferedLanguageScopes
 
         return $this;
     }
-
 
     /**
      * Disable the language scope entirely, making it work exactly like

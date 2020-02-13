@@ -78,7 +78,7 @@ class TranslatedBelongsToMany extends BelongsToMany
                     $this->getMasterKeys($models, $this->parentKey)
                 );
 
-    //            $this->setDefaultLanguageFromModelQuery($query, Arr::first($models));
+                //            $this->setDefaultLanguageFromModelQuery($query, Arr::first($models));
             });
     }
 
