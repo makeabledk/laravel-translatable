@@ -26,11 +26,11 @@ trait TranslatableRelationships
      * Create a new Eloquent query builder for the model.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return \Makeable\LaravelTranslatable\Builder\Builder
+     * @return \Makeable\LaravelTranslatable\Builder\EloquentBuilder
      */
     public function newEloquentBuilder($query)
     {
-        return new \Makeable\LaravelTranslatable\Builder\Builder($query);
+        return new \Makeable\LaravelTranslatable\Builder\EloquentBuilder($query);
     }
 
     /**

@@ -5,7 +5,7 @@ namespace Makeable\LaravelTranslatable;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
+use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
 use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
 use Makeable\LaravelTranslatable\Relations\VersionsRelation;
@@ -200,10 +200,10 @@ trait Translatable
      * Create a new Eloquent query builder for the model.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return \Makeable\LaravelTranslatable\Builder\TranslatableBuilder
+     * @return \Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder
      */
     public function newEloquentBuilder($query)
     {
-        return new TranslatableBuilder($query);
+        return new TranslatableEloquentBuilder($query);
     }
 }

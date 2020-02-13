@@ -5,7 +5,7 @@ namespace Makeable\LaravelTranslatable\Scopes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Makeable\LaravelTranslatable\Builder\Builder;
+use Makeable\LaravelTranslatable\Builder\EloquentBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;
 
 class LanguageScope
@@ -16,7 +16,7 @@ class LanguageScope
     public static $modelHistory = [];
 
     /**
-     * @var Builder
+     * @var EloquentBuilder
      */
     protected $query;
 
@@ -31,10 +31,10 @@ class LanguageScope
     }
 
     /**
-     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
+     * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
      * @param  string|array  $languages
      * @param  bool|null  $fallbackMaster
-     * @return Builder
+     * @return EloquentBuilder
      */
     public static function apply($query, $languages, $fallbackMaster = false)
     {
@@ -51,7 +51,7 @@ class LanguageScope
     }
 
     /**
-     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
+     * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
      * @return bool
      */
     public static function wasApplied($query)
@@ -60,7 +60,7 @@ class LanguageScope
     }
 
     /**
-     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
+     * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
      * @return bool
      */
     public static function wasntApplied($query)
@@ -69,7 +69,7 @@ class LanguageScope
     }
 
     /**
-     * @param  \Makeable\LaravelTranslatable\Builder\Builder  $query
+     * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
      */
     public function __construct($query)
     {

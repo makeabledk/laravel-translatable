@@ -3,16 +3,19 @@
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
-use Makeable\LaravelTranslatable\Builder\Builder;
+use Makeable\LaravelTranslatable\Builder\EloquentBuilder;
+use Makeable\LaravelTranslatable\Builder\Concerns\HasGetterHooks;
 use Makeable\LaravelTranslatable\Builder\Concerns\ProxyGetterMethods;
-use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
+use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait TranslatedRelation
 {
     use HasBufferedLanguageScopes;
-//        ProxyGetterMethods;
+//        HasGetterHooks;
+
+    //        ProxyGetterMethods;
 
     /**
      * @param  array  $models
@@ -53,7 +56,7 @@ trait TranslatedRelation
 
     protected function queryLanguageScopeEnabled($query)
     {
-        return $query instanceof TranslatableBuilder && $query->languageScopeEnabled();
+        return $query instanceof TranslatableEloquentBuilder && $query->languageScopeEnabled();
     }
 
     /**
@@ -66,7 +69,7 @@ trait TranslatedRelation
      * @param  \Illuminate\Database\Eloquent\Model|null  $model
      * @return $this
      */
-    protected function setDefaultLanguageFromModel(Model $model = null, Builder $query = null)
+    protected function setDefaultLanguageFromModel(Model $model = null, EloquentBuilder $query = null)
     {
         // Sometimes the parent will be an empty instance. In this case
         // we won't set any default language based on that.

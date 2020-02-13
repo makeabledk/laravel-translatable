@@ -4,13 +4,11 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Support\Arr;
 use Makeable\LaravelTranslatable\Builder\Concerns\HasGetterHooks;
-use Makeable\LaravelTranslatable\Builder\TranslatableBuilder;
+use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait HasBufferedLanguageScopes
 {
-    use HasGetterHooks;
-
     /**
      * @var bool
      */
@@ -22,6 +20,9 @@ trait HasBufferedLanguageScopes
     public $pendingDefaultLanguage = null;
 
     protected $hasGetterHook = false;
+
+//    abstract public function beforeGetting(callable $callback, $priority = null);
+
 
     public function getQueryLanguage()
     {
@@ -106,7 +107,7 @@ trait HasBufferedLanguageScopes
     {
         $query = $query ?? $this->query;
 
-        if (is_array($language = $this->getQueryLanguage()) && $query instanceof TranslatableBuilder) {
+        if (is_array($language = $this->getQueryLanguage()) && $query instanceof TranslatableEloquentBuilder) {
             $query->language($language);
         }
     }
@@ -114,9 +115,9 @@ trait HasBufferedLanguageScopes
     protected function applyLanguageScopeBeforeGetting()
     {
         if (! $this->hasGetterHook) {
-            $this->beforeGetting(function () {
+            $this->query->beforeGetting(function () {
                 $this->applyLanguageScope();
-            }, 100);
+            }, 100); // ensure run last
 
             $this->hasGetterHook = true;
         }

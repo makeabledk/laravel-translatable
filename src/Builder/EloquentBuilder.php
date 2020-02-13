@@ -2,13 +2,26 @@
 
 namespace Makeable\LaravelTranslatable\Builder;
 
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as NativeQueryBuilder;
 use Makeable\LaravelTranslatable\Builder\Concerns\HasGetterHooks;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
-class Builder extends EloquentBuilder
+class EloquentBuilder extends Builder
 {
-//    use HasGetterHooks;
+    use HasGetterHooks;
+//
+//    public function __construct(NativeQueryBuilder $query)
+//    {
+//        parent::__construct(QueryBuilder::fromNative($query));;
+//    }
+
+    public function applyScopes()
+    {
+        $this->invokeBeforeGettingCallbacks();
+
+        return parent::applyScopes();
+    }
 
 //    /**
 //     * @var bool
