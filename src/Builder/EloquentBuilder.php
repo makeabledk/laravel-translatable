@@ -17,7 +17,6 @@ class EloquentBuilder extends Builder
 //        parent::__construct(QueryBuilder::fromNative($query));;
 //    }
 
-
 //    /**
 //     * @var bool
 //     * @deprecated

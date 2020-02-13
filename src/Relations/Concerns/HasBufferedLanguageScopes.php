@@ -77,7 +77,6 @@ trait HasBufferedLanguageScopes
 
     // _________________________________________________________________________________________________________________
 
-
     protected function applyLanguageScopeBeforeGetting()
     {
         if (! $this->hasGetterHook) {
@@ -117,7 +116,6 @@ trait HasBufferedLanguageScopes
             // itself will default to master language
         }
     }
-
 
     protected function languageScopeEnabled()
     {

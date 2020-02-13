@@ -6,7 +6,6 @@ trait HasGetterHooks
 {
     protected $beforeGettingCallbacks = [];
 
-
 //    /**
 //     * @param  string  $method
 //     * @param  array  $parameters
