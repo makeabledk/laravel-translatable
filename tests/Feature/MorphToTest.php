@@ -77,7 +77,7 @@ class MorphToTest extends TestCase
                 ->create()
         )->save();
 
-        $user->unsetRelations();
+        $user->setRelations([]);
 
         Post::setGlobalLanguage('en');
 
