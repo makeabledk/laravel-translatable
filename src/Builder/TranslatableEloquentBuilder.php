@@ -3,23 +3,10 @@
 namespace Makeable\LaravelTranslatable\Builder;
 
 use Makeable\LaravelTranslatable\Builder\Concerns\HasLanguageScopes;
+use Makeable\LaravelTranslatable\Builder\Concerns\HydratesWithRequestedLanguage;
 
 class TranslatableEloquentBuilder extends EloquentBuilder
 {
-    use HasLanguageScopes;
-
-    public function hydrate(array $items)
-    {
-        $instance = $this->newModelInstance();
-
-        $models = $instance->newCollection(array_map(function ($item) use ($instance) {
-            return tap($instance->newFromBuilder($item), function ($model) {
-                $model->requestedLanguage = $this->getQueryLanguageHistory();
-            });
-        }, $items));
-
-        $this->clearQueryLanguageHistory();
-
-        return $models;
-    }
+    use HasLanguageScopes,
+        HydratesWithRequestedLanguage;
 }

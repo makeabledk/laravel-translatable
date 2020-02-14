@@ -19,7 +19,8 @@ class ApplyLanguageScope implements Scope
     public function apply(Builder $builder, Model $model)
     {
         // If language scope was already applied or disabled we won't do anything.
-        if ($builder->languageScopeWasApplied || $builder->languageScopeWasDisabled) {
+        if ($builder->languageQueryStatus('language_scope_applied') ||
+            $builder->languageQueryStatus('language_scope_disabled')) {
             return $builder;
         }
 
@@ -29,7 +30,7 @@ class ApplyLanguageScope implements Scope
         }
 
         // Finally we'll default to only fetch master-language unless this was disabled.
-        if (! $builder->defaultLanguageScopeWasDisabled) {
+        if (! $builder->languageQueryStatus('default_language_scope_disabled')) {
             return $builder->whereNull('master_id');
         }
     }

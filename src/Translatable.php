@@ -190,15 +190,28 @@ trait Translatable
             ?: (new static)->forceFill(['language_code' => $language])->master()->associate($this->getMaster());
     }
 
-//    /**
-//     * Make sure to initialize new query with current language when set.
-//     *
-//     * @return Builder
-//     */
-//    public function newQuery()
-//    {
-//        return tap(parent::newQuery(), Closure::fromCallable([$this, 'applyCurrentLanguage']));
-//    }
+    /**
+     * Ensure that the denormalized master_key is up to date. If it
+     * needs update we'll do it silently to ensure it does not
+     * trigger further syncing attempts with siblings.
+     *
+     * @return $this
+     */
+    public function refreshMasterKey()
+    {
+        if ($this->master_key !== ($masterKey = $this->master_id ?? $this->getKey())) {
+            static::withoutEvents(function () use ($masterKey) {
+                $this->getConnection()->table($this->getTable())
+                    ->where($this->getKeyName(), $this->getKey())
+                    ->update(['master_key' => $masterKey]);
+
+                $this->master_key = $masterKey;
+                $this->syncOriginalAttribute('master_key');
+            });
+        }
+
+        return $this;
+    }
 
     /**
      * Create a new Eloquent query builder for the model.

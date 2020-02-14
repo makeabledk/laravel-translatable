@@ -10,11 +10,6 @@ use Makeable\LaravelTranslatable\ModelChecker;
 
 class LanguageScope
 {
-//    /**
-//     * @var array
-//     */
-//    public static $modelHistory = [];
-
     /**
      * @var EloquentBuilder
      */
@@ -24,11 +19,6 @@ class LanguageScope
      * @var \Illuminate\Database\Eloquent\Model|\Makeable\LaravelTranslatable\Translatable
      */
     protected $model;
-//
-//    public static function clearHistory()
-//    {
-//        static::$modelHistory = [];
-//    }
 
     /**
      * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
@@ -40,33 +30,6 @@ class LanguageScope
     {
         return call_user_func(new static($query), $languages, $fallbackMaster);
     }
-
-//    /**
-//     * @param  \Illuminate\Database\Eloquent\Model  $model
-//     * @return array|null
-//     */
-//    public static function getLatestRequestedLanguage(Model $model)
-//    {
-//        return Arr::get(static::$modelHistory, get_class($model));
-//    }
-//
-//    /**
-//     * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
-//     * @return bool
-//     */
-//    public static function wasApplied($query)
-//    {
-//        return $query->languageScopeWasApplied;
-//    }
-
-//    /**
-//     * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
-//     * @return bool
-//     */
-//    public static function wasntApplied($query)
-//    {
-//        return ! static::wasApplied($query);
-//    }
 
     /**
      * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
@@ -86,26 +49,12 @@ class LanguageScope
     {
         $languages = static::getNormalizedLanguages($languages, $fallbackMaster);
 
-//        $this->pushHistory($languages);
-
         $this->clearVariables();
 
         $this->query->whereRaw("{$this->model->getQualifiedKeyName()} IN ({$this->getBestIdsQuery($languages)})");
 
         return $this->query;
     }
-
-//
-//    /**
-//     * @param  \Illuminate\Support\Collection  $languages
-//     * @return void
-//     */
-//    protected function pushHistory(Collection $languages)
-//    {
-    ////        $this->query->languageScopeWasApplied = true;
-//
-//        Arr::set(static::$modelHistory, get_class($this->query->getModel()), $languages->toArray());
-//    }
 
     /**
      * @param $languages

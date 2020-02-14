@@ -2,19 +2,40 @@
 
 namespace Makeable\LaravelTranslatable\Builder\Concerns;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait HasLanguageScopes
 {
+    /**
+     * @var array
+     */
     protected static $modelQueryHistory = [];
 
-    public $languageScopeWasApplied = false;
+    /**
+     * @var array
+     */
+    protected $languageQueryStatus = [
+        'language_scope_applied' => false,
+        'language_scope_disabled' => false,
+        'default_language_scope_disabled' => false,
+    ];
 
-    public $languageScopeWasDisabled = false;
+    /**
+     * @param  null  $key
+     * @param  null  $value
+     * @return array|mixed
+     */
+    public function languageQueryStatus($key = null, $value = null)
+    {
+        if ($key && $value !== null) {
+            return $this->languageQueryStatus[$key] = $value;
+        }
 
-    public $defaultLanguageScopeWasDisabled = false;
+        return $key
+            ? Arr::get($this->languageQueryStatus, $key)
+            : $this->languageQueryStatus;
+    }
 
     /**
      * @param string|array $languages
@@ -29,7 +50,7 @@ trait HasLanguageScopes
             LanguageScope::getNormalizedLanguages($languages, $fallbackMaster)->values()->toArray()
         );
 
-        $this->languageScopeWasApplied = true;
+        $this->languageQueryStatus('language_scope_applied', true);
 
         return $this;
     }
@@ -39,9 +60,7 @@ trait HasLanguageScopes
      */
     public function withoutLanguageScope()
     {
-        $this->languageScopeWasDisabled = true;
-
-        return $this;
+        return tap($this)->languageQueryStatus('language_scope_disabled', true);
     }
 
     /**
@@ -49,39 +68,30 @@ trait HasLanguageScopes
      */
     public function withoutDefaultLanguageScope()
     {
-        $this->defaultLanguageScopeWasDisabled = true;
-
-        return $this;
+        return tap($this)->languageQueryStatus('default_language_scope_disabled', true);
     }
 
-//
-//    /**
-//     * Merge the where constraints from another query to the current query.
-//     *
-//     * @param  \Illuminate\Database\Eloquent\Builder  $from
-//     * @return \Illuminate\Database\Eloquent\Builder|static
-//     */
-//    public function mergeConstraintsFrom(Builder $from)
-//    {
-//        $from->invokeBeforeGettingCallbacks();
-//
-//        $this->languageScopeWasApplied = $from->languageScopeWasApplied;
-//        $this->languageScopeWasDisabled = $from->languageScopeWasDisabled;
-//        $this->defaultLanguageScopeWasDisabled = $from->defaultLanguageScopeWasDisabled;
-//
-//        return parent::mergeConstraintsFrom($from);
-//    }
+    // _________________________________________________________________________________________________________________
 
+    /**
+     * @param $language
+     */
     protected function setQueryLanguageHistory($language)
     {
         static::$modelQueryHistory[get_class($this->getModel())] = $language;
     }
 
+    /**
+     * @return mixed
+     */
     protected function getQueryLanguageHistory()
     {
         return Arr::get(static::$modelQueryHistory, get_class($this->getModel()));
     }
 
+    /**
+     * @return void
+     */
     protected function clearQueryLanguageHistory()
     {
         static::$modelQueryHistory[get_class($this->getModel())] = null;

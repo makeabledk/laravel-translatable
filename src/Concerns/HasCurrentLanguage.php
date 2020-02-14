@@ -8,18 +8,6 @@ use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait HasCurrentLanguage
 {
-//    public static function bootHasCurrentLanguage()
-//    {
-//        static::retrieved(function (Model $model) {
-//            $model->requestedLanguage = LanguageScope::getLatestRequestedLanguage($model);
-//        });
-//    }
-//
-//    /**
-//     * @var array|null
-//     */
-//    public $requestedLanguage;
-
     /**
      * @var string|null
      */
@@ -48,32 +36,4 @@ trait HasCurrentLanguage
     {
         app()[__TRAIT__.'@globalLanguage'] = $language;
     }
-
-//
-//    /**
-//     * @return array|null
-//     */
-//    public static function getRequestedLanguage()
-//    {
-//        return static::$latestRequestedLanguage;
-//    }
-//
-//    /**
-//     * @param  array|null  $languages
-//     * @internal
-//     */
-//    public static function setRequestedLanguage(array $languages = null)
-//    {
-//        static::$latestRequestedLanguage = $languages;
-//    }
-
-//    /**
-//     * @param  \Illuminate\Database\Eloquent\Builder  $query
-//     */
-//    protected function applyCurrentLanguage(Builder $query)
-//    {
-//        if (($language = static::getCurrentLanguage()) !== null) {
-//            $query->language($language);
-//        }
-//    }
 }

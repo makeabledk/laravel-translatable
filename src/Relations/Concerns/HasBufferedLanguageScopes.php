@@ -3,6 +3,7 @@
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
+use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
 trait HasBufferedLanguageScopes
@@ -98,8 +99,7 @@ trait HasBufferedLanguageScopes
     {
         $query = $query ?? $this->query;
 
-        if ($query instanceof TranslatableEloquentBuilder) {
-
+        if (ModelChecker::checkTranslatable($query->getModel())) {
             // Apply the correct language resolved from the relation if was set
             if (is_array($language = $this->pendingLanguage ?? $this->pendingDefaultLanguage)) {
                 return $query->language($language);

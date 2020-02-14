@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
@@ -80,6 +81,21 @@ trait SyncsAttributes
             if (Arr::get($this->attributes, $attribute) === null) {
                 $this->setAttribute($attribute, $value);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return $this
+     */
+    public function syncAttributesFromSibling(Model $model)
+    {
+        if (! $this->is($model)) {
+            $this->syncingInProgress = true;
+            $this->forceFill($model->getSyncAttributes())->save();
+            $this->syncingInProgress = false;
         }
 
         return $this;
