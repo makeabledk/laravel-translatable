@@ -2,8 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Scopes;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Makeable\LaravelTranslatable\Builder\EloquentBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;

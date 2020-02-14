@@ -2,7 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
-use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 
