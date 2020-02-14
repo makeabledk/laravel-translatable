@@ -4,7 +4,6 @@ namespace Makeable\LaravelTranslatable;
 
 use BadMethodCallException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 
 class ModelChecker
 {

@@ -2,10 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Concerns;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Makeable\LaravelTranslatable\Scopes\LanguageScope;
-
 trait HasCurrentLanguage
 {
     /**

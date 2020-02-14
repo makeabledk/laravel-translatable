@@ -3,7 +3,6 @@
 namespace Makeable\LaravelTranslatable;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class TranslatableObserver
 {
