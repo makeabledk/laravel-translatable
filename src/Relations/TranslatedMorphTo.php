@@ -82,16 +82,4 @@ class TranslatedMorphTo extends MorphTo
 
         return $this->parent->setRelation($this->getRelation(), $model);
     }
-
-    /**
-     * Polyfill for different Laravel versions.
-     *
-     * @return mixed|string
-     */
-    public function getRelation()
-    {
-        return property_exists($this, 'relation')
-            ? $this->relation
-            : $this->relationName;
-    }
 }

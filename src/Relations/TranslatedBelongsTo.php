@@ -51,9 +51,9 @@ class TranslatedBelongsTo extends BelongsTo
         $this->child->setAttribute($this->foreignKey, $ownerKey);
 
         if ($model instanceof Model) {
-            $this->child->setRelation($this->relationName, $model);
+            $this->child->setRelation($this->getRelation(), $model);
         } elseif ($this->child->isDirty($this->foreignKey)) {
-            $this->child->unsetRelation($this->relationName);
+            $this->child->unsetRelation($this->getRelation());
         }
 
         return $this->child;

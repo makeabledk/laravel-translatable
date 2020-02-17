@@ -28,4 +28,16 @@ trait BelongsToBaseImplementation
                 $query->where($table.'.'.$ownerKey, '=', $this->child->{$this->foreignKey});
             });
     }
+
+    /**
+     * Polyfill for different Laravel versions.
+     *
+     * @return mixed|string
+     */
+    public function getRelation()
+    {
+        return property_exists($this, 'relation')
+            ? $this->relation
+            : $this->relationName;
+    }
 }
