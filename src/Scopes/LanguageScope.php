@@ -110,7 +110,7 @@ class LanguageScope
             })
             // Now union the language queries
             ->pipe(function (Collection $queries) {
-                return $queries->implode(' UNION DISTINCT ') . ' ORDER BY master_key asc, priority asc';
+                return $queries->implode(' UNION DISTINCT ').' ORDER BY master_key asc, priority asc';
             });
 
         // Now we'll use the previous priorities and select the best match.

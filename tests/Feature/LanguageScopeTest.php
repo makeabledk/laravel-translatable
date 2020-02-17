@@ -2,7 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
-use Makeable\LaravelTranslatable\Scopes\LanguageScope;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 

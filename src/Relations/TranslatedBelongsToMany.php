@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
-use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\Relations\Concerns\TranslatedRelation;
 
 class TranslatedBelongsToMany extends BelongsToMany
