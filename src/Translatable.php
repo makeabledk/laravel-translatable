@@ -5,14 +5,14 @@ namespace Makeable\LaravelTranslatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
-use Makeable\LaravelTranslatable\Concerns\HasCurrentLanguage;
+use Makeable\LaravelTranslatable\Concerns\HasLanguageQueryPreferences;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
 use Makeable\LaravelTranslatable\Relations\VersionsRelation;
 use Makeable\LaravelTranslatable\Scopes\ApplyLanguageScope;
 
 trait Translatable
 {
-    use HasCurrentLanguage,
+    use HasLanguageQueryPreferences,
         SyncsAttributes,
         TranslatableRelationships;
 

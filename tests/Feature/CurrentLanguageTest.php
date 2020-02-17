@@ -19,8 +19,6 @@ class CurrentLanguageTest extends TestCase
         $this->assertEquals('en', Post::getCurrentLanguage());
         $this->assertEquals(1, ($posts = Post::all())->count());
         $this->assertEquals('en', $posts->first()->language_code);
-
-        Post::setLanguage(null); // reset
     }
 
     /** @test **/
@@ -33,8 +31,6 @@ class CurrentLanguageTest extends TestCase
         $this->assertEquals('en', Post::getCurrentLanguage());
         $this->assertEquals(1, ($posts = Post::all())->count());
         $this->assertEquals('en', $posts->first()->language_code);
-
-        Tag::setGlobalLanguage(null);
     }
 
     /** @test **/

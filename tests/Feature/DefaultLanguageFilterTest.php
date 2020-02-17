@@ -2,10 +2,12 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Makeable\LaravelTranslatable\Concerns\HasLanguageQueryPreferences;
+use Makeable\LaravelTranslatable\Scopes\ApplyLanguageScope;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
-class DefaultLanguageTest extends TestCase
+class DefaultLanguageFilterTest extends TestCase
 {
     /** @test **/
     public function it_defaults_to_only_fetch_master()
@@ -22,5 +24,18 @@ class DefaultLanguageTest extends TestCase
         $translation = $master->getTranslation('en');
 
         $this->assertEquals($translation->id, $translation->refresh()->id);
+    }
+
+    /** @test **/
+    public function the_default_language_filter_may_be_disabled_globally()
+    {
+        HasLanguageQueryPreferences::fetchAllLanguagesWhenNoFilterApplied();
+
+        factory(Post::class)->with(1, 'english', 'translations')->create();
+
+        $this->assertEquals(2, Post::all()->count());
+
+        // Reset
+        ApplyLanguageScope::setMode(ApplyLanguageScope::FILTER_TO_MASTER_LANGUAGE_BY_DEFAULT);
     }
 }
