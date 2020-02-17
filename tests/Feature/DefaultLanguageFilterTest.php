@@ -2,8 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
-use Makeable\LaravelTranslatable\Concerns\HasLanguageQueryPreferences;
-use Makeable\LaravelTranslatable\Scopes\ApplyLanguageScope;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 use Makeable\LaravelTranslatable\Translatable;
