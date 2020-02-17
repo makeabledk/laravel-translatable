@@ -82,7 +82,7 @@ class MorphToTest extends TestCase
         Post::setGlobalLanguage('en');
 
         $this->assertEquals('en', $user->photo()->first()->language_code);
-//        $this->assertEquals('en', $user->photo()->withoutLanguageScope()->first()->language_code);
+        $this->assertEquals('da', $user->photo()->withoutLanguageScope()->first()->language_code);
     }
 
     /** @test **/
@@ -99,28 +99,6 @@ class MorphToTest extends TestCase
             $model->language('en');
         };
 
-//        \DB::listen(function ($e) {
-//            dump($e->sql, $e->bindings);
-//        });
-
         $this->assertEquals('en', data_get($user->load(['photo' => $inEnglish]), 'photo.language_code'));
     }
-
-//    /** @test **/
-//    public function it_eager_loads_translated_morph_to()
-//    {
-//        $postMaster = factory(Post::class)
-//            ->with(1, 'tags')
-//            ->with(1, 'english', 'translations')
-//            ->times(2)
-//            ->create()
-//            ->last();
-//
-//        $tagMaster = factory(Tag::class)->create();
-//        $tagTranslation = $tagMaster->getTranslationOrNew('en');
-//        $tagTranslation->taggable()->associate($postTranslation = $postMaster->getTranslation('en'))->save();
-//
-//        $this->assertEquals('da', $tagMaster->setRelations([])->refresh()->load('taggable')->taggable->language_code);
-//        $this->assertEquals('en', $tagTranslation->setRelations([])->load('taggable')->taggable->language_code);
-//    }
 }

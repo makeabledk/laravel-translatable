@@ -34,15 +34,6 @@ class TranslatedBelongsTo extends BelongsTo
                     $whereIn = $this->whereInMethod($this->related, $ownerKey);
 
                     $query->{$whereIn}($key, $modelKeys = $this->getEagerModelKeys($models));
-                    //
-    //                // We'll check if related is translatable & we should apply language scope on this query.
-    //                // If language scope has been explicitly disabled we'll avoid corrupting the query.
-    //                if (ModelChecker::checkTranslatable($this->related) && $this->query->languageScopeEnabled) {
-    //                    $query->orWhere(function ($query) use ($modelKeys) {
-    //                        $query->whereIn($this->related->getTable().'.'.$this->related->getMasterKeyName(), $modelKeys)
-    //                            ->whereNotNull($this->related->getTable().'.'.$this->related->getMasterKeyName());
-    //                    });
-    //                }
                 });
             });
     }

@@ -17,6 +17,9 @@ trait HasBufferedLanguageScopes
      */
     public $pendingDefaultLanguage = null;
 
+    /**
+     * @var bool
+     */
     protected $hasGetterHook = false;
 
     /**
@@ -77,6 +80,9 @@ trait HasBufferedLanguageScopes
 
     // _________________________________________________________________________________________________________________
 
+    /**
+     * @return $this
+     */
     protected function applyLanguageScopeBeforeGetting()
     {
         if (! $this->hasGetterHook) {
@@ -112,11 +118,14 @@ trait HasBufferedLanguageScopes
                 return $query->withoutDefaultLanguageScope();
             }
 
-            // If no language was set, but also not disabled, the TranslatedEloquentBuilder
-            // itself will default to master language
+            // When no preferences were set whatsoever, ApplyLanguageScope will
+            // will default to only fetch master language.
         }
     }
 
+    /**
+     * @return bool
+     */
     protected function languageScopeEnabled()
     {
         return $this->pendingLanguage !== false;

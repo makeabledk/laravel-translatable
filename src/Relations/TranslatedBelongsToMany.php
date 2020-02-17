@@ -33,10 +33,6 @@ class TranslatedBelongsToMany extends BelongsToMany
             $relatedKey = $this->getMasterKeyName($this->related, $this->relatedKey);
 
             $join->on($baseTable.'.'.$relatedKey, '=', $this->getQualifiedRelatedPivotKeyName());
-
-//            if (ModelChecker::checkTranslatable($this->related)) {
-//                $join->orOn($baseTable.'.master_id', '=', $this->getQualifiedRelatedPivotKeyName());
-//            }
         });
 
         return $this;

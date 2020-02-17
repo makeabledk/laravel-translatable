@@ -58,7 +58,6 @@ trait TranslatedRelation
      */
     protected function getMasterKeyName(Model $model, $keyName = null, $query = null)
     {
-//        if (ModelChecker::checkTranslatable($model) && $this->queryLanguageScopeEnabled($query ?? $this->query)) {
         if ($this->isTranslatableContext($model)) {
             return 'master_key';
         }
@@ -66,6 +65,10 @@ trait TranslatedRelation
         return $keyName ?? $model->getKeyName();
     }
 
+    /**
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return bool
+     */
     protected function isTranslatableContext(Model $model)
     {
         return ModelChecker::checkTranslatable($model) && $this->languageScopeEnabled();
@@ -88,11 +91,6 @@ trait TranslatedRelation
         if (! optional($model)->exists) {
             return $this;
         }
-//
-//        dump(
-//            $model->getMorphClass(),
-//            $model->language_code
-//        );
 
         // Before we attemt to set the language from the child / parent model,
         // we'll first check if the related model already has language

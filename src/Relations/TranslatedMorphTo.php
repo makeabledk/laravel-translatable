@@ -12,19 +12,6 @@ class TranslatedMorphTo extends MorphTo
 {
     use BelongsToBaseImplementation;
 
-//    /**
-//     * Get all of the relation results for a type.
-//     *
-//     * @param  string  $type
-//     * @return \Illuminate\Database\Eloquent\Collection
-//     */
-//    protected function getResultsByType($type)
-//    {
-//        $this->ownerKey = $this->getMasterKeyName($this->createModelByType($type), $this->ownerKey);
-//
-//        return parent::getResultsByType($type);
-//    }
-
     /**
      * Get all of the relation results for a type.
      *

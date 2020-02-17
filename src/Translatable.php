@@ -89,17 +89,6 @@ trait Translatable
 
     // _________________________________________________________________________________________________________________
 
-//    /**
-//     * @param Builder $query
-//     * @param string|array $languagePriority
-//     * @param bool $fallbackMaster
-//     * @return Builder
-//     */
-//    public function scopeLanguage($query, $languagePriority, $fallbackMaster = false)
-//    {
-//        return LanguageScope::apply($query, $languagePriority, $fallbackMaster);
-//    }
-
     /**
      * @param Builder $query
      * @return Builder
@@ -108,20 +97,6 @@ trait Translatable
     {
         return $query->whereNull('master_id');
     }
-
-//
-//    /**
-//     * @param \Illuminate\Database\Eloquent\Builder $query
-//     * @return \Illuminate\Database\Eloquent\Builder
-//     */
-//    public function scopeWithMasterKey(Builder $query)
-//    {
-//        if ($query->getQuery()->columns === null) {
-//            $query->select($query->getQuery()->from.'.*');
-//        }
-//
-//        return $query->selectRaw("(SELECT IF({'master_id'} is NULL, {$this->getKeyName()}, {'master_id'})) as master_key");
-//    }
 
     // _________________________________________________________________________________________________________________
 
@@ -139,18 +114,8 @@ trait Translatable
     public function getMasterKey()
     {
         return $this->master_key;
-//        return $this->getAttribute('master_id') ?: $this->getKey();
     }
-
-//
-//    /**
-//     * @return int
-//     */
-//    public function getMasterKeyAttribute()
-//    {
-//        return $this->getMasterKey();
-//    }
-
+    
     /**
      * @return string
      */

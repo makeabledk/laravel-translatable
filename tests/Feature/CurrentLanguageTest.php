@@ -50,6 +50,4 @@ class CurrentLanguageTest extends TestCase
         $this->assertEquals('en', $post->meta()->first()->language_code);
         $this->assertEquals('da', $post->meta()->withoutLanguageScope()->first()->language_code);
     }
-
-    // TODO: ensure that it does not apply if language scope disabled
 }

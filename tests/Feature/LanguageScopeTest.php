@@ -8,19 +8,6 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class LanguageScopeTest extends TestCase
 {
-//    /** @test * */
-//    public function it_keeps_track_of_the_queries_it_was_applied_on()
-//    {
-//        $model = new Post();
-//
-//        $this->assertFalse(LanguageScope::wasApplied($query = $model->newQuery()));
-//
-//        LanguageScope::apply($query, 'en', true);
-//
-//        $this->assertTrue(LanguageScope::wasApplied($query));
-//        $this->assertEquals(['en', '*'], LanguageScope::getLatestRequestedLanguage($model));
-//    }
-
     /** @test **/
     public function when_using_language_scope_it_finds_the_best_matching_model()
     {
