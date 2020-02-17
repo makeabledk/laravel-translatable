@@ -12,7 +12,7 @@ class ApplyLanguageScope implements Scope
      * When no language scope was applied on the query, we'll
      * default to only fetch models of master language.
      */
-    public const FILTER_TO_MASTER_LANGUAGE_BY_DEFAULT = 1;
+    public const FETCH_MASTER_LANGUAGE_BY_DEFAULT = 1;
 
     /**
      * When no language scope was applied on the query, we'll fetch
@@ -23,7 +23,7 @@ class ApplyLanguageScope implements Scope
     /**
      * @var int
      */
-    protected static $mode = self::FILTER_TO_MASTER_LANGUAGE_BY_DEFAULT;
+    protected static $mode = self::FETCH_MASTER_LANGUAGE_BY_DEFAULT;
 
     /**
      * @param $mode
@@ -56,7 +56,7 @@ class ApplyLanguageScope implements Scope
 
         // Finally we'll default to only fetch master-language unless
         // this was disabled either globally or on the query itself.
-        if (static::$mode === static::FILTER_TO_MASTER_LANGUAGE_BY_DEFAULT) {
+        if (static::$mode === static::FETCH_MASTER_LANGUAGE_BY_DEFAULT) {
             if (! $builder->languageQueryStatus('default_language_scope_disabled')) {
                 return $builder->whereNull('master_id');
             }

@@ -37,8 +37,18 @@ trait HasLanguageQueryPreferences
      * When no language scope was applied on the query, we'll fetch
      * all languages just like a normal non-translatable model.
      */
-    public static function fetchAllLanguagesWhenNoFilterApplied()
+    public static function fetchAllLanguagesByDefault()
     {
         ApplyLanguageScope::setMode(ApplyLanguageScope::FETCH_ALL_LANGUAGES_BY_DEFAULT);
+    }
+
+    /**
+     * Change default behavior of the LanguageScope.
+     * When no language scope was applied on the query, we'll fetch
+     * all languages just like a normal non-translatable model.
+     */
+    public static function fetchMasterLanguageByDefault()
+    {
+        ApplyLanguageScope::setMode(ApplyLanguageScope::FETCH_MASTER_LANGUAGE_BY_DEFAULT);
     }
 }
