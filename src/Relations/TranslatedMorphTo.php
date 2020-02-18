@@ -12,6 +12,8 @@ class TranslatedMorphTo extends MorphTo
 {
     use BelongsToBaseImplementation;
 
+    protected $originalOwnerKey;
+
     /**
      * Get all of the relation results for a type.
      *
@@ -22,6 +24,8 @@ class TranslatedMorphTo extends MorphTo
     {
         $instance = $this->createModelByType($type);
 
+        $this->setOwnerKeyNameFor($instance);
+
         $query = $this->replayMacros($instance->newQuery())
             ->mergeConstraintsFrom($this->getQuery())
             ->with(array_merge(
@@ -29,13 +33,11 @@ class TranslatedMorphTo extends MorphTo
                 (array) ($this->morphableEagerLoads[get_class($instance)] ?? [])
             ));
 
-        $whereIn = $this->whereInMethod($instance, $this->ownerKey);
+        $whereIn = $this->whereInMethod($instance, $this->originalOwnerKey);
 
         // Ensure master key for translatable models
-        $ownerKey = $this->getMasterKeyName($this->createModelByType($type), $this->ownerKey);
-
         $query = $query->{$whereIn}(
-            $instance->getTable().'.'.$ownerKey, $this->gatherKeysByType($type)
+            $instance->getTable().'.'.$this->ownerKey, $this->gatherKeysByType($type)
         );
 
         // Add default language
@@ -56,10 +58,7 @@ class TranslatedMorphTo extends MorphTo
      */
     protected function matchToMorphParents($type, Collection $results)
     {
-        $this->ownerKey = $this->getMasterKeyName(
-            $model = $this->createModelByType($type),
-            $this->ownerKey
-        );
+        $this->setOwnerKeyNameFor($type);
 
         return parent::matchToMorphParents($type, $results);
     }
@@ -72,8 +71,10 @@ class TranslatedMorphTo extends MorphTo
      */
     public function associate($model)
     {
+        $this->setOwnerKeyNameFor($model);
+
         $this->parent->setAttribute(
-            $this->foreignKey, $model instanceof Model ? $this->getMasterKey($model, $this->ownerKey) : null
+            $this->foreignKey, $model instanceof Model ? $model->getAttribute($this->ownerKey) : null
         );
 
         $this->parent->setAttribute(
@@ -81,5 +82,22 @@ class TranslatedMorphTo extends MorphTo
         );
 
         return $this->parent->setRelation($this->getRelation(), $model);
+    }
+
+    /**
+     * @param Model|string $model
+     */
+    protected function setOwnerKeyNameFor($model)
+    {
+        // Backup originally specified ownerKey so that we confidently overwrite it.
+        // If null, we'll set false to indicate no key was specified.
+        if ($this->originalOwnerKey === null) {
+            $this->originalOwnerKey = $this->ownerKey ?? false;
+        }
+
+        $this->ownerKey = $this->getMasterKeyName(
+            ($model instanceof Model ? $model : $this->createModelByType($model)),
+            $this->originalOwnerKey ?: null
+        );
     }
 }

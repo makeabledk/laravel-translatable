@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Makeable\LaravelTranslatable\Tests\Stubs\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\Tag;
 use Makeable\LaravelTranslatable\Tests\Stubs\User;
@@ -100,5 +101,17 @@ class MorphToTest extends TestCase
         };
 
         $this->assertEquals('en', data_get($user->load(['photo' => $inEnglish]), 'photo.language_code'));
+    }
+
+    /** @test **/
+    public function regression_it_may_morph_to_a_combination_of_both_translated_and_nontranslatable_models()
+    {
+        factory(User::class)->create()->photo()->associate(factory(Post::class)->create())->save();
+        factory(User::class)->create()->photo()->associate(factory(Image::class)->create())->save();
+
+        $users = User::with('photo')->get();
+
+        $this->assertInstanceOf(Post::class, $users->first()->photo);
+        $this->assertInstanceOf(Image::class, $users->last()->photo);
     }
 }

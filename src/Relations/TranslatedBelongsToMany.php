@@ -89,7 +89,7 @@ class TranslatedBelongsToMany extends BelongsToMany
         // children back to their parent using the dictionary and the keys on the
         // the parent models. Then we will return the hydrated models back out.
         foreach ($models as $model) {
-            if (isset($dictionary[$key = $this->getMasterKey($model, null, $model->newQuery())])) {
+            if (isset($dictionary[$key = $this->getMasterKey($model, null)])) {
                 $model->setRelation(
                     $relation,
                     $this->related->newCollection($dictionary[$key])
@@ -105,6 +105,6 @@ class TranslatedBelongsToMany extends BelongsToMany
      */
     protected function getParentKey()
     {
-        return $this->getMasterKey($this->parent, $this->parentKey, $this->parent->newQuery());
+        return $this->getMasterKey($this->parent, $this->parentKey);
     }
 }
