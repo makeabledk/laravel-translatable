@@ -14,7 +14,7 @@ class TranslatableObserver
         // When creating translations we'll fill any syncable
         // attributes that is not already set.
         if (! $model->isMaster()) {
-            $model->forceFillMissing($model->master->getSyncAttributes());
+            $model->forceFillMissing($this->master($model)->getSyncAttributes());
         }
     }
 
@@ -62,8 +62,23 @@ class TranslatableObserver
             // In case the model was just inserted, there will be no original attributes
             // to check against. Therefore we'll compare against the master-attributes
             // and see if any syncable attributes were changed.
-            : $model->getChangedSyncAttributes($model->master->getAttributes());
+            : $model->getChangedSyncAttributes($this->master($model)->getAttributes());
 
         return count($changes) > 0;
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @return Model
+     */
+    protected function master(Model $model)
+    {
+        if ($model->relationLoaded('master') && $model->master !== null) {
+            return $model->master;
+        }
+
+        $model->setRelation('master', $model->master()->withoutGlobalScopes()->firstOrFail());
+
+        return $model->master;
     }
 }

@@ -45,6 +45,23 @@ class LanguageScopeTest extends TestCase
         $this->assertEquals(3, Post::language(['sv', 'en', '*'])->get()->count());
     }
 
+    /** @test **/
+    public function it_applies_global_scopes_on_best_ids_query()
+    {
+        Post::addGlobalScope(function ($query) {
+            $query->where('is_published', 1);
+        });
+
+        $post = factory(Post::class)
+            ->with(1, 'english', 'translations', ['is_published' => 0])
+            ->create();
+
+        $match = Post::language(['en', '*'])->whereMasterKey($post->id)->first();
+
+        $this->assertNotNull($match);
+        $this->assertEquals('da', $post->language_code);
+    }
+
     protected function seedTranslatedModels()
     {
         factory(Post::class)->create(); // danish

@@ -42,6 +42,7 @@ class CreateTestTables extends Migration
             $table->unsignedInteger('master_id')->nullable();
             $table->unsignedInteger('master_key')->nullable();
             $table->string('language_code');
+            $table->boolean('is_published')->default(1);
             $table->unsignedInteger('author_id')->nullable();
             $table->unsignedInteger('team_id')->nullable();
             $table->timestamps();
