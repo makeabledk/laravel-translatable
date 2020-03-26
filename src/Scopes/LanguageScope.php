@@ -115,7 +115,7 @@ class LanguageScope
      */
     protected function prioritizedIdsQuery(Collection $languages)
     {
-        $baseQuery = $this->freshModelQuery();
+        $baseQuery = $this->freshModelQueryWithoutOrders();
 
         return $languages
             // For each language we'll select all ids with an assigned priority according
@@ -146,21 +146,27 @@ class LanguageScope
     /**
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function freshModelQuery()
+    protected function freshModelQueryWithoutOrders()
     {
-        $class = get_class($this->model);
+        // We'll instantiate new model in case table name was modified.
+        $model = new $this->model;
 
-        $query = ($model = new $class)->newQuery()->withoutLanguageScope();
+        // Instantiate a new query, and issue an alias for the query to avoid conflicts
+        // with outer queries. We'll allow any defined global scopes but disable
+        // language scope to avoid infinite recursion faults.
+        $query = $model
+            ->newQuery()
+            ->withoutLanguageScope()
+            ->from($model->getTable().' as '.($alias = 'laravel_translatable_'.static::$selfJoinCount++));
 
-        $query->from($model->getTable().' as '.($alias = 'laravel_translatable_'.static::$selfJoinCount++));
-
+        // Set the table name on the model as well to ensure fields are correctly qualified.
         $query->getModel()->setTable($alias);
 
-        $query = $query->toBase();
-        $query->orders = [];
-
-        return $query;
-
-//        return $query->from($model->getTable().' as laravel_translable_'.static::$selfJoinCount++);
+        // Finally we'll apply scopes and return the underlying query object.
+        // We'll disable any orders that were set by global scopes as
+        // these could corrupt our prioritized language query.
+        return tap($query->toBase(), function ($query) {
+            $query->orders = [];
+        });
     }
 }
