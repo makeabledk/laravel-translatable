@@ -161,7 +161,6 @@ class LanguageScope
 
         return $query;
 
-
 //        return $query->from($model->getTable().' as laravel_translable_'.static::$selfJoinCount++);
     }
 }
