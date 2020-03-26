@@ -26,6 +26,11 @@ class LanguageScope
     protected $primaryKeyName;
 
     /**
+     * @var int
+     */
+    protected static $selfJoinCount = 0;
+
+    /**
      * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
      * @param  string|array  $languages
      * @param  bool|null  $fallbackMaster
@@ -110,13 +115,13 @@ class LanguageScope
      */
     protected function prioritizedIdsQuery(Collection $languages)
     {
+        $baseQuery = $this->freshModelQuery();
+
         return $languages
             // For each language we'll select all ids with an assigned priority according
             // to the order of the language array, etc: [0 => 'da', 1 => 'en', ...]
-            ->map(function ($language, $priority) use ($languages) {
-                $query = $this
-                    ->freshModelQuery()
-                    ->select([$this->primaryKeyName, 'language_code', 'master_key', DB::raw("{$priority} as priority")]);
+            ->map(function ($language, $priority) use ($baseQuery, $languages) {
+                $query = (clone $baseQuery)->select([$this->primaryKeyName, 'language_code', 'master_key', DB::raw("{$priority} as priority")]);
 
                 // Fetch posts of specified language
                 if ($language !== '*') {
@@ -145,6 +150,18 @@ class LanguageScope
     {
         $class = get_class($this->model);
 
-        return (new $class)->newQuery()->withoutLanguageScope();
+        $query = ($model = new $class)->newQuery()->withoutLanguageScope();
+
+        $query->from($model->getTable().' as '.($alias = 'laravel_translatable_'.static::$selfJoinCount++));
+
+        $query->getModel()->setTable($alias);
+
+        $query = $query->toBase();
+        $query->orders = [];
+
+        return $query;
+
+
+//        return $query->from($model->getTable().' as laravel_translable_'.static::$selfJoinCount++);
     }
 }
