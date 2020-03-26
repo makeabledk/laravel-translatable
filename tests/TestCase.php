@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Makeable\LaravelFactory\FactoryServiceProvider;
-use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 
 class TestCase extends BaseTestCase
 {
