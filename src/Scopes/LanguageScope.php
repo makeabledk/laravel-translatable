@@ -161,7 +161,7 @@ class LanguageScope
 //            ->withoutLanguageScope()
 //            ->applyScopesSilently()
 //            ->getQuery();
-////            ->from($model->getTable().' as '.($alias = 'laravel_translatable_'.static::$selfJoinCount++));
+        ////            ->from($model->getTable().' as '.($alias = 'laravel_translatable_'.static::$selfJoinCount++));
 //
 //        [$wheres, $bindings] = [$outerQuery->wheres, $outerQuery->bindings['where']];
 //
@@ -183,9 +183,7 @@ class LanguageScope
 //
 //        return $query;
 
-
         // VARIANT 2
-
 
         // We'll instantiate new model in case table name was modified.
         $model = new $this->model;
@@ -210,11 +208,11 @@ class LanguageScope
             if ($where['type'] === 'Column') {
                 return Str::before($where['first'], '.') === Str::before($where['second'], '.');
             }
+
             return true;
         });
 
 //        dump($query->wheres);
-
 
         // Finally we'll apply scopes and return the underlying query object.
         // We'll disable any orders that were set by global scopes as
@@ -222,9 +220,6 @@ class LanguageScope
         return tap($query, function ($query) {
             $query->orders = [];
         });
-
-
-
 
         return;
 
