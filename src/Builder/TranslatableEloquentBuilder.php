@@ -9,4 +9,9 @@ class TranslatableEloquentBuilder extends EloquentBuilder
 {
     use HasLanguageScopes,
         HydratesWithRequestedLanguage;
+
+    public function getScopes()
+    {
+        return $this->scopes;
+    }
 }

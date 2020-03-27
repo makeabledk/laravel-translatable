@@ -5,6 +5,7 @@ namespace Makeable\LaravelTranslatable\Scopes;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Makeable\LaravelTranslatable\Builder\EloquentBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;
 
@@ -148,6 +149,85 @@ class LanguageScope
      */
     protected function freshModelQueryWithoutOrders()
     {
+        // VARIANT 1
+
+//        // We'll instantiate new model in case table name was modified.
+//        $model = new $this->model;
+//
+//        // Instantiate a new query, and issue an alias for the query to avoid conflicts
+//        // with outer queries. We'll allow any defined global scopes but disable
+//        // language scope to avoid infinite recursion faults.
+//        $outerQuery = (clone $this->query)
+//            ->withoutLanguageScope()
+//            ->applyScopesSilently()
+//            ->getQuery();
+////            ->from($model->getTable().' as '.($alias = 'laravel_translatable_'.static::$selfJoinCount++));
+//
+//        [$wheres, $bindings] = [$outerQuery->wheres, $outerQuery->bindings['where']];
+//
+//        foreach ($wheres as $key => $where) {
+//            if ($where['type'] === 'Column' && Str::before($where['first'], '.') !== Str::before($where['second'], '.')) {
+//                unset($wheres[$key]);
+//                unset($bindings[$key]);
+//            }
+//        }
+//
+//        $query = $model
+//            ->newQuery()
+//            ->withoutLanguageScope()
+//            ->from($outerQuery->from)
+//            ->mergeWheres(
+//                array_values($wheres),
+//                array_values($bindings)
+//            );
+//
+//        return $query;
+
+
+        // VARIANT 2
+
+
+        // We'll instantiate new model in case table name was modified.
+        $model = new $this->model;
+
+        // Instantiate a new query, and issue an alias for the query to avoid conflicts
+        // with outer queries. We'll allow any defined global scopes but disable
+        // language scope to avoid infinite recursion faults.
+        $query = (clone $this->query)
+            ->withoutLanguageScope();
+//            ->from($model->getTable().' as '.($alias = 'laravel_translatable_'.static::$selfJoinCount++));
+
+        // Set the table name on the model as well to ensure fields are correctly qualified.
+//        $query->getModel()->setTable($alias);
+
+        // Remove any wheres targeting another table
+        $query = $query->applyScopesSilently()->getQuery();
+
+//        dump($query->wheres);
+
+        $query->wheres = array_filter($query->wheres, function ($where) {
+            // Remove any cross-table wheres as these won't apply to our sub-query.
+            if ($where['type'] === 'Column') {
+                return Str::before($where['first'], '.') === Str::before($where['second'], '.');
+            }
+            return true;
+        });
+
+//        dump($query->wheres);
+
+
+        // Finally we'll apply scopes and return the underlying query object.
+        // We'll disable any orders that were set by global scopes as
+        // these could corrupt our prioritized language query.
+        return tap($query, function ($query) {
+            $query->orders = [];
+        });
+
+
+
+
+        return;
+
         // We'll instantiate new model in case table name was modified.
         $model = new $this->model;
 

@@ -46,6 +46,21 @@ class LanguageScopeTest extends TestCase
     }
 
     /** @test **/
+    public function it_applies_local_constraints_on_best_ids_query()
+    {
+        $post = factory(Post::class)
+            ->with(1, 'english', 'translations', ['is_published' => 0])
+            ->create();
+
+        $match = Post::where('is_published', 1)
+            ->language(['en', '*'])
+            ->whereMasterKey($post->id)->first();
+
+        $this->assertNotNull($match);
+        $this->assertEquals('da', $post->language_code);
+    }
+
+    /** @test **/
     public function it_applies_global_scopes_on_best_ids_query()
     {
         Post::addGlobalScope(function ($query) {

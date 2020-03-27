@@ -11,8 +11,18 @@ trait HasGetterHooks
      */
     public function applyScopes()
     {
-        $this->invokeBeforeGettingCallbacks();
+        return $this
+            ->invokeBeforeGettingCallbacks()
+            ->applyScopesSilently();
 
+//        return parent::applyScopes();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder|\Makeable\ApiEndpoints\QueryBuilder
+     */
+    public function applyScopesSilently()
+    {
         return parent::applyScopes();
     }
 
@@ -28,6 +38,9 @@ trait HasGetterHooks
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function invokeBeforeGettingCallbacks()
     {
         collect($this->beforeGettingCallbacks)
@@ -37,5 +50,7 @@ trait HasGetterHooks
             });
 
         $this->beforeGettingCallbacks = [];
+
+        return $this;
     }
 }
