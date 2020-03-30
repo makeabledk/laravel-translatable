@@ -3,9 +3,6 @@
 namespace Makeable\LaravelTranslatable\Builder;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Makeable\LaravelTranslatable\Builder\Concerns\HasGetterHooks;
 
 class EloquentBuilder extends Builder

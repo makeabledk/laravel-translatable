@@ -161,7 +161,7 @@ class LanguageScope
             ->newQuery()
             ->withoutGlobalScopes()
             ->from($outerQuery->from)
-            ->mergeWheres(... $this->getCompatibleWheres($outerQuery));
+            ->mergeWheres(...$this->getCompatibleWheres($outerQuery));
     }
 
     /**
