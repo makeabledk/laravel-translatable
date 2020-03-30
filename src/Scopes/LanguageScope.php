@@ -3,6 +3,8 @@
 namespace Makeable\LaravelTranslatable\Scopes;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -25,11 +27,6 @@ class LanguageScope
      * @var string
      */
     protected $primaryKeyName;
-
-    /**
-     * @var int
-     */
-    protected static $selfJoinCount = 0;
 
     /**
      * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
@@ -116,7 +113,7 @@ class LanguageScope
      */
     protected function prioritizedIdsQuery(Collection $languages)
     {
-        $baseQuery = $this->freshModelQueryWithoutOrders();
+        $baseQuery = $this->freshQueryWithOriginalConstraints();
 
         return $languages
             // For each language we'll select all ids with an assigned priority according
@@ -147,101 +144,93 @@ class LanguageScope
     /**
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function freshModelQueryWithoutOrders()
+    protected function freshQueryWithOriginalConstraints()
     {
-        // VARIANT 1
+        // We'll clone the original query to include any applied where-constraints.
+        // However we'll make sure to disable language-scope and apply global
+        // scopes silently to avoid infinite recursion faults.
+        $outerQuery = (clone $this->query)
+            ->withoutLanguageScope()
+            ->applyScopesSilently()
+            ->getQuery();
 
-//        // We'll instantiate new model in case table name was modified.
-//        $model = new $this->model;
-//
-//        // Instantiate a new query, and issue an alias for the query to avoid conflicts
-//        // with outer queries. We'll allow any defined global scopes but disable
-//        // language scope to avoid infinite recursion faults.
-//        $outerQuery = (clone $this->query)
-//            ->withoutLanguageScope()
-//            ->applyScopesSilently()
-//            ->getQuery();
-        ////            ->from($model->getTable().' as '.($alias = 'laravel_translatable_'.static::$selfJoinCount++));
-//
-//        [$wheres, $bindings] = [$outerQuery->wheres, $outerQuery->bindings['where']];
-//
-//        foreach ($wheres as $key => $where) {
-//            if ($where['type'] === 'Column' && Str::before($where['first'], '.') !== Str::before($where['second'], '.')) {
-//                unset($wheres[$key]);
-//                unset($bindings[$key]);
-//            }
-//        }
-//
-//        $query = $model
-//            ->newQuery()
-//            ->withoutLanguageScope()
-//            ->from($outerQuery->from)
-//            ->mergeWheres(
-//                array_values($wheres),
-//                array_values($bindings)
-//            );
-//
-//        return $query;
+        // Instantiate a new query from the original model but this
+        // time without any global scopes. Instead we'll merge
+        // any compatible wheres from the original query.
+        return (new $this->model)
+            ->newQuery()
+            ->withoutGlobalScopes()
+            ->from($outerQuery->from)
+            ->mergeWheres(... $this->getCompatibleWheres($outerQuery));
+    }
 
-        // VARIANT 2
+    /**
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return array
+     */
+    protected function getCompatibleWheres(Builder $query)
+    {
+        [$newWheres, $newBindings] = [[], []];
 
-        // We'll instantiate new model in case table name was modified.
-        $model = new $this->model;
+        foreach ($query->wheres as $key => $where) {
+            $keep = null;
 
-        // Instantiate a new query, and issue an alias for the query to avoid conflicts
-        // with outer queries. We'll allow any defined global scopes but disable
-        // language scope to avoid infinite recursion faults.
-        $query = (clone $this->query)
-            ->withoutLanguageScope();
-//            ->from($model->getTable().' as '.($alias = 'laravel_translatable_'.static::$selfJoinCount++));
+            // Check all known where-fields that may contain references to other table-fields
+            foreach (['column', 'first', 'second'] as $property) {
+                // Where-property not present
+                if (is_null($qualifiedColumn = Arr::get($where, $property))) {
+                    continue;
+                }
 
-        // Set the table name on the model as well to ensure fields are correctly qualified.
-//        $query->getModel()->setTable($alias);
+                // We won't inherent complex queries as these may origin from a relational query.
+                if ($qualifiedColumn instanceof Expression) {
+                    $keep = false;
+                    break;
+                }
 
-        // Remove any wheres targeting another table
-        $query = $query->applyScopesSilently()->getQuery();
+                $queryTable = trim(Str::before($query->from, 'as'));
+                $fieldTable = Str::contains($qualifiedColumn, '.')
+                    ? Str::before($qualifiedColumn, '.')
+                    : null;
 
-//        dump($query->wheres);
+                // If column was qualified with another table, we'll ignore it. It probably origins from a relational query.
+                if ($fieldTable !== null && $fieldTable !== $queryTable) {
+                    $keep = false;
+                    break;
+                }
 
-        $query->wheres = array_filter($query->wheres, function ($where) {
-            // Remove any cross-table wheres as these won't apply to our sub-query.
-            if ($where['type'] === 'Column') {
-                return Str::before($where['first'], '.') === Str::before($where['second'], '.');
+                $keep = $keep ?? true;
             }
 
-            return true;
-        });
+            if ($keep === true) {
+                $newWheres[] = $where;
+                $newBindings = array_merge($newBindings, $this->getBindingsForWhere($where));
+            }
+        }
 
-//        dump($query->wheres);
+        return [$newWheres, $newBindings];
+    }
 
-        // Finally we'll apply scopes and return the underlying query object.
-        // We'll disable any orders that were set by global scopes as
-        // these could corrupt our prioritized language query.
-        return tap($query, function ($query) {
-            $query->orders = [];
-        });
+    /**
+     * Since there is no easy mapping between a where clause and it's original bindings
+     * we'll instead re-add bindings based on the values in the where clause.
+     *
+     * @param array $where
+     * @return array
+     */
+    protected function getBindingsForWhere(array $where)
+    {
+        if (! Str::endsWith($where['type'], 'Raw')) {
+            foreach (['value', 'values'] as $valueType) {
+                if (($value = Arr::get($where, $valueType))) {
+                    // Re-implementation of protected \Illuminate\Database\Query\Builder@cleanBindings
+                    return array_values(array_filter(Arr::wrap($value), function ($binding) {
+                        return ! $binding instanceof Expression;
+                    }));
+                }
+            }
+        }
 
-        return;
-
-        // We'll instantiate new model in case table name was modified.
-        $model = new $this->model;
-
-        // Instantiate a new query, and issue an alias for the query to avoid conflicts
-        // with outer queries. We'll allow any defined global scopes but disable
-        // language scope to avoid infinite recursion faults.
-        $query = $model
-            ->newQuery()
-            ->withoutLanguageScope()
-            ->from($model->getTable().' as '.($alias = 'laravel_translatable_'.static::$selfJoinCount++));
-
-        // Set the table name on the model as well to ensure fields are correctly qualified.
-        $query->getModel()->setTable($alias);
-
-        // Finally we'll apply scopes and return the underlying query object.
-        // We'll disable any orders that were set by global scopes as
-        // these could corrupt our prioritized language query.
-        return tap($query->toBase(), function ($query) {
-            $query->orders = [];
-        });
+        return [];
     }
 }

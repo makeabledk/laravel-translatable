@@ -54,7 +54,8 @@ class LanguageScopeTest extends TestCase
 
         $match = Post::where('is_published', 1)
             ->language(['en', '*'])
-            ->whereMasterKey($post->id)->first();
+            ->whereMasterKey($post->id)
+            ->first();
 
         $this->assertNotNull($match);
         $this->assertEquals('da', $post->language_code);
