@@ -2,7 +2,6 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
-use Domain\Core\ContentType\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Comment;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
@@ -99,7 +98,9 @@ class BelongsToTest extends TestCase
         Translatable::fetchAllLanguagesByDefault();
 
         $this->assertEquals('da', $comment->post()->latest('id')->first()->language_code);
-        $this->assertEquals('da', $comment->load(['post' => function ($q) { $q->orderBy('id'); }])->post->language_code); // first result for eager-loads since no limit on this query
+        $this->assertEquals('da', $comment->load(['post' => function ($q) {
+            $q->orderBy('id');
+        }])->post->language_code); // first result for eager-loads since no limit on this query
 
         Translatable::fetchMasterLanguageByDefault(); // reset
     }
