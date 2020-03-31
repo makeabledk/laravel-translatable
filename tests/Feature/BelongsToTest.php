@@ -2,9 +2,12 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Domain\Core\ContentType\Image;
+use Makeable\LaravelTranslatable\Tests\Stubs\Comment;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
 use Makeable\LaravelTranslatable\Tests\TestCase;
+use Makeable\LaravelTranslatable\Translatable;
 
 class BelongsToTest extends TestCase
 {
@@ -83,5 +86,21 @@ class BelongsToTest extends TestCase
         $this->assertEquals('da', $translation->load(['post' => function ($query) {
             $query->withoutLanguageScope();
         }])->post->language_code);
+    }
+
+    /** @test **/
+    public function regression_it_loads_the_default_language_for_belongs_to_even_on_compatibility_mode()
+    {
+        $comment = factory(Comment::class)
+            ->with(1, 'post')
+            ->with('english', 'post.translations')
+            ->create();
+
+        Translatable::fetchAllLanguagesByDefault();
+
+        $this->assertEquals('da', $comment->post()->latest('id')->first()->language_code);
+        $this->assertEquals('da', $comment->load(['post' => function ($q) { $q->orderBy('id'); }])->post->language_code); // first result for eager-loads since no limit on this query
+
+        Translatable::fetchMasterLanguageByDefault(); // reset
     }
 }

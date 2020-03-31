@@ -88,7 +88,7 @@ trait HasBufferedLanguageScopes
         if (! $this->hasGetterHook) {
             $this->query->beforeGetting(function () {
                 $this->applyRelationLanguageOnQuery();
-            }, 100); // ensure run last
+            }, 100); // ensure run after relational constraints are applied
 
             $this->hasGetterHook = true;
         }

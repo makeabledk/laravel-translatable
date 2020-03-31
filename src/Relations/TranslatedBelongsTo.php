@@ -34,6 +34,8 @@ class TranslatedBelongsTo extends BelongsTo
                     $whereIn = $this->whereInMethod($this->related, $ownerKey);
 
                     $query->{$whereIn}($key, $modelKeys = $this->getEagerModelKeys($models));
+
+                    $this->ensureMasterOnAmbiguousQueries($query);
                 });
             });
     }

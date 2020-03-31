@@ -46,6 +46,8 @@ class TranslatedMorphTo extends MorphTo
             $this->applyRelationLanguageOnQuery($query);
         }
 
+        $this->ensureMasterOnAmbiguousQueries($query);
+
         return $query->get();
     }
 

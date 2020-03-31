@@ -26,11 +26,20 @@ class ApplyLanguageScope implements Scope
     protected static $mode = self::FETCH_MASTER_LANGUAGE_BY_DEFAULT;
 
     /**
-     * @param $mode
+     * @param string $mode
      */
     public static function setMode($mode)
     {
         static::$mode = $mode;
+    }
+
+    /**
+     * @param string $mode
+     * @return bool
+     */
+    public static function modeIs($mode)
+    {
+        return static::$mode === $mode;
     }
 
     /**
