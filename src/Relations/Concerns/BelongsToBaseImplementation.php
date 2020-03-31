@@ -47,7 +47,7 @@ trait BelongsToBaseImplementation
     }
 
     /**
-     * Covers edge-case where present when following conditions are met:
+     * Covers edge-case where present when following conditions are met:.
      *
      * - running in compatibility-mode
      * - parent is translatable
