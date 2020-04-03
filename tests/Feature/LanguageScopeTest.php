@@ -5,7 +5,7 @@ namespace Makeable\LaravelTranslatable\Tests\Feature;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
-class LocaleScopeTest extends TestCase
+class LanguageScopeTest extends TestCase
 {
     /** @test **/
     public function when_using_locale_scope_it_finds_the_best_matching_model()

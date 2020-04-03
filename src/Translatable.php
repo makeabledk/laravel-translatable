@@ -166,7 +166,6 @@ trait Translatable
         return $this;
     }
 
-
     /**
      * Create a new Eloquent query builder for the model.
      *

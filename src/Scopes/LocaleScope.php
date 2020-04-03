@@ -142,7 +142,7 @@ class LocaleScope
                     $this->primaryKeyName,
                     $this->localeName,
                     $this->siblingIdName,
-                    DB::raw("{$priority} as priority")
+                    DB::raw("{$priority} as priority"),
                 ]);
 
                 // Fetch posts of specified locale
