@@ -97,6 +97,16 @@ trait Translatable
         return $query->whereNull(TranslatableField::$master_id);
     }
 
+    /**
+     * @param  Builder  $query
+     * @param  mixed  $key
+     * @return Builder
+     */
+    public function scopeWhereSiblingKey($query, $key)
+    {
+        return $query->where(TranslatableField::$sibling_id, $key);
+    }
+
     // _________________________________________________________________________________________________________________
 
     /**
@@ -113,6 +123,14 @@ trait Translatable
     public function isMaster()
     {
         return $this->getAttribute(TranslatableField::$master_id) === null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSiblingKey()
+    {
+        return $this->getAttribute(TranslatableField::$sibling_id);
     }
 
     /**

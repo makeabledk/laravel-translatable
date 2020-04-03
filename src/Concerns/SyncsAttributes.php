@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 trait SyncsAttributes
 {
@@ -49,13 +50,13 @@ trait SyncsAttributes
         $attributes = [];
 
         foreach ($this->sync ?? [] as $attribute) {
-            if (Arr::has($this->attributes, $attribute) || ! method_exists($this, $attribute)) {
+            if (Arr::has($this->attributes, $attribute) || ! method_exists($this, $relationName = Str::camel($attribute))) {
                 $attributes[] = $attribute;
                 continue;
             }
 
             // If a belongs-to relation was passed, we'll use the underlying foreign keys
-            $relation = $this->$attribute();
+            $relation = $this->$relationName();
 
             if ($relation instanceof BelongsTo) {
                 $attributes[] = method_exists($relation, 'getForeignKey')
@@ -63,8 +64,8 @@ trait SyncsAttributes
                     : $relation->getForeignKeyName();
             }
 
-            if ($this->$attribute() instanceof MorphTo) {
-                $attributes[] = $this->$attribute()->getMorphType();
+            if ($relation instanceof MorphTo) {
+                $attributes[] = $relation->getMorphType();
             }
         }
 
