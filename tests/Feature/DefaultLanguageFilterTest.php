@@ -6,7 +6,7 @@ use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 use Makeable\LaravelTranslatable\Translatable;
 
-class DefaultLocaleFilterTest extends TestCase
+class DefaultLanguageFilterTest extends TestCase
 {
     /** @test **/
     public function it_defaults_to_only_fetch_master()

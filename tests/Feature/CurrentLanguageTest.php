@@ -7,7 +7,7 @@ use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
 use Makeable\LaravelTranslatable\Tests\Stubs\Tag;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
-class CurrentLocaleTest extends TestCase
+class CurrentLanguageTest extends TestCase
 {
     /** @test **/
     public function when_a_local_locale_is_set_on_a_model_it_always_fetches_that_locale()
