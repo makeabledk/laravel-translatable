@@ -5,6 +5,7 @@ namespace Makeable\LaravelTranslatable\Relations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Makeable\LaravelTranslatable\Relations\Concerns\HasOneOrManyImplementation;
+use Makeable\LaravelTranslatable\TranslatableField;
 
 /**
  * This is a special HasMany relation that allows us to
@@ -27,7 +28,7 @@ class VersionsRelation extends HasMany
      */
     public function addConstraints()
     {
-        $this->withoutDefaultLanguageScope()->traitAddConstraints(function ($query) {
+        $this->withoutDefaultLocaleScope()->traitAddConstraints(function ($query) {
             if ($this->withoutSelf) {
                 $query->where($this->localKey, '<>', $this->parent->getKey());
             }
@@ -40,7 +41,7 @@ class VersionsRelation extends HasMany
      */
     public function addEagerConstraints(array $models)
     {
-        $this->withoutDefaultLanguageScope()->traitAddEagerConstraints($models, function ($query) use ($models) {
+        $this->withoutDefaultLocaleScope()->traitAddEagerConstraints($models, function ($query) use ($models) {
             if ($this->withoutSelf) {
                 $query->whereNotIn($this->getLocalKeyName(), $this->getKeys($models, $this->getLocalKeyName()));
             }
@@ -62,7 +63,7 @@ class VersionsRelation extends HasMany
             }
         });
 
-        return new static($related->newQuery(), $model, 'master_key', $model->getKeyName());
+        return new static($related->newQuery(), $model, TranslatableField::$sibling_id, $model->getKeyName());
     }
 
     /**

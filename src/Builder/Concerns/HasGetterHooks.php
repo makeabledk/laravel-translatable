@@ -14,8 +14,6 @@ trait HasGetterHooks
         return $this
             ->invokeBeforeGettingCallbacks()
             ->applyScopesSilently();
-
-//        return parent::applyScopes();
     }
 
     /**

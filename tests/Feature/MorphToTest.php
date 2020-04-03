@@ -27,12 +27,12 @@ class MorphToTest extends TestCase
         $this->assertEquals($postMaster->getMorphClass(), $tagMaster->refresh()->taggable_type);
 
         $this->assertEquals($postMaster->id, $tagTranslation->taggable_id, 'It sets the master id');
-        $this->assertEquals($postTranslation->id, $tagTranslation->taggable->id, 'When no language set, it defaults to current language of child');
-        $this->assertEquals('en', $tagTranslation->taggable->language_code, 'When no language set, it defaults to current language of child');
+        $this->assertEquals($postTranslation->id, $tagTranslation->taggable->id, 'When no locale set, it defaults to current locale of child');
+        $this->assertEquals('en', $tagTranslation->taggable->locale, 'When no locale set, it defaults to current locale of child');
 
         $this->assertEquals(1, $tagTranslation->taggable()->count(), 'It always just matches 1 parent at a time');
-        $this->assertEquals(1, $tagTranslation->taggable()->language('da')->count());
-        $this->assertEquals($postMaster->id, $tagTranslation->taggable()->language('da')->first()->id, 'Another language may be set on the relation which changes the outcome');
+        $this->assertEquals(1, $tagTranslation->taggable()->locale('da')->count());
+        $this->assertEquals($postMaster->id, $tagTranslation->taggable()->locale('da')->first()->id, 'Another locale may be set on the relation which changes the outcome');
     }
 
     /** @test **/
@@ -46,9 +46,9 @@ class MorphToTest extends TestCase
             ->times(2)
             ->create();
 
-        $load = function ($language) {
+        $load = function ($locale) {
             return Post::latest()
-                ->language($language)
+                ->locale($locale)
                 ->with('tags.taggable')
                 ->first()
                 ->toArray();
@@ -57,19 +57,19 @@ class MorphToTest extends TestCase
         $result = $load('en');
 
         $this->assertEquals(1, count(data_get($result, 'tags')));
-        $this->assertEquals('en', data_get($result, 'language_code'));
-        $this->assertEquals('en', data_get($result, 'tags.0.language_code'));
-        $this->assertEquals('en', data_get($result, 'tags.0.taggable.language_code'));
+        $this->assertEquals('en', data_get($result, 'locale'));
+        $this->assertEquals('en', data_get($result, 'tags.0.locale'));
+        $this->assertEquals('en', data_get($result, 'tags.0.taggable.locale'));
 
         $result = $load('sv');
         $this->assertEquals(1, count(data_get($result, 'tags')));
-        $this->assertEquals('sv', data_get($result, 'language_code'));
-        $this->assertEquals('da', data_get($result, 'tags.0.language_code'), 'Fallback to master (da)');
-        $this->assertEquals('sv', data_get($result, 'tags.0.taggable.language_code'));
+        $this->assertEquals('sv', data_get($result, 'locale'));
+        $this->assertEquals('da', data_get($result, 'tags.0.locale'), 'Fallback to master (da)');
+        $this->assertEquals('sv', data_get($result, 'tags.0.taggable.locale'));
     }
 
     /** @test **/
-    public function language_scope_can_be_disabled_for_morph_to()
+    public function locale_scope_can_be_disabled_for_morph_to()
     {
         $user = factory(User::class)->create();
         $user->photo()->associate(
@@ -80,10 +80,10 @@ class MorphToTest extends TestCase
 
         $user->setRelations([]);
 
-        Post::setGlobalLanguage('en');
+        Post::setGlobalLocale('en');
 
-        $this->assertEquals('en', $user->photo()->first()->language_code);
-        $this->assertEquals('da', $user->photo()->withoutLanguageScope()->first()->language_code);
+        $this->assertEquals('en', $user->photo()->first()->locale);
+        $this->assertEquals('da', $user->photo()->withoutLocaleScope()->first()->locale);
     }
 
     /** @test **/
@@ -97,10 +97,10 @@ class MorphToTest extends TestCase
         )->save();
 
         $inEnglish = function ($model) {
-            $model->language('en');
+            $model->locale('en');
         };
 
-        $this->assertEquals('en', data_get($user->load(['photo' => $inEnglish]), 'photo.language_code'));
+        $this->assertEquals('en', data_get($user->load(['photo' => $inEnglish]), 'photo.locale'));
     }
 
     /** @test **/

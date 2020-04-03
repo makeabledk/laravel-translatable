@@ -29,7 +29,7 @@ class TranslatedBelongsToMany extends BelongsToMany
         $query->join($this->table, function (JoinClause $join) {
             $baseTable = $this->related->getTable();
 
-            $relatedKey = $this->getMasterKeyName($this->related, $this->relatedKey);
+            $relatedKey = $this->getModelKeyName($this->related, $this->relatedKey);
 
             $join->on($baseTable.'.'.$relatedKey, '=', $this->getQualifiedRelatedPivotKeyName());
         });
@@ -45,7 +45,7 @@ class TranslatedBelongsToMany extends BelongsToMany
     protected function addWhereConstraints()
     {
         $this
-            ->setDefaultLanguageFromModel($this->parent)
+            ->setDefaultLocaleFromModel($this->parent)
             ->beforeGetting(function ($query) {
                 $query->where($this->getQualifiedForeignPivotKeyName(), '=', $this->getParentKey());
             });
@@ -62,13 +62,13 @@ class TranslatedBelongsToMany extends BelongsToMany
     public function addEagerConstraints(array $models)
     {
         $this
-            ->setDefaultLanguageFromModel(Arr::first($models))
+            ->setDefaultLocaleFromModel(Arr::first($models))
             ->beforeGetting(function ($query) use ($models) {
                 $whereIn = $this->whereInMethod($this->parent, $this->parentKey);
 
                 $query->{$whereIn}(
                     $this->getQualifiedForeignPivotKeyName(),
-                    $this->getMasterKeys($models, $this->parentKey)
+                    $this->getModelKeys($models, $this->parentKey)
                 );
             });
     }
@@ -89,7 +89,7 @@ class TranslatedBelongsToMany extends BelongsToMany
         // children back to their parent using the dictionary and the keys on the
         // the parent models. Then we will return the hydrated models back out.
         foreach ($models as $model) {
-            if (isset($dictionary[$key = $this->getMasterKey($model, null)])) {
+            if (isset($dictionary[$key = $this->getModelKey($model, null)])) {
                 $model->setRelation(
                     $relation,
                     $this->related->newCollection($dictionary[$key])
@@ -105,6 +105,6 @@ class TranslatedBelongsToMany extends BelongsToMany
      */
     protected function getParentKey()
     {
-        return $this->getMasterKey($this->parent, $this->parentKey);
+        return $this->getModelKey($this->parent, $this->parentKey);
     }
 }

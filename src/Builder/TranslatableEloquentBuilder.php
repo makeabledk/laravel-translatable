@@ -2,13 +2,13 @@
 
 namespace Makeable\LaravelTranslatable\Builder;
 
-use Makeable\LaravelTranslatable\Builder\Concerns\HasLanguageScopes;
-use Makeable\LaravelTranslatable\Builder\Concerns\HydratesWithRequestedLanguage;
+use Makeable\LaravelTranslatable\Builder\Concerns\HasLocaleScopes;
+use Makeable\LaravelTranslatable\Builder\Concerns\HydratesWithRequestedLocale;
 
 class TranslatableEloquentBuilder extends EloquentBuilder
 {
-    use HasLanguageScopes,
-        HydratesWithRequestedLanguage;
+    use HasLocaleScopes,
+        HydratesWithRequestedLocale;
 
     public function getScopes()
     {

@@ -26,15 +26,15 @@ class DefaultLanguageFilterTest extends TestCase
     }
 
     /** @test **/
-    public function the_default_language_filter_may_be_disabled_globally()
+    public function the_default_locale_filter_may_be_disabled_globally()
     {
-        Translatable::fetchAllLanguagesByDefault();
+        Translatable::fetchAllLocalesByDefault();
 
         factory(Post::class)->with(1, 'english', 'translations')->create();
 
         $this->assertEquals(2, Post::all()->count());
 
         // Reset
-        Translatable::fetchMasterLanguageByDefault();
+        Translatable::fetchMasterLocaleByDefault();
     }
 }

@@ -14,7 +14,7 @@ trait HasOneOrManyImplementation
      */
     public function getParentKey()
     {
-        return $this->getMasterKey($this->parent, $this->localKey);
+        return $this->getModelKey($this->parent, $this->localKey);
     }
 
     /**
@@ -22,7 +22,7 @@ trait HasOneOrManyImplementation
      */
     public function getParentKeyName()
     {
-        return $this->getMasterKeyName($this->parent, $this->localKey);
+        return $this->getModelKeyName($this->parent, $this->localKey);
     }
 
     /**
@@ -45,9 +45,9 @@ trait HasOneOrManyImplementation
             return;
         }
 
-        // Allow for disabling language scope before applying constraints
+        // Allow for disabling locale scope before applying constraints
         $this
-            ->setDefaultLanguageFromModel($this->parent)
+            ->setDefaultLocaleFromModel($this->parent)
             ->beforeGetting(function ($query) use ($extraConstraint) {
                 $query->where($this->foreignKey, '=', $this->getParentKey());
 
@@ -69,11 +69,11 @@ trait HasOneOrManyImplementation
     public function addEagerConstraints(array $models, callable $extraConstraint = null)
     {
         $this
-            ->setDefaultLanguageFromModel(Arr::first($models))
+            ->setDefaultLocaleFromModel(Arr::first($models))
             ->beforeGetting(function ($query) use ($models, $extraConstraint) {
                 $whereIn = $this->whereInMethod($this->parent, $this->localKey);
 
-                $query->{$whereIn}($this->foreignKey, $this->getMasterKeys($models, $this->localKey));
+                $query->{$whereIn}($this->foreignKey, $this->getModelKeys($models, $this->localKey));
 
                 if ($extraConstraint) {
                     call_user_func($extraConstraint, $query);

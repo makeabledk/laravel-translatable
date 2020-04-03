@@ -15,13 +15,13 @@ class TranslatableTest extends TestCase
             ->andWith(1, 'swedish', 'translations')
             ->create();
 
-        $this->assertEquals(['en', 'sv'], $master->siblings->pluck('language_code')->toArray());
-        $this->assertEquals(['da', 'sv'], $master->getTranslation('en')->siblings->pluck('language_code')->toArray());
+        $this->assertEquals(['en', 'sv'], $master->siblings->pluck('locale')->toArray());
+        $this->assertEquals(['da', 'sv'], $master->getTranslation('en')->siblings->pluck('locale')->toArray());
 
         // Test eager load
         $master->setRelations([])->load('siblings');
 
-        $this->assertEquals(['en', 'sv'], $master->siblings->pluck('language_code')->toArray());
+        $this->assertEquals(['en', 'sv'], $master->siblings->pluck('locale')->toArray());
     }
 
     /** @test * */
@@ -32,8 +32,8 @@ class TranslatableTest extends TestCase
             ->andWith(1, 'swedish', 'translations')
             ->create();
 
-        $this->assertEquals(['en', 'sv'], $master->translations->pluck('language_code')->toArray());
-        $this->assertEquals(['en', 'sv'], $master->getTranslation('en')->translations->pluck('language_code')->toArray());
+        $this->assertEquals(['en', 'sv'], $master->translations->pluck('locale')->toArray());
+        $this->assertEquals(['en', 'sv'], $master->getTranslation('en')->translations->pluck('locale')->toArray());
     }
 
     /** @test * */
@@ -44,8 +44,8 @@ class TranslatableTest extends TestCase
             ->andWith(1, 'swedish', 'translations')
             ->create();
 
-        $this->assertEquals(['da', 'en', 'sv'], $master->versions->pluck('language_code')->toArray());
-        $this->assertEquals(['da', 'en', 'sv'], $master->getTranslation('en')->versions->pluck('language_code')->toArray());
+        $this->assertEquals(['da', 'en', 'sv'], $master->versions->pluck('locale')->toArray());
+        $this->assertEquals(['da', 'en', 'sv'], $master->getTranslation('en')->versions->pluck('locale')->toArray());
     }
 
     /** @test **/
@@ -65,19 +65,19 @@ class TranslatableTest extends TestCase
     }
 
     /** @test **/
-    public function it_sets_the_master_key_attribute_on_saving()
+    public function it_sets_the_sibling_id_attribute_on_saving()
     {
-        // When master: master_id = NULL, master_key = id
+        // When master: master_id = NULL, sibling_id = id
         $master = factory(Post::class)->create();
         $this->assertNull($master->master_id);
-        $this->assertEquals($master->id, $master->master_key);
+        $this->assertEquals($master->id, $master->sibling_id);
 
-        // When translation: master_id = master.id, master_key = master.id
+        // When translation: master_id = master.id, sibling_id = master.id
         $translation = factory(Post::class)->create(['master_id' => $master->id]);
-        $this->assertEquals($master->id, $translation->master_key);
+        $this->assertEquals($master->id, $translation->sibling_id);
 
         // Check updating
         $translation->update(['master_id' => null]);
-        $this->assertEquals($translation->id, $translation->master_key);
+        $this->assertEquals($translation->id, $translation->sibling_id);
     }
 }

@@ -5,28 +5,28 @@ namespace Makeable\LaravelTranslatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
-use Makeable\LaravelTranslatable\Concerns\HasLanguageQueryPreferences;
+use Makeable\LaravelTranslatable\Concerns\HasLocaleQueryPreferences;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
 use Makeable\LaravelTranslatable\Relations\VersionsRelation;
-use Makeable\LaravelTranslatable\Scopes\ApplyLanguageScope;
+use Makeable\LaravelTranslatable\Scopes\ApplyLocaleScope;
 
 trait Translatable
 {
-    use HasLanguageQueryPreferences,
+    use HasLocaleQueryPreferences,
         SyncsAttributes,
         TranslatableRelationships;
 
     /**
      * @var null|array
      */
-    public $requestedLanguage;
+    public $requestedLocale;
 
     /**
      * Register observer on model.
      */
     public static function bootTranslatable()
     {
-        static::addGlobalScope(new ApplyLanguageScope);
+        static::addGlobalScope(new ApplyLocaleScope);
         static::observe(TranslatableObserver::class);
     }
 
@@ -35,7 +35,7 @@ trait Translatable
      */
     public function master()
     {
-        return $this->belongsTo(get_class($this), 'master_id')->withoutLanguageScope();
+        return $this->belongsTo(get_class($this), TranslatableField::$master_id)->withoutLocaleScope();
     }
 
     /**
@@ -49,7 +49,7 @@ trait Translatable
      */
     public function translations()
     {
-        return $this->hasMany(static::class, 'master_id')->withoutDefaultLanguageScope();
+        return $this->hasMany(static::class, TranslatableField::$master_id)->withoutDefaultLocaleScope();
     }
 
     /**
@@ -94,7 +94,7 @@ trait Translatable
      */
     public function scopeMaster($query)
     {
-        return $query->whereNull('master_id');
+        return $query->whereNull(TranslatableField::$master_id);
     }
 
     // _________________________________________________________________________________________________________________
@@ -108,67 +108,58 @@ trait Translatable
     }
 
     /**
-     * @return int
-     */
-    public function getMasterKey()
-    {
-        return $this->master_key;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMasterKeyName()
-    {
-        return 'master_id';
-    }
-
-    /**
      * @return bool
      */
     public function isMaster()
     {
-        return $this->getAttribute('master_id') === null;
+        return $this->getAttribute(TranslatableField::$master_id) === null;
     }
 
     /**
-     * @param string $language
+     * @param string $locale
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function getTranslation($language)
+    public function getTranslation($locale)
     {
-        return ($language === $this->language_code)
+        return ($locale === $this->getAttribute(TranslatableField::$locale))
             ? $this
-            : $this->siblings->firstWhere('language_code', $language);
+            : $this->siblings->firstWhere(TranslatableField::$locale, $locale);
     }
 
     /**
-     * @param $language
+     * @param string $locale
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function getTranslationOrNew($language)
+    public function getTranslationOrNew($locale)
     {
-        return $this->getTranslation($language)
-            ?: (new static)->forceFill(['language_code' => $language])->master()->associate($this->getMaster());
+        return $this->getTranslation($locale)
+            ?: (new static)->forceFill([TranslatableField::$locale => $locale])->master()->associate($this->getMaster());
     }
 
     /**
-     * Ensure that the denormalized master_key is up to date. If it
+     * Ensure that the denormalized sibling_id is up to date. If it
      * needs update we'll do it silently to ensure it does not
      * trigger further syncing attempts with siblings.
      *
      * @return $this
      */
-    public function refreshMasterKey()
+    public function refreshSiblingId()
     {
-        if ($this->master_key !== ($masterKey = $this->master_id ?? $this->getKey())) {
-            static::withoutEvents(function () use ($masterKey) {
+        [$masterIdField, $siblingIdField] = [
+            TranslatableField::$master_id,
+            TranslatableField::$sibling_id,
+        ];
+
+        $freshSiblingId = $this->{$masterIdField} ?? $this->getKey();
+
+        if ($this->{$siblingIdField} !== $freshSiblingId) {
+            static::withoutEvents(function () use ($siblingIdField, $freshSiblingId) {
                 $this->getConnection()->table($this->getTable())
                     ->where($this->getKeyName(), $this->getKey())
-                    ->update(['master_key' => $masterKey]);
+                    ->update([$siblingIdField => $freshSiblingId]);
 
-                $this->master_key = $masterKey;
-                $this->syncOriginalAttribute('master_key');
+                $this->{$siblingIdField} = $freshSiblingId;
+                $this->syncOriginalAttribute($siblingIdField);
             });
         }
 

@@ -40,10 +40,10 @@ class TranslatedMorphTo extends MorphTo
             $instance->getTable().'.'.$this->ownerKey, $this->gatherKeysByType($type)
         );
 
-        // Add default language
+        // Add default locale
         if ($this->isTranslatableContext($instance)) {
-            $this->setDefaultLanguageFromModel(Arr::first(Arr::first($this->dictionary[$type])));
-            $this->applyRelationLanguageOnQuery($query);
+            $this->setDefaultLocaleFromModel(Arr::first(Arr::first($this->dictionary[$type])));
+            $this->applyRelationLocaleOnQuery($query);
         }
 
         $this->ensureMasterOnAmbiguousQueries($query);
@@ -97,7 +97,7 @@ class TranslatedMorphTo extends MorphTo
             $this->originalOwnerKey = $this->ownerKey ?? false;
         }
 
-        $this->ownerKey = $this->getMasterKeyName(
+        $this->ownerKey = $this->getModelKeyName(
             ($model instanceof Model ? $model : $this->createModelByType($model)),
             $this->originalOwnerKey ?: null
         );

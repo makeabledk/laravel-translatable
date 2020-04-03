@@ -10,40 +10,40 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 class CurrentLanguageTest extends TestCase
 {
     /** @test **/
-    public function when_a_local_language_is_set_on_a_model_it_always_fetches_that_language()
+    public function when_a_local_locale_is_set_on_a_model_it_always_fetches_that_locale()
     {
         factory(Post::class)->with(1, 'english', 'translations')->create();
 
-        Post::setLanguage('en');
+        Post::setLocale('en');
 
-        $this->assertEquals('en', Post::getCurrentLanguage());
+        $this->assertEquals('en', Post::getCurrentLocale());
         $this->assertEquals(1, ($posts = Post::all())->count());
-        $this->assertEquals('en', $posts->first()->language_code);
+        $this->assertEquals('en', $posts->first()->locale);
     }
 
     /** @test **/
-    public function when_a_global_language_is_set_it_always_fetches_that_language_across_models()
+    public function when_a_global_locale_is_set_it_always_fetches_that_locale_across_models()
     {
         factory(Post::class)->with(1, 'english', 'translations')->create();
 
-        Tag::setGlobalLanguage('en'); // Can be any translatable model
+        Tag::setGlobalLocale('en'); // Can be any translatable model
 
-        $this->assertEquals('en', Post::getCurrentLanguage());
+        $this->assertEquals('en', Post::getCurrentLocale());
         $this->assertEquals(1, ($posts = Post::all())->count());
-        $this->assertEquals('en', $posts->first()->language_code);
+        $this->assertEquals('en', $posts->first()->locale);
     }
 
     /** @test **/
-    public function regression_it_does_not_apply_current_language_when_disabled_on_relation()
+    public function regression_it_does_not_apply_current_locale_when_disabled_on_relation()
     {
         $post = factory(Post::class)
             ->with(1, 'meta')
             ->with(1, 'english', 'meta.translations')
             ->create();
 
-        PostMeta::setGlobalLanguage('en');
+        PostMeta::setGlobalLocale('en');
 
-        $this->assertEquals('en', $post->meta()->first()->language_code);
-        $this->assertEquals('da', $post->meta()->withoutLanguageScope()->first()->language_code);
+        $this->assertEquals('en', $post->meta()->first()->locale);
+        $this->assertEquals('da', $post->meta()->withoutLocaleScope()->first()->locale);
     }
 }

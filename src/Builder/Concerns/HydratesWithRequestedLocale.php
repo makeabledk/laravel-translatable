@@ -2,7 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Builder\Concerns;
 
-trait HydratesWithRequestedLanguage
+trait HydratesWithRequestedLocale
 {
     /**
      * @param  array  $items
@@ -14,11 +14,11 @@ trait HydratesWithRequestedLanguage
 
         $models = $instance->newCollection(array_map(function ($item) use ($instance) {
             return tap($instance->newFromBuilder($item), function ($model) {
-                $model->requestedLanguage = $this->getQueryLanguageHistory();
+                $model->requestedLocale = $this->getLocaleQueryHistory();
             });
         }, $items));
 
-        $this->clearQueryLanguageHistory();
+        $this->clearLocaleQueryHistory();
 
         return $models;
     }

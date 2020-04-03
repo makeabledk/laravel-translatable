@@ -23,7 +23,7 @@ class TranslatableObserver
      */
     public function created(Model $model)
     {
-        $model->refreshMasterKey();
+        $model->refreshSiblingId();
     }
 
     /**
@@ -33,7 +33,10 @@ class TranslatableObserver
     {
         // In the rare event that we change id or master_id,
         // we'll ensure that master key is up-to-date.
-        $model->master_key = $model->master_id ?? $model->id;
+        $model->setAttribute(
+            TranslatableField::$sibling_id,
+            $model->getAttribute(TranslatableField::$master_id) ?? $model->getKey()
+        );
     }
 
     /**

@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Makeable\LaravelTranslatable\Builder\EloquentBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;
+use Makeable\LaravelTranslatable\TranslatableField;
 
-class LanguageScope
+class LocaleScope
 {
     /**
      * @var EloquentBuilder
@@ -29,14 +30,29 @@ class LanguageScope
     protected $primaryKeyName;
 
     /**
+     * @var string
+     */
+    protected $masterIdName;
+
+    /**
+     * @var string
+     */
+    protected $siblingIdName;
+
+    /**
+     * @var string
+     */
+    protected $localeName;
+
+    /**
      * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
-     * @param  string|array  $languages
+     * @param  string|array  $locales
      * @param  bool|null  $fallbackMaster
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public static function apply($query, $languages, $fallbackMaster = false)
+    public static function apply($query, $locales, $fallbackMaster = false)
     {
-        return call_user_func(new static($query), $languages, $fallbackMaster);
+        return call_user_func(new static($query), $locales, $fallbackMaster);
     }
 
     /**
@@ -47,89 +63,99 @@ class LanguageScope
         $this->query = $query;
         $this->model = ModelChecker::ensureTranslatable($query->getModel());
         $this->primaryKeyName = $this->model->getKeyName();
+        $this->localeName = TranslatableField::$locale;
+        $this->masterIdName = TranslatableField::$master_id;
+        $this->siblingIdName = TranslatableField::$sibling_id;
     }
 
     /**
-     * @param  array  $languages
+     * @param  array  $locales
      * @param  bool  $fallbackMaster
      * @return  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
      */
-    public function __invoke($languages, $fallbackMaster = false)
+    public function __invoke($locales, $fallbackMaster = false)
     {
         return $this->query->whereIn(
             $this->model->getQualifiedKeyName(),
-            $this->bestModelIdsQuery(static::getNormalizedLanguages($languages, $fallbackMaster))
+            $this->bestModelIdsQuery(static::getNormalizedLocales($locales, $fallbackMaster))
         );
     }
 
     /**
-     * @param  string|array  $languages
+     * @param  string|array  $locales
      * @param  bool|null  $fallbackMaster
      * @return \Illuminate\Support\Collection|mixed
      */
-    public static function getNormalizedLanguages($languages, $fallbackMaster)
+    public static function getNormalizedLocales($locales, $fallbackMaster)
     {
-        return collect($languages)
+        return collect($locales)
             ->values()
-            ->when($fallbackMaster, function (Collection $languages) {
+            ->when($fallbackMaster, function (Collection $locales) {
                 // Push an * as a last-priority wildcard to indicate master fallback
-                return $languages->push('*');
+                return $locales->push('*');
             })
-            ->filter(function ($language) {
-                // Do some simple validation so we can inline language in SQL later on
-                return preg_match('/^[a-zA-Z\*]{1,5}/', $language);
+            ->filter(function ($locale) {
+                // Do some simple validation so we can inline locale in SQL later on
+                return preg_match('/^[a-zA-Z-_\*]{1,5}$/', $locale);
             })
             ->unique();
     }
 
     /**
-     * @param  \Illuminate\Support\Collection  $languages
+     * @param  \Illuminate\Support\Collection  $locales
      * @return string
      */
-    protected function bestModelIdsQuery(Collection $languages)
+    protected function bestModelIdsQuery(Collection $locales)
     {
         // Reset previous variables that may interfere with new results.
-        $this->query->getQuery()->getConnection()->select('SELECT NULL, NULL INTO @prevMasterKey, @priority');
+        $this->query->getQuery()->getConnection()->select('SELECT NULL, NULL INTO @prevSiblingId, @priority');
 
-        return function ($query) use ($languages) {
+        return function ($query) use ($locales) {
             return $query
                 ->select($this->primaryKeyName)
-                ->fromSub(function (Builder $query) use ($languages) {
+                ->fromSub(function (Builder $query) use ($locales) {
                     return $query
                         ->select(
                             $this->primaryKeyName,
-                            DB::raw('@priority := IF(@prevMasterKey <> master_key OR @prevMasterKey IS NULL, 1, @priority + 1) AS priority'),
-                            DB::raw('@prevMasterKey:=master_key as master_key, language_code')
+                            DB::raw("@priority := IF(@prevSiblingId <> {$this->siblingIdName} OR @prevSiblingId IS NULL, 1, @priority + 1) AS priority"),
+                            DB::raw("@prevSiblingId:={$this->siblingIdName} as {$this->siblingIdName}, {$this->localeName}")
                         )
-                        ->fromSub($this->prioritizedIdsQuery($languages), 'prioritized_query')
+                        ->fromSub($this->prioritizedIdsQuery($locales), 'prioritized_query')
                         ->having('priority', 1);
                 }, 'best_ids_query');
         };
     }
 
     /**
-     * @param  \Illuminate\Support\Collection  $languages
+     * @param  \Illuminate\Support\Collection  $locales
      * @return \Closure
      */
-    protected function prioritizedIdsQuery(Collection $languages)
+    protected function prioritizedIdsQuery(Collection $locales)
     {
         $baseQuery = $this->freshQueryWithOriginalConstraints();
 
-        return $languages
-            // For each language we'll select all ids with an assigned priority according
-            // to the order of the language array, etc: [0 => 'da', 1 => 'en', ...]
-            ->map(function ($language, $priority) use ($baseQuery, $languages) {
-                $query = (clone $baseQuery)->select([$this->primaryKeyName, 'language_code', 'master_key', DB::raw("{$priority} as priority")]);
+        return $locales
+            // For each locale we'll select all ids with an assigned priority according
+            // to the order of the locale array, etc: [0 => 'da', 1 => 'en', ...]
+            ->map(function ($locale, $priority) use ($baseQuery, $locales) {
+                $query = (clone $baseQuery)->select([
+                    $this->primaryKeyName,
+                    $this->localeName,
+                    $this->siblingIdName,
+                    DB::raw("{$priority} as priority"),
+                ]);
 
-                // Fetch posts of specified language
-                if ($language !== '*') {
-                    return $query->where('language_code', $language);
+                // Fetch posts of specified locale
+                if ($locale !== '*') {
+                    return $query->where($this->localeName, $locale);
                 }
 
-                // If master fallback: get master posts except the for the languages we've already fetched
-                return $query->whereNotIn('language_code', $languages)->whereNull('master_id');
+                // If master fallback: get master posts except the for the locales we've already fetched
+                return $query
+                    ->whereNotIn($this->localeName, $locales)
+                    ->whereNull(TranslatableField::$master_id);
             })
-            // Now union the language queries
+            // Now union the locale queries
             ->pipe(function (Collection $queries) {
                 $query = $queries->shift();
 
@@ -137,7 +163,7 @@ class LanguageScope
                     $query->union($unionQuery);
                 }
 
-                return $query->orderBy('master_key')->orderBy('priority');
+                return $query->orderBy($this->siblingIdName)->orderBy('priority');
             });
     }
 
@@ -147,10 +173,10 @@ class LanguageScope
     protected function freshQueryWithOriginalConstraints()
     {
         // We'll clone the original query to include any applied where-constraints.
-        // However we'll make sure to disable language-scope and apply global
+        // However we'll make sure to disable locale-scope and apply global
         // scopes silently to avoid infinite recursion faults.
         $outerQuery = (clone $this->query)
-            ->withoutLanguageScope()
+            ->withoutLocaleScope()
             ->applyScopesSilently()
             ->getQuery();
 
