@@ -45,7 +45,7 @@ class TranslatedBelongsToMany extends BelongsToMany
     protected function addWhereConstraints()
     {
         $this
-            ->setDefaultLanguageFromModel($this->parent)
+            ->setDefaultLocaleFromModel($this->parent)
             ->beforeGetting(function ($query) {
                 $query->where($this->getQualifiedForeignPivotKeyName(), '=', $this->getParentKey());
             });
@@ -62,7 +62,7 @@ class TranslatedBelongsToMany extends BelongsToMany
     public function addEagerConstraints(array $models)
     {
         $this
-            ->setDefaultLanguageFromModel(Arr::first($models))
+            ->setDefaultLocaleFromModel(Arr::first($models))
             ->beforeGetting(function ($query) use ($models) {
                 $whereIn = $this->whereInMethod($this->parent, $this->parentKey);
 

@@ -22,7 +22,7 @@ trait BelongsToBaseImplementation
         }
 
         $this
-            ->setDefaultLanguageFromModel($this->child)
+            ->setDefaultLocaleFromModel($this->child)
             ->beforeGetting(function ($query) {
                 // Ie. select * from posts WHERE posts.id = {$meta->post_id}
                 $table = $this->related->getTable();
@@ -59,9 +59,9 @@ trait BelongsToBaseImplementation
      */
     protected function ensureMasterOnAmbiguousQueries($query)
     {
-        if (! $this->pendingDefaultLanguage
+        if (! $this->pendingDefaultLocale
             && ModelChecker::checkTranslatable($query->getModel())
-            && ApplyLocaleScope::modeIs(ApplyLocaleScope::FETCH_ALL_LANGUAGES_BY_DEFAULT)) {
+            && ApplyLocaleScope::modeIs(ApplyLocaleScope::FETCH_ALL_LOCALES_BY_DEFAULT)) {
             $query->whereNull(TranslatableField::$master_id);
         }
     }

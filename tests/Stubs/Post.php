@@ -35,7 +35,7 @@ class Post extends Model
 
     public function directMeta()
     {
-        return $this->hasMany(PostMeta::class)->withoutLanguageScope();
+        return $this->hasMany(PostMeta::class)->withoutLocaleScope();
     }
 
     public function images()

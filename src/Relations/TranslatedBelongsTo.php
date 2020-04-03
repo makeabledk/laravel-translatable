@@ -21,7 +21,7 @@ class TranslatedBelongsTo extends BelongsTo
     public function addEagerConstraints(array $models)
     {
         $this
-            ->setDefaultLanguageFromModel(Arr::first($models))
+            ->setDefaultLocaleFromModel(Arr::first($models))
             ->beforeGetting(function ($query) use ($models) {
                 $query->where(function ($query) use ($models) {
                     // We'll grab the primary key name of the related models since it could be set to

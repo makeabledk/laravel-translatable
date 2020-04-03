@@ -20,7 +20,7 @@ class BelongsToManyTest extends TestCase
             ->images()->attach($image = factory(Image::class)->create());
 
         $image = Image::whereKey($image->id)->with(['posts' => function ($query) {
-            $query->language('sv');
+            $query->locale('sv');
         }])->first();
 
         $this->assertEquals(1, $image->posts->count());
@@ -28,7 +28,7 @@ class BelongsToManyTest extends TestCase
     }
 
     /** @test * */
-    public function it_defaults_to_fetch_the_best_matching_language_to_the_parent()
+    public function it_defaults_to_fetch_the_best_matching_locale_to_the_parent()
     {
         $masterPost = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -40,13 +40,13 @@ class BelongsToManyTest extends TestCase
             ->last();
 
         $this->assertEquals(1, $masterPost->categories()->count(), 'It only matches a single translation');
-        $this->assertEquals('da', $masterPost->categories()->first()->locale, 'Master version will be loaded unless a specific language is requested');
+        $this->assertEquals('da', $masterPost->categories()->first()->locale, 'Master version will be loaded unless a specific locale is requested');
 
         $this->assertEquals(1, $masterPost->getTranslation('en')->categories()->count(), 'It only matches a single translation');
-        $this->assertEquals('en', $masterPost->getTranslation('en')->categories()->first()->locale, 'It fetches the same language as the parent when available');
+        $this->assertEquals('en', $masterPost->getTranslation('en')->categories()->first()->locale, 'It fetches the same locale as the parent when available');
 
         $this->assertEquals(1, $masterPost->getTranslation('sv')->categories()->count(), 'It only matches a single translation');
-        $this->assertEquals('da', $masterPost->getTranslation('sv')->categories()->first()->locale, 'It defaults to master when parent language is not available');
+        $this->assertEquals('da', $masterPost->getTranslation('sv')->categories()->first()->locale, 'It defaults to master when parent locale is not available');
     }
 
     /** @test **/
@@ -73,15 +73,15 @@ class BelongsToManyTest extends TestCase
             ->times(2)
             ->create();
 
-        $load = function ($language) {
+        $load = function ($locale) {
             return Category::latest()
-                ->language($language)
+                ->locale($locale)
                 ->with('posts.categories.posts')
                 ->first()
                 ->toArray();
         };
 
-        // The language should be inherited all the way down
+        // The locale should be inherited all the way down
         $result = $load('en');
 
         $this->assertEquals(1, count(data_get($result, 'posts')));
@@ -92,9 +92,9 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals('en', data_get($result, 'posts.0.categories.0.locale'));
         $this->assertEquals('en', data_get($result, 'posts.0.categories.0.posts.0.locale'));
 
-        // When a child doesn't exist in the requested language, it will default to master.
+        // When a child doesn't exist in the requested locale, it will default to master.
         // When nesting further relation, it will keep trying the originally requested
-        // language, and only use master on the individual models where necessary.
+        // locale, and only use master on the individual models where necessary.
         $result = $load('sv');
 
         $this->assertEquals(1, count(data_get($result, 'posts')));
@@ -116,12 +116,12 @@ class BelongsToManyTest extends TestCase
 
         // Relation
         $this->assertEquals(2, $translation->categories()->count());
-        $this->assertEquals(0, $translation->categories()->withoutLanguageScope()->count());
+        $this->assertEquals(0, $translation->categories()->withoutLocaleScope()->count());
 
         // Eager load
         $this->assertEquals(2, $translation->load('categories')->categories->count());
         $this->assertEquals(0, $translation->load(['categories' => function ($query) {
-            $query->withoutLanguageScope();
+            $query->withoutLocaleScope();
 
             // Let's also check if the query actually returns any results, but just didn't
             // match on model hydration!
@@ -161,12 +161,12 @@ class BelongsToManyTest extends TestCase
 //            ->create();
 //
 //        $this->assertEquals(1, Post::whereKey($translation->id)->has('meta', '>=', 2)->get()->count());
-//        $this->assertEquals(1, Post::whereKey($translation->id)->whereHas('meta', $this->ofLanguage('en'))->get()->count());
-//        $this->assertEquals(0, Post::whereKey($translation->id)->whereHas('meta', $this->ofLanguage('sv'))->get()->count());
+//        $this->assertEquals(1, Post::whereKey($translation->id)->whereHas('meta', $this->ofLocale('en'))->get()->count());
+//        $this->assertEquals(0, Post::whereKey($translation->id)->whereHas('meta', $this->ofLocale('sv'))->get()->count());
 //
 //        // On self (separate implementation)
-//        $this->assertEquals(1, Post::whereKey($translation->id)->whereHas('translations', $this->ofLanguage('en'))->get()->count());
-//        $this->assertEquals(0, Post::whereKey($translation->id)->whereHas('translations', $this->ofLanguage('sv'))->get()->count());
+//        $this->assertEquals(1, Post::whereKey($translation->id)->whereHas('translations', $this->ofLocale('en'))->get()->count());
+//        $this->assertEquals(0, Post::whereKey($translation->id)->whereHas('translations', $this->ofLocale('sv'))->get()->count());
 //    }
 //
 //    /** @test * */

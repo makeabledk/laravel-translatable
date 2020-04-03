@@ -5,14 +5,14 @@ namespace Makeable\LaravelTranslatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
-use Makeable\LaravelTranslatable\Concerns\HasLanguageQueryPreferences;
+use Makeable\LaravelTranslatable\Concerns\HasLocaleQueryPreferences;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
 use Makeable\LaravelTranslatable\Relations\VersionsRelation;
 use Makeable\LaravelTranslatable\Scopes\ApplyLocaleScope;
 
 trait Translatable
 {
-    use HasLanguageQueryPreferences,
+    use HasLocaleQueryPreferences,
         SyncsAttributes,
         TranslatableRelationships;
 
@@ -35,7 +35,7 @@ trait Translatable
      */
     public function master()
     {
-        return $this->belongsTo(get_class($this), TranslatableField::$master_id)->withoutLanguageScope();
+        return $this->belongsTo(get_class($this), TranslatableField::$master_id)->withoutLocaleScope();
     }
 
     /**
@@ -49,7 +49,7 @@ trait Translatable
      */
     public function translations()
     {
-        return $this->hasMany(static::class, TranslatableField::$master_id)->withoutDefaultLanguageScope();
+        return $this->hasMany(static::class, TranslatableField::$master_id)->withoutDefaultLocaleScope();
     }
 
     /**

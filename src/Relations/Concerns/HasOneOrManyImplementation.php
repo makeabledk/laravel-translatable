@@ -45,9 +45,9 @@ trait HasOneOrManyImplementation
             return;
         }
 
-        // Allow for disabling language scope before applying constraints
+        // Allow for disabling locale scope before applying constraints
         $this
-            ->setDefaultLanguageFromModel($this->parent)
+            ->setDefaultLocaleFromModel($this->parent)
             ->beforeGetting(function ($query) use ($extraConstraint) {
                 $query->where($this->foreignKey, '=', $this->getParentKey());
 
@@ -69,7 +69,7 @@ trait HasOneOrManyImplementation
     public function addEagerConstraints(array $models, callable $extraConstraint = null)
     {
         $this
-            ->setDefaultLanguageFromModel(Arr::first($models))
+            ->setDefaultLocaleFromModel(Arr::first($models))
             ->beforeGetting(function ($query) use ($models, $extraConstraint) {
                 $whereIn = $this->whereInMethod($this->parent, $this->localKey);
 

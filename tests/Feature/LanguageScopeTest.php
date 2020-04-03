@@ -5,14 +5,14 @@ namespace Makeable\LaravelTranslatable\Tests\Feature;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
-class LanguageScopeTest extends TestCase
+class LocaleScopeTest extends TestCase
 {
     /** @test **/
     public function when_using_locale_scope_it_finds_the_best_matching_model()
     {
         $this->seedTranslatedModels();
 
-        $posts = Post::language(['sv', 'en'])->get();
+        $posts = Post::locale(['sv', 'en'])->get();
 
         $this->assertEquals(2, $posts->count());
 
@@ -27,11 +27,11 @@ class LanguageScopeTest extends TestCase
     }
 
     /** @test **/
-    public function it_can_fallback_to_master_when_no_language_matches()
+    public function it_can_fallback_to_master_when_no_locale_matches()
     {
         $this->seedTranslatedModels();
 
-        $posts = Post::language(['sv', 'en'], true)->get();
+        $posts = Post::locale(['sv', 'en'], true)->get();
 
         $this->assertEquals(3, $posts->count());
 
@@ -42,7 +42,7 @@ class LanguageScopeTest extends TestCase
         $this->assertEquals('sv', $sv->locale);
 
         // This should give us the exact same thing
-        $this->assertEquals(3, Post::language(['sv', 'en', '*'])->get()->count());
+        $this->assertEquals(3, Post::locale(['sv', 'en', '*'])->get()->count());
     }
 
     /** @test **/
@@ -53,7 +53,7 @@ class LanguageScopeTest extends TestCase
             ->create();
 
         $match = Post::where('is_published', 1)
-            ->language(['en', '*'])
+            ->locale(['en', '*'])
             ->whereSiblingId($post->id)
             ->first();
 
@@ -72,7 +72,7 @@ class LanguageScopeTest extends TestCase
             ->with(1, 'english', 'translations', ['is_published' => 0])
             ->create();
 
-        $match = Post::language(['en', '*'])->whereSiblingId($post->id)->first();
+        $match = Post::locale(['en', '*'])->whereSiblingId($post->id)->first();
 
         $this->assertNotNull($match);
         $this->assertEquals('da', $post->locale);

@@ -46,13 +46,13 @@ class LocaleScope
 
     /**
      * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
-     * @param  string|array  $languages
+     * @param  string|array  $locales
      * @param  bool|null  $fallbackMaster
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public static function apply($query, $languages, $fallbackMaster = false)
+    public static function apply($query, $locales, $fallbackMaster = false)
     {
-        return call_user_func(new static($query), $languages, $fallbackMaster);
+        return call_user_func(new static($query), $locales, $fallbackMaster);
     }
 
     /**
@@ -69,34 +69,34 @@ class LocaleScope
     }
 
     /**
-     * @param  array  $languages
+     * @param  array  $locales
      * @param  bool  $fallbackMaster
      * @return  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
      */
-    public function __invoke($languages, $fallbackMaster = false)
+    public function __invoke($locales, $fallbackMaster = false)
     {
         return $this->query->whereIn(
             $this->model->getQualifiedKeyName(),
-            $this->bestModelIdsQuery(static::getNormalizedLanguages($languages, $fallbackMaster))
+            $this->bestModelIdsQuery(static::getNormalizedLocales($locales, $fallbackMaster))
         );
     }
 
     /**
-     * @param  string|array  $languages
+     * @param  string|array  $locales
      * @param  bool|null  $fallbackMaster
      * @return \Illuminate\Support\Collection|mixed
      */
-    public static function getNormalizedLanguages($languages, $fallbackMaster)
+    public static function getNormalizedLocales($locales, $fallbackMaster)
     {
-        return collect($languages)
+        return collect($locales)
             ->values()
-            ->when($fallbackMaster, function (Collection $languages) {
+            ->when($fallbackMaster, function (Collection $locales) {
                 // Push an * as a last-priority wildcard to indicate master fallback
-                return $languages->push('*');
+                return $locales->push('*');
             })
-            ->filter(function ($language) {
-                // Do some simple validation so we can inline language in SQL later on
-                return preg_match('/^[a-zA-Z\*]{1,5}/', $language);
+            ->filter(function ($locale) {
+                // Do some simple validation so we can inline locale in SQL later on
+                return preg_match('/^[a-zA-Z-_\*]{1,5}$/', $locale);
             })
             ->unique();
     }
@@ -176,7 +176,7 @@ class LocaleScope
         // However we'll make sure to disable locale-scope and apply global
         // scopes silently to avoid infinite recursion faults.
         $outerQuery = (clone $this->query)
-            ->withoutLanguageScope()
+            ->withoutLocaleScope()
             ->applyScopesSilently()
             ->getQuery();
 

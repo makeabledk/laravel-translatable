@@ -28,7 +28,7 @@ class VersionsRelation extends HasMany
      */
     public function addConstraints()
     {
-        $this->withoutDefaultLanguageScope()->traitAddConstraints(function ($query) {
+        $this->withoutDefaultLocaleScope()->traitAddConstraints(function ($query) {
             if ($this->withoutSelf) {
                 $query->where($this->localKey, '<>', $this->parent->getKey());
             }
@@ -41,7 +41,7 @@ class VersionsRelation extends HasMany
      */
     public function addEagerConstraints(array $models)
     {
-        $this->withoutDefaultLanguageScope()->traitAddEagerConstraints($models, function ($query) use ($models) {
+        $this->withoutDefaultLocaleScope()->traitAddEagerConstraints($models, function ($query) use ($models) {
             if ($this->withoutSelf) {
                 $query->whereNotIn($this->getLocalKeyName(), $this->getKeys($models, $this->getLocalKeyName()));
             }

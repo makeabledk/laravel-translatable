@@ -38,16 +38,16 @@ trait HasLocaleScopes
     }
 
     /**
-     * @param string|array $languages
+     * @param string|array $locales
      * @param bool $fallbackMaster
      * @return $this
      */
-    public function language($languages, $fallbackMaster = false)
+    public function locale($locales, $fallbackMaster = false)
     {
-        LocaleScope::apply($this, $languages, $fallbackMaster);
+        LocaleScope::apply($this, $locales, $fallbackMaster);
 
         $this->setLocaleQueryHistory(
-            LocaleScope::getNormalizedLanguages($languages, $fallbackMaster)->values()->toArray()
+            LocaleScope::getNormalizedLocales($locales, $fallbackMaster)->values()->toArray()
         );
 
         $this->localeQueryStatus('locale_scope_applied', true);
@@ -58,7 +58,7 @@ trait HasLocaleScopes
     /**
      * @return $this
      */
-    public function withoutLanguageScope()
+    public function withoutLocaleScope()
     {
         return tap($this)->localeQueryStatus('locale_scope_disabled', true);
     }
@@ -66,7 +66,7 @@ trait HasLocaleScopes
     /**
      * @return $this
      */
-    public function withoutDefaultLanguageScope()
+    public function withoutDefaultLocaleScope()
     {
         return tap($this)->localeQueryStatus('default_locale_scope_disabled', true);
     }
@@ -74,11 +74,11 @@ trait HasLocaleScopes
     // _________________________________________________________________________________________________________________
 
     /**
-     * @param $language
+     * @param $locale
      */
-    protected function setLocaleQueryHistory($language)
+    protected function setLocaleQueryHistory($locale)
     {
-        static::$localeQueryHistory[get_class($this->getModel())] = $language;
+        static::$localeQueryHistory[get_class($this->getModel())] = $locale;
     }
 
     /**

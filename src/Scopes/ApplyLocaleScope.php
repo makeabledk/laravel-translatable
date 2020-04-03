@@ -10,21 +10,21 @@ use Makeable\LaravelTranslatable\TranslatableField;
 class ApplyLocaleScope implements Scope
 {
     /**
-     * When no language scope was applied on the query, we'll
-     * default to only fetch models of master language.
+     * When no locale scope was applied on the query, we'll
+     * default to only fetch models of master locale.
      */
-    public const FETCH_MASTER_LANGUAGE_BY_DEFAULT = 1;
+    public const FETCH_MASTER_LOCALE_BY_DEFAULT = 1;
 
     /**
-     * When no language scope was applied on the query, we'll fetch
-     * all languages just like a normal non-translatable model.
+     * When no locale scope was applied on the query, we'll fetch models
+     * of all locales just like a normal non-translatable model.
      */
-    public const FETCH_ALL_LANGUAGES_BY_DEFAULT = 2;
+    public const FETCH_ALL_LOCALES_BY_DEFAULT = 2;
 
     /**
      * @var int
      */
-    protected static $mode = self::FETCH_MASTER_LANGUAGE_BY_DEFAULT;
+    protected static $mode = self::FETCH_MASTER_LOCALE_BY_DEFAULT;
 
     /**
      * @param string $mode
@@ -45,7 +45,7 @@ class ApplyLocaleScope implements Scope
 
     /**
      * This scope will be applied as the very last thing before executing the query.
-     * We'll check whether or not we'll need to add more language constrains.
+     * We'll check whether or not we'll need to add more locale constrains.
      *
      * @param  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $builder
      * @param  \Illuminate\Database\Eloquent\Model  $model
@@ -53,20 +53,20 @@ class ApplyLocaleScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-        // If language scope was already applied or disabled we won't do anything.
+        // If locale scope was already applied or disabled we won't do anything.
         if ($builder->localeQueryStatus('locale_scope_applied') ||
             $builder->localeQueryStatus('locale_scope_disabled')) {
             return $builder;
         }
 
-        // If a current language was set we'll apply that.
-        if ($language = call_user_func([get_class($builder->getModel()), 'getCurrentLanguage'])) {
-            return $builder->language($language);
+        // If a current locale was set we'll apply that.
+        if ($locale = call_user_func([get_class($builder->getModel()), 'getCurrentLocale'])) {
+            return $builder->locale($locale);
         }
 
-        // Finally we'll default to only fetch master-language unless
+        // Finally we'll default to only fetch master-locale unless
         // this was disabled either globally or on the query itself.
-        if (static::$mode === static::FETCH_MASTER_LANGUAGE_BY_DEFAULT) {
+        if (static::$mode === static::FETCH_MASTER_LOCALE_BY_DEFAULT) {
             if (! $builder->localeQueryStatus('default_locale_scope_disabled')) {
                 return $builder->whereNull(TranslatableField::$master_id);
             }
