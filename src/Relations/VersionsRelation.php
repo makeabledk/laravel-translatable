@@ -5,6 +5,7 @@ namespace Makeable\LaravelTranslatable\Relations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Makeable\LaravelTranslatable\Relations\Concerns\HasOneOrManyImplementation;
+use Makeable\LaravelTranslatable\TranslatableField;
 
 /**
  * This is a special HasMany relation that allows us to
@@ -62,7 +63,7 @@ class VersionsRelation extends HasMany
             }
         });
 
-        return new static($related->newQuery(), $model, 'master_key', $model->getKeyName());
+        return new static($related->newQuery(), $model, TranslatableField::$sibling_id, $model->getKeyName());
     }
 
     /**

@@ -27,7 +27,7 @@ class TranslatedBelongsTo extends BelongsTo
                     // We'll grab the primary key name of the related models since it could be set to
                     // a non-standard name and not "id". We will then construct the constraint for
                     // our eagerly loading query so it returns the proper models from execution.
-                    $ownerKey = $this->getMasterKeyName($this->related, $this->ownerKey);
+                    $ownerKey = $this->getModelKeyName($this->related, $this->ownerKey);
 
                     $key = $this->related->getTable().'.'.$ownerKey;
 
@@ -48,7 +48,7 @@ class TranslatedBelongsTo extends BelongsTo
      */
     public function associate($model)
     {
-        $ownerKey = $model instanceof Model ? $this->getMasterKey($model, $this->ownerKey) : $model;
+        $ownerKey = $model instanceof Model ? $this->getModelKey($model, $this->ownerKey) : $model;
 
         $this->child->setAttribute($this->foreignKey, $ownerKey);
 
@@ -81,7 +81,7 @@ class TranslatedBelongsTo extends BelongsTo
         $dictionary = [];
 
         foreach ($results as $result) {
-            $dictionary[$this->getMasterKey($result, $owner)] = $result;
+            $dictionary[$this->getModelKey($result, $owner)] = $result;
         }
 
         // Once we have the dictionary constructed, we can loop through all the parents

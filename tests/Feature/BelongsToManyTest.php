@@ -24,7 +24,7 @@ class BelongsToManyTest extends TestCase
         }])->first();
 
         $this->assertEquals(1, $image->posts->count());
-        $this->assertEquals('sv', $image->posts->first()->language_code);
+        $this->assertEquals('sv', $image->posts->first()->locale);
     }
 
     /** @test * */
@@ -40,13 +40,13 @@ class BelongsToManyTest extends TestCase
             ->last();
 
         $this->assertEquals(1, $masterPost->categories()->count(), 'It only matches a single translation');
-        $this->assertEquals('da', $masterPost->categories()->first()->language_code, 'Master version will be loaded unless a specific language is requested');
+        $this->assertEquals('da', $masterPost->categories()->first()->locale, 'Master version will be loaded unless a specific language is requested');
 
         $this->assertEquals(1, $masterPost->getTranslation('en')->categories()->count(), 'It only matches a single translation');
-        $this->assertEquals('en', $masterPost->getTranslation('en')->categories()->first()->language_code, 'It fetches the same language as the parent when available');
+        $this->assertEquals('en', $masterPost->getTranslation('en')->categories()->first()->locale, 'It fetches the same language as the parent when available');
 
         $this->assertEquals(1, $masterPost->getTranslation('sv')->categories()->count(), 'It only matches a single translation');
-        $this->assertEquals('da', $masterPost->getTranslation('sv')->categories()->first()->language_code, 'It defaults to master when parent language is not available');
+        $this->assertEquals('da', $masterPost->getTranslation('sv')->categories()->first()->locale, 'It defaults to master when parent language is not available');
     }
 
     /** @test **/
@@ -58,7 +58,7 @@ class BelongsToManyTest extends TestCase
             ->create();
 
         $this->assertEquals(1, $translation->images->count());
-        $this->assertEquals('en', $translation->language_code);
+        $this->assertEquals('en', $translation->locale);
         $this->assertEquals('Foo', $translation->images->first()->src);
     }
 
@@ -87,10 +87,10 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals(1, count(data_get($result, 'posts')));
         $this->assertEquals(1, count(data_get($result, 'posts.0.categories')));
         $this->assertEquals(1, count(data_get($result, 'posts.0.categories.0.posts')));
-        $this->assertEquals('en', data_get($result, 'language_code'));
-        $this->assertEquals('en', data_get($result, 'posts.0.language_code'));
-        $this->assertEquals('en', data_get($result, 'posts.0.categories.0.language_code'));
-        $this->assertEquals('en', data_get($result, 'posts.0.categories.0.posts.0.language_code'));
+        $this->assertEquals('en', data_get($result, 'locale'));
+        $this->assertEquals('en', data_get($result, 'posts.0.locale'));
+        $this->assertEquals('en', data_get($result, 'posts.0.categories.0.locale'));
+        $this->assertEquals('en', data_get($result, 'posts.0.categories.0.posts.0.locale'));
 
         // When a child doesn't exist in the requested language, it will default to master.
         // When nesting further relation, it will keep trying the originally requested
@@ -100,14 +100,14 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals(1, count(data_get($result, 'posts')));
         $this->assertEquals(1, count(data_get($result, 'posts.0.categories')));
         $this->assertEquals(1, count(data_get($result, 'posts.0.categories.0.posts')));
-        $this->assertEquals('sv', data_get($result, 'language_code'));
-        $this->assertEquals('da', data_get($result, 'posts.0.language_code'));
-        $this->assertEquals('sv', data_get($result, 'posts.0.categories.0.language_code'));
-        $this->assertEquals('da', data_get($result, 'posts.0.categories.0.posts.0.language_code'));
+        $this->assertEquals('sv', data_get($result, 'locale'));
+        $this->assertEquals('da', data_get($result, 'posts.0.locale'));
+        $this->assertEquals('sv', data_get($result, 'posts.0.categories.0.locale'));
+        $this->assertEquals('da', data_get($result, 'posts.0.categories.0.posts.0.locale'));
     }
 
     /** @test * */
-    public function belongs_to_many_language_scope_may_be_disabled()
+    public function belongs_to_many_locale_scope_may_be_disabled()
     {
         $translation = factory(Post::class)
             ->state('english')
@@ -170,7 +170,7 @@ class BelongsToManyTest extends TestCase
 //    }
 //
 //    /** @test * */
-//    public function regression_when_disabling_language_scope_it_also_applies_to_with_count_method()
+//    public function regression_when_disabling_locale_scope_it_also_applies_to_with_count_method()
 //    {
 //        $englishPost = factory(Post::class)
 //            ->state('english')

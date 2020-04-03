@@ -36,7 +36,7 @@ class HasManyTest extends TestCase
             ->load('meta');
 
         $this->assertEquals(2, $translation->meta->count());
-        $this->assertEquals('en', $translation->language_code);
+        $this->assertEquals('en', $translation->locale);
         $this->assertEquals('foo', $translation->meta->first()->key);
     }
 
@@ -53,13 +53,13 @@ class HasManyTest extends TestCase
             ->first();
 
         $this->assertEquals(1, $postMaster->meta->count());
-        $this->assertEquals('da', $postMaster->meta->first()->language_code);
+        $this->assertEquals('da', $postMaster->meta->first()->locale);
 
         $this->assertEquals(1, ($english = $postMaster->getTranslation('en'))->meta->count());
-        $this->assertEquals('en', $english->meta->first()->language_code);
+        $this->assertEquals('en', $english->meta->first()->locale);
 
         $this->assertEquals(1, ($swedish = $postMaster->getTranslation('sv'))->meta->count(), 'It should default to master when language not available');
-        $this->assertEquals('da', $swedish->meta->first()->language_code, 'It should default to master when language not available');
+        $this->assertEquals('da', $swedish->meta->first()->locale, 'It should default to master when language not available');
     }
 
     /** @test **/
@@ -71,10 +71,10 @@ class HasManyTest extends TestCase
             ->create();
 
         $this->assertEquals(1, $team->posts->count(), 'Master version will be loaded unless a specific language is requested');
-        $this->assertEquals('da', $team->posts->first()->language_code, 'Master version will be loaded unless a specific language is requested');
+        $this->assertEquals('da', $team->posts->first()->locale, 'Master version will be loaded unless a specific language is requested');
 
         $this->assertEquals(1, $team->posts()->language('en')->count(), 'A specific language is requested');
-        $this->assertEquals('en', $team->posts()->language('en')->first()->language_code, 'A specific language is requested');
+        $this->assertEquals('en', $team->posts()->language('en')->first()->locale, 'A specific language is requested');
     }
 
     /** @test **/
@@ -96,8 +96,8 @@ class HasManyTest extends TestCase
 
         $this->assertEquals(1, count(data_get($result, 'posts')));
         $this->assertEquals(1, count(data_get($result, 'posts.0.meta')));
-        $this->assertEquals('en', data_get($result, 'posts.0.language_code'));
-        $this->assertEquals('en', data_get($result, 'posts.0.meta.0.language_code'));
+        $this->assertEquals('en', data_get($result, 'posts.0.locale'));
+        $this->assertEquals('en', data_get($result, 'posts.0.meta.0.locale'));
     }
 
     /** @test **/
@@ -120,11 +120,11 @@ class HasManyTest extends TestCase
         // It also works on translated models
         $translations = $post->translations()->language('en')->has('meta', '=', 1)->get();
         $this->assertEquals(1, $translations->count());
-        $this->assertEquals('en', $translations->first()->language_code);
+        $this->assertEquals('en', $translations->first()->locale);
     }
 
     /** @test * */
-    public function regression_when_disabling_language_scope_it_also_applies_to_with_count_method()
+    public function regression_when_disabling_locale_scope_it_also_applies_to_with_count_method()
     {
         $post = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -140,7 +140,7 @@ class HasManyTest extends TestCase
     }
 
     /** @test * */
-    public function has_many_language_scope_may_be_disabled()
+    public function has_many_locale_scope_may_be_disabled()
     {
         $translation = factory(Post::class)
             ->state('english')
@@ -178,7 +178,7 @@ class HasManyTest extends TestCase
 
         $this->assertEquals(1, $category->posts->count());
         $this->assertEquals(2, $category->posts->first()->meta_count);
-        $this->assertEquals('en', $category->posts->first()->language_code);
+        $this->assertEquals('en', $category->posts->first()->locale);
     }
 
     /**

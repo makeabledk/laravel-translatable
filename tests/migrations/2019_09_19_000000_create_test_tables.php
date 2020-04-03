@@ -20,8 +20,8 @@ class CreateTestTables extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('master_id')->nullable();
-            $table->unsignedInteger('master_key')->nullable();
-            $table->string('language_code');
+            $table->unsignedInteger('sibling_id')->nullable();
+            $table->string('locale');
             $table->timestamps();
         });
         Schema::create('category_post', function (Blueprint $table) {
@@ -40,8 +40,8 @@ class CreateTestTables extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('master_id')->nullable();
-            $table->unsignedInteger('master_key')->nullable();
-            $table->string('language_code');
+            $table->unsignedInteger('sibling_id')->nullable();
+            $table->string('locale');
             $table->boolean('is_published')->default(1);
             $table->unsignedInteger('author_id')->nullable();
             $table->unsignedInteger('team_id')->nullable();
@@ -50,8 +50,8 @@ class CreateTestTables extends Migration
         Schema::create('post_meta', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('master_id')->nullable();
-            $table->unsignedInteger('master_key')->nullable();
-            $table->string('language_code');
+            $table->unsignedInteger('sibling_id')->nullable();
+            $table->string('locale');
             $table->unsignedInteger('post_id')->nullable();
             $table->string('key')->nullable();
             $table->timestamps();
@@ -67,8 +67,8 @@ class CreateTestTables extends Migration
         Schema::create('tags', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('master_id')->nullable();
-            $table->unsignedInteger('master_key')->nullable();
-            $table->string('language_code');
+            $table->unsignedInteger('sibling_id')->nullable();
+            $table->string('locale');
             $table->nullableMorphs('taggable');
             $table->timestamps();
         });

@@ -2,7 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Concerns;
 
-use Makeable\LaravelTranslatable\Scopes\ApplyLanguageScope;
+use Makeable\LaravelTranslatable\Scopes\ApplyLocaleScope;
 
 trait HasLanguageQueryPreferences
 {
@@ -39,7 +39,7 @@ trait HasLanguageQueryPreferences
      */
     public static function fetchAllLanguagesByDefault()
     {
-        ApplyLanguageScope::setMode(ApplyLanguageScope::FETCH_ALL_LANGUAGES_BY_DEFAULT);
+        ApplyLocaleScope::setMode(ApplyLocaleScope::FETCH_ALL_LANGUAGES_BY_DEFAULT);
     }
 
     /**
@@ -49,6 +49,6 @@ trait HasLanguageQueryPreferences
      */
     public static function fetchMasterLanguageByDefault()
     {
-        ApplyLanguageScope::setMode(ApplyLanguageScope::FETCH_MASTER_LANGUAGE_BY_DEFAULT);
+        ApplyLocaleScope::setMode(ApplyLocaleScope::FETCH_MASTER_LANGUAGE_BY_DEFAULT);
     }
 }

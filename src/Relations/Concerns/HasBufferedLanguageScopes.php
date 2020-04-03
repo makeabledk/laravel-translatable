@@ -3,7 +3,7 @@
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Makeable\LaravelTranslatable\ModelChecker;
-use Makeable\LaravelTranslatable\Scopes\LanguageScope;
+use Makeable\LaravelTranslatable\Scopes\LocaleScope;
 
 trait HasBufferedLanguageScopes
 {
@@ -29,9 +29,9 @@ trait HasBufferedLanguageScopes
      */
     public function language($languages, $fallbackMaster = false)
     {
-        $this->pendingLanguage = LanguageScope::getNormalizedLanguages($languages, $fallbackMaster)->values()->toArray();
+        $this->pendingLanguage = LocaleScope::getNormalizedLanguages($languages, $fallbackMaster)->values()->toArray();
 
-        return $this->applyLanguageScopeBeforeGetting();
+        return $this->applyLocaleScopeBeforeGetting();
     }
 
     /**
@@ -41,9 +41,9 @@ trait HasBufferedLanguageScopes
      */
     public function defaultLanguage($languages, $fallbackMaster = false)
     {
-        $this->pendingDefaultLanguage = LanguageScope::getNormalizedLanguages($languages, $fallbackMaster)->values()->toArray();
+        $this->pendingDefaultLanguage = LocaleScope::getNormalizedLanguages($languages, $fallbackMaster)->values()->toArray();
 
-        return $this->applyLanguageScopeBeforeGetting();
+        return $this->applyLocaleScopeBeforeGetting();
     }
 
     /**
@@ -65,7 +65,7 @@ trait HasBufferedLanguageScopes
     {
         $this->pendingLanguage = false;
 
-        return $this->applyLanguageScopeBeforeGetting();
+        return $this->applyLocaleScopeBeforeGetting();
     }
 
     /**
@@ -75,7 +75,7 @@ trait HasBufferedLanguageScopes
     {
         $this->pendingDefaultLanguage = false;
 
-        return $this->applyLanguageScopeBeforeGetting();
+        return $this->applyLocaleScopeBeforeGetting();
     }
 
     // _________________________________________________________________________________________________________________
@@ -83,7 +83,7 @@ trait HasBufferedLanguageScopes
     /**
      * @return $this
      */
-    protected function applyLanguageScopeBeforeGetting()
+    protected function applyLocaleScopeBeforeGetting()
     {
         if (! $this->hasGetterHook) {
             $this->query->beforeGetting(function () {
@@ -118,7 +118,7 @@ trait HasBufferedLanguageScopes
                 return $query->withoutDefaultLanguageScope();
             }
 
-            // When no preferences were set whatsoever, ApplyLanguageScope will
+            // When no preferences were set whatsoever, ApplyLocaleScope will
             // will default to only fetch master language.
         }
     }

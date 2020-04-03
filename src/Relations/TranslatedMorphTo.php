@@ -97,7 +97,7 @@ class TranslatedMorphTo extends MorphTo
             $this->originalOwnerKey = $this->ownerKey ?? false;
         }
 
-        $this->ownerKey = $this->getMasterKeyName(
+        $this->ownerKey = $this->getModelKeyName(
             ($model instanceof Model ? $model : $this->createModelByType($model)),
             $this->originalOwnerKey ?: null
         );

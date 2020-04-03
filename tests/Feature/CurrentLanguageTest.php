@@ -18,7 +18,7 @@ class CurrentLanguageTest extends TestCase
 
         $this->assertEquals('en', Post::getCurrentLanguage());
         $this->assertEquals(1, ($posts = Post::all())->count());
-        $this->assertEquals('en', $posts->first()->language_code);
+        $this->assertEquals('en', $posts->first()->locale);
     }
 
     /** @test **/
@@ -30,7 +30,7 @@ class CurrentLanguageTest extends TestCase
 
         $this->assertEquals('en', Post::getCurrentLanguage());
         $this->assertEquals(1, ($posts = Post::all())->count());
-        $this->assertEquals('en', $posts->first()->language_code);
+        $this->assertEquals('en', $posts->first()->locale);
     }
 
     /** @test **/
@@ -43,7 +43,7 @@ class CurrentLanguageTest extends TestCase
 
         PostMeta::setGlobalLanguage('en');
 
-        $this->assertEquals('en', $post->meta()->first()->language_code);
-        $this->assertEquals('da', $post->meta()->withoutLanguageScope()->first()->language_code);
+        $this->assertEquals('en', $post->meta()->first()->locale);
+        $this->assertEquals('da', $post->meta()->withoutLanguageScope()->first()->locale);
     }
 }

@@ -8,7 +8,7 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 class LanguageScopeTest extends TestCase
 {
     /** @test **/
-    public function when_using_language_scope_it_finds_the_best_matching_model()
+    public function when_using_locale_scope_it_finds_the_best_matching_model()
     {
         $this->seedTranslatedModels();
 
@@ -18,12 +18,12 @@ class LanguageScopeTest extends TestCase
 
         [$en, $sv] = [$posts->get(0), $posts->get(1)];
 
-        $this->assertEquals('en', $en->language_code);
-        $this->assertEquals('sv', $sv->language_code);
+        $this->assertEquals('en', $en->locale);
+        $this->assertEquals('sv', $sv->locale);
 
         // Since they are both translations of each their post, they should have a master_id set
-        $this->assertEquals('da', Post::findOrFail($en->master_id)->language_code);
-        $this->assertEquals('da', Post::findOrFail($sv->master_id)->language_code);
+        $this->assertEquals('da', Post::findOrFail($en->master_id)->locale);
+        $this->assertEquals('da', Post::findOrFail($sv->master_id)->locale);
     }
 
     /** @test **/
@@ -37,9 +37,9 @@ class LanguageScopeTest extends TestCase
 
         [$da, $en, $sv] = [$posts->get(0), $posts->get(1), $posts->get(2)];
 
-        $this->assertEquals('da', $da->language_code);
-        $this->assertEquals('en', $en->language_code);
-        $this->assertEquals('sv', $sv->language_code);
+        $this->assertEquals('da', $da->locale);
+        $this->assertEquals('en', $en->locale);
+        $this->assertEquals('sv', $sv->locale);
 
         // This should give us the exact same thing
         $this->assertEquals(3, Post::language(['sv', 'en', '*'])->get()->count());
@@ -54,11 +54,11 @@ class LanguageScopeTest extends TestCase
 
         $match = Post::where('is_published', 1)
             ->language(['en', '*'])
-            ->whereMasterKey($post->id)
+            ->whereSiblingId($post->id)
             ->first();
 
         $this->assertNotNull($match);
-        $this->assertEquals('da', $post->language_code);
+        $this->assertEquals('da', $post->locale);
     }
 
     /** @test **/
@@ -72,10 +72,10 @@ class LanguageScopeTest extends TestCase
             ->with(1, 'english', 'translations', ['is_published' => 0])
             ->create();
 
-        $match = Post::language(['en', '*'])->whereMasterKey($post->id)->first();
+        $match = Post::language(['en', '*'])->whereSiblingId($post->id)->first();
 
         $this->assertNotNull($match);
-        $this->assertEquals('da', $post->language_code);
+        $this->assertEquals('da', $post->locale);
     }
 
     protected function seedTranslatedModels()

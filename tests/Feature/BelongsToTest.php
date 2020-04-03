@@ -26,7 +26,7 @@ class BelongsToTest extends TestCase
 
         $this->assertEquals($postMaster->id, $metaTranslation->post_id, 'It sets the master id');
         $this->assertEquals($postTranslation->id, $metaTranslation->post->id, 'When no language set, it defaults to current language of child');
-        $this->assertEquals('en', $metaTranslation->post->language_code, 'When no language set, it defaults to current language of child');
+        $this->assertEquals('en', $metaTranslation->post->locale, 'When no language set, it defaults to current language of child');
 
         $this->assertEquals(1, $metaTranslation->post()->count(), 'It always just matches 1 parent at a time');
         $this->assertEquals(1, $metaTranslation->post()->language('da')->count());
@@ -54,19 +54,19 @@ class BelongsToTest extends TestCase
 
         $result = $load('en');
         $this->assertEquals(1, count(data_get($result, 'meta')));
-        $this->assertEquals('en', data_get($result, 'language_code'));
-        $this->assertEquals('en', data_get($result, 'meta.0.language_code'));
-        $this->assertEquals('en', data_get($result, 'meta.0.post.language_code'));
+        $this->assertEquals('en', data_get($result, 'locale'));
+        $this->assertEquals('en', data_get($result, 'meta.0.locale'));
+        $this->assertEquals('en', data_get($result, 'meta.0.post.locale'));
 
         $result = $load('sv');
         $this->assertEquals(1, count(data_get($result, 'meta')));
-        $this->assertEquals('sv', data_get($result, 'language_code'));
-        $this->assertEquals('da', data_get($result, 'meta.0.language_code'), 'Fallback to master (da)');
-        $this->assertEquals('sv', data_get($result, 'meta.0.post.language_code'));
+        $this->assertEquals('sv', data_get($result, 'locale'));
+        $this->assertEquals('da', data_get($result, 'meta.0.locale'), 'Fallback to master (da)');
+        $this->assertEquals('sv', data_get($result, 'meta.0.post.locale'));
     }
 
     /** @test **/
-    public function belongs_to_language_scope_may_be_disabled()
+    public function belongs_to_locale_scope_may_be_disabled()
     {
         $translation = factory(PostMeta::class)
             ->state('english')
@@ -75,16 +75,16 @@ class BelongsToTest extends TestCase
             ->create();
 
         // Relation
-        $this->assertEquals('en', $translation->post()->first()->language_code);
+        $this->assertEquals('en', $translation->post()->first()->locale);
         $this->assertEquals(1, $translation->post()->take(5)->count());
-        $this->assertEquals('da', $translation->post()->withoutLanguageScope()->first()->language_code);
+        $this->assertEquals('da', $translation->post()->withoutLanguageScope()->first()->locale);
         $this->assertEquals(1, $translation->post()->withoutLanguageScope()->take(5)->count());
 
         // Eager load
-        $this->assertEquals('en', $translation->load('post')->post->language_code);
+        $this->assertEquals('en', $translation->load('post')->post->locale);
         $this->assertEquals('da', $translation->load(['post' => function ($query) {
             $query->withoutLanguageScope();
-        }])->post->language_code);
+        }])->post->locale);
     }
 
     /** @test **/
@@ -97,10 +97,10 @@ class BelongsToTest extends TestCase
 
         Translatable::fetchAllLanguagesByDefault();
 
-        $this->assertEquals('da', $comment->post()->latest('id')->first()->language_code);
+        $this->assertEquals('da', $comment->post()->latest('id')->first()->locale);
         $this->assertEquals('da', $comment->load(['post' => function ($q) {
             $q->orderBy('id');
-        }])->post->language_code); // first result for eager-loads since no limit on this query
+        }])->post->locale); // first result for eager-loads since no limit on this query
 
         Translatable::fetchMasterLanguageByDefault(); // reset
     }

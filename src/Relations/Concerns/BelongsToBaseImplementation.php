@@ -3,7 +3,8 @@
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Makeable\LaravelTranslatable\ModelChecker;
-use Makeable\LaravelTranslatable\Scopes\ApplyLanguageScope;
+use Makeable\LaravelTranslatable\Scopes\ApplyLocaleScope;
+use Makeable\LaravelTranslatable\TranslatableField;
 
 trait BelongsToBaseImplementation
 {
@@ -26,7 +27,7 @@ trait BelongsToBaseImplementation
                 // Ie. select * from posts WHERE posts.id = {$meta->post_id}
                 $table = $this->related->getTable();
 
-                $ownerKey = $this->getMasterKeyName($this->related, $this->ownerKey);
+                $ownerKey = $this->getModelKeyName($this->related, $this->ownerKey);
 
                 $query->where($table.'.'.$ownerKey, '=', $this->child->{$this->foreignKey});
 
@@ -60,8 +61,8 @@ trait BelongsToBaseImplementation
     {
         if (! $this->pendingDefaultLanguage
             && ModelChecker::checkTranslatable($query->getModel())
-            && ApplyLanguageScope::modeIs(ApplyLanguageScope::FETCH_ALL_LANGUAGES_BY_DEFAULT)) {
-            $query->whereNull('master_id');
+            && ApplyLocaleScope::modeIs(ApplyLocaleScope::FETCH_ALL_LANGUAGES_BY_DEFAULT)) {
+            $query->whereNull(TranslatableField::$master_id);
         }
     }
 }

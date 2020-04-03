@@ -5,8 +5,9 @@ namespace Makeable\LaravelTranslatable\Scopes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
+use Makeable\LaravelTranslatable\TranslatableField;
 
-class ApplyLanguageScope implements Scope
+class ApplyLocaleScope implements Scope
 {
     /**
      * When no language scope was applied on the query, we'll
@@ -53,8 +54,8 @@ class ApplyLanguageScope implements Scope
     public function apply(Builder $builder, Model $model)
     {
         // If language scope was already applied or disabled we won't do anything.
-        if ($builder->languageQueryStatus('language_scope_applied') ||
-            $builder->languageQueryStatus('language_scope_disabled')) {
+        if ($builder->localeQueryStatus('locale_scope_applied') ||
+            $builder->localeQueryStatus('locale_scope_disabled')) {
             return $builder;
         }
 
@@ -66,8 +67,8 @@ class ApplyLanguageScope implements Scope
         // Finally we'll default to only fetch master-language unless
         // this was disabled either globally or on the query itself.
         if (static::$mode === static::FETCH_MASTER_LANGUAGE_BY_DEFAULT) {
-            if (! $builder->languageQueryStatus('default_language_scope_disabled')) {
-                return $builder->whereNull('master_id');
+            if (! $builder->localeQueryStatus('default_locale_scope_disabled')) {
+                return $builder->whereNull(TranslatableField::$master_id);
             }
         }
     }

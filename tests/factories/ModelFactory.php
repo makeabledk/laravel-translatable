@@ -25,15 +25,15 @@ new class($factory) {
     protected function multilingual($modelClass)
     {
         $this->factory->define($modelClass, function () {
-            return ['language_code' => 'da'];
+            return ['locale' => 'da'];
         });
 
         $this->factory->state($modelClass, 'english', function () {
-            return ['language_code' => 'en'];
+            return ['locale' => 'en'];
         });
 
         $this->factory->state($modelClass, 'swedish', function () {
-            return ['language_code' => 'sv'];
+            return ['locale' => 'sv'];
         });
     }
 };

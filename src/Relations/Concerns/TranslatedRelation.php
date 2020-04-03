@@ -5,6 +5,7 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Makeable\LaravelTranslatable\ModelChecker;
+use Makeable\LaravelTranslatable\TranslatableField;
 
 trait TranslatedRelation
 {
@@ -34,10 +35,10 @@ trait TranslatedRelation
      * @param  null  $keyName
      * @return array
      */
-    protected function getMasterKeys(array $models, $keyName = null)
+    protected function getModelKeys(array $models, $keyName = null)
     {
         return collect($models)->map(function ($model) use ($keyName) {
-            return $this->getMasterKey($model, $keyName);
+            return $this->getModelKey($model, $keyName);
         })->values()->unique(null, true)->sort()->all();
     }
 
@@ -46,9 +47,9 @@ trait TranslatedRelation
      * @param null $keyName
      * @return mixed
      */
-    protected function getMasterKey(Model $model, $keyName = null)
+    protected function getModelKey(Model $model, $keyName = null)
     {
-        return $model->getAttribute($this->getMasterKeyName($model, $keyName));
+        return $model->getAttribute($this->getModelKeyName($model, $keyName));
     }
 
     /**
@@ -56,10 +57,10 @@ trait TranslatedRelation
      * @param null $keyName
      * @return mixed
      */
-    protected function getMasterKeyName(Model $model, $keyName = null)
+    protected function getModelKeyName(Model $model, $keyName = null)
     {
         if ($this->isTranslatableContext($model)) {
-            return 'master_key';
+            return TranslatableField::$sibling_id;
         }
 
         return $keyName ?? $model->getKeyName();
@@ -105,7 +106,7 @@ trait TranslatedRelation
         // The related model can still be translatable, but in this case it does not
         // make sense to try and set the language from a non-translatable model.
         if (ModelChecker::checkTranslatable($model)) {
-            $language = $model->requestedLanguage ?? [$model->language_code];
+            $language = $model->requestedLocale ?? [$model->getAttribute(TranslatableField::$locale)];
 
             return $this->defaultLanguageUnlessDisabled($language, true);
         }
