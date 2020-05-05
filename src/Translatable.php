@@ -94,7 +94,7 @@ trait Translatable
      */
     public function scopeMaster($query)
     {
-        return $query->whereNull(TranslatableField::$master_id);
+        return $query->whereNull($query->qualifyColumn(TranslatableField::$master_id));
     }
 
     /**
@@ -104,7 +104,7 @@ trait Translatable
      */
     public function scopeWhereSiblingKey($query, $key)
     {
-        return $query->where(TranslatableField::$sibling_id, $key);
+        return $query->where($query->qualifyColumn(TranslatableField::$sibling_id), $key);
     }
 
     // _________________________________________________________________________________________________________________
