@@ -13,8 +13,8 @@
     ],
     "require": {
         "php": ">=7.2.0",
-        "illuminate/database": "^5.7|^6.0",
-        "illuminate/support": "^5.7|^6.0"
+        "illuminate/database": "^5.7|^6.0|^7.0",
+        "illuminate/support": "^5.7|^6.0|^7.0"
     },
     "require-dev": {
         "laravel/laravel": "^6.0",
