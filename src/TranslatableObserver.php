@@ -45,7 +45,7 @@ class TranslatableObserver
     public function saved(Model $model)
     {
         if ($this->shouldSyncSiblings($model)) {
-            $model->siblings()->get()->each->syncAttributesFromSibling($model);
+            $model->siblings()->withoutGlobalScopes()->get()->each->syncAttributesFromSibling($model);
         }
     }
 

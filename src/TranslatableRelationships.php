@@ -162,7 +162,7 @@ trait TranslatableRelationships
             ModelChecker::checkTranslatable($relatedModel)
         )
             ? new $translatableRelation(...$args)
-            : new $originalRelation(...$args);
+            : new $translatableRelation(...$args);
     }
 
     protected function translatableRelationshipAllowed()

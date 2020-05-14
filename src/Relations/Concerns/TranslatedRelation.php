@@ -4,6 +4,7 @@ namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Makeable\LaravelTranslatable\Builder\EloquentBuilder;
 use Makeable\LaravelTranslatable\ModelChecker;
 use Makeable\LaravelTranslatable\TranslatableField;
 
@@ -28,6 +29,24 @@ trait TranslatedRelation
         }
 
         return parent::getRelationExistenceCountQuery($query, $parentQuery);
+    }
+
+    /**
+     * Queue the callable onto the underlying eloquent builder. Usually this would be proxied
+     * straight through, however in certain edge-cases the underlying builder would be a
+     * regular Eloquent instance. In this case we'll apply the callback immediately.
+     *
+     * @param  callable  $callback
+     * @param  null  $priority
+     * @return $this
+     */
+    protected function beforeGetting(callable $callback, $priority = null)
+    {
+        ($query = $this->getQuery()) instanceof EloquentBuilder
+            ? $query->beforeGetting(...func_get_args())
+            : call_user_func($callback, $query);
+
+        return $this;
     }
 
     /**
