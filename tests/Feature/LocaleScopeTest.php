@@ -78,7 +78,7 @@ class LocaleScopeTest extends TestCase
         $this->assertNotNull($match);
         $this->assertEquals('da', $post->locale);
     }
-    
+
     /** @test **/
     public function it_normalizes_given_locale_preferences_to_locale_collection()
     {
