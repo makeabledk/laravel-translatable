@@ -94,10 +94,6 @@ class LocaleScope
                 // Push an * as a last-priority wildcard to indicate master fallback
                 return $locales->push('*');
             })
-            ->filter(function ($locale) {
-                // Do some simple validation so we can inline locale in SQL later on
-                return preg_match('/^[a-zA-Z-_\*]{1,5}$/', $locale);
-            })
             ->unique();
     }
 

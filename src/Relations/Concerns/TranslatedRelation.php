@@ -117,13 +117,13 @@ trait TranslatedRelation
         // preference set directly through HasCurrentLocale::class.
         if (ModelChecker::checkTranslatable($this->related)) {
             if ($locale = call_user_func([get_class($this->related), 'getCurrentLocale'])) {
-                return $this->defaultLocaleUnlessDisabled($locale, true);
+                return $this->defaultLocaleUnlessDisabled($locale);
             }
         }
 
         // The model represents the child or parent from which we're loading the relation.
-        // The related model can still be translatable, but in this case it does not
-        // make sense to try and set the locale from a non-translatable model.
+        // If the model is translatable we'll attempt to use the originally requested
+        // locale on the relation. Otherwise use the current locale of the model.
         if (ModelChecker::checkTranslatable($model)) {
             $locale = $model->requestedLocale ?? [$model->getAttribute(TranslatableField::$locale)];
 

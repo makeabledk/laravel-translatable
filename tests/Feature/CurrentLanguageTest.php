@@ -46,4 +46,20 @@ class CurrentLanguageTest extends TestCase
         $this->assertEquals('en', $post->meta()->first()->locale);
         $this->assertEquals('da', $post->meta()->withoutLocaleScope()->first()->locale);
     }
+
+    /** @test **/
+    public function it_respects_default_master_policy_when_loading_relations()
+    {
+        factory(Post::class)
+            ->with(1, 'english', 'translations')
+            ->with(1, 'meta')
+            ->create();
+
+        Post::setGlobalLocale('en');
+
+        $post = Post::with('meta')->first();
+
+        $this->assertEquals('en', $post->locale);
+        $this->assertEquals(0, $post->meta->count());
+    }
 }
