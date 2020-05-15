@@ -29,7 +29,7 @@ trait HasBufferedLocaleScopes
      */
     public function locale($locales, $fallbackMaster = false)
     {
-        $this->pendingLocale = LocaleScope::getNormalizedLocales($locales, $fallbackMaster)->values()->toArray();
+        $this->pendingLocale = LocaleScope::getNormalizedLocales($locales, $fallbackMaster)->toArray();
 
         return $this->applyLocaleScopeBeforeGetting();
     }
@@ -41,7 +41,7 @@ trait HasBufferedLocaleScopes
      */
     public function defaultLocale($locales, $fallbackMaster = false)
     {
-        $this->pendingDefaultLocale = LocaleScope::getNormalizedLocales($locales, $fallbackMaster)->values()->toArray();
+        $this->pendingDefaultLocale = LocaleScope::getNormalizedLocales($locales, $fallbackMaster)->toArray();
 
         return $this->applyLocaleScopeBeforeGetting();
     }

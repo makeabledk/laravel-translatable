@@ -94,7 +94,9 @@ class LocaleScope
                 // Push an * as a last-priority wildcard to indicate master fallback
                 return $locales->push('*');
             })
-            ->unique();
+            ->filter()
+            ->unique()
+            ->values();
     }
 
     /**

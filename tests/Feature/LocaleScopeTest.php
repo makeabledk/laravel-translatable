@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Makeable\LaravelTranslatable\Scopes\LocaleScope;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
 
@@ -76,6 +77,15 @@ class LocaleScopeTest extends TestCase
 
         $this->assertNotNull($match);
         $this->assertEquals('da', $post->locale);
+    }
+    
+    /** @test **/
+    public function it_normalizes_given_locale_preferences_to_locale_collection()
+    {
+        $this->assertEquals(['en'], LocaleScope::getNormalizedLocales('en', false)->toArray());
+        $this->assertEquals(['en', '*'], LocaleScope::getNormalizedLocales('en', true)->toArray());
+        $this->assertEquals(['en', '*'], LocaleScope::getNormalizedLocales(['en', null, '*'], false)->toArray());
+        $this->assertEquals(['en', '*'], LocaleScope::getNormalizedLocales(['en', null, '*'], true)->toArray());
     }
 
     protected function seedTranslatedModels()

@@ -47,7 +47,7 @@ trait HasLocaleScopes
         LocaleScope::apply($this, $locales, $fallbackMaster);
 
         $this->setLocaleQueryHistory(
-            LocaleScope::getNormalizedLocales($locales, $fallbackMaster)->values()->toArray()
+            LocaleScope::getNormalizedLocales($locales, $fallbackMaster)->toArray()
         );
 
         $this->localeQueryStatus('locale_scope_applied', true);
