@@ -48,11 +48,7 @@ trait BelongsToBaseImplementation
     }
 
     /**
-     * Covers edge-case where present when following conditions are met:.
-     *
-     * - running in compatibility-mode
-     * - parent is translatable
-     * - child is non-translatable
+     * Covers edge-case present when running in compatibility-mode and parent is translatable
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @return void

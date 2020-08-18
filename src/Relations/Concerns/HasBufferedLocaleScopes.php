@@ -3,6 +3,7 @@
 namespace Makeable\LaravelTranslatable\Relations\Concerns;
 
 use Makeable\LaravelTranslatable\ModelChecker;
+use Makeable\LaravelTranslatable\Scopes\ApplyLocaleScope;
 use Makeable\LaravelTranslatable\Scopes\LocaleScope;
 
 trait HasBufferedLocaleScopes
@@ -53,7 +54,15 @@ trait HasBufferedLocaleScopes
      */
     public function defaultLocaleUnlessDisabled($locales, $fallbackMaster = false)
     {
-        return $this->pendingDefaultLocale !== false
+        if ($this->pendingDefaultLocale === false || ApplyLocaleScope::modeIs(ApplyLocaleScope::FETCH_ALL_LOCALES_BY_DEFAULT)) {
+            return $this;
+        }
+
+        return $this->defaultLocale($locales, $fallbackMaster);
+
+//        if ($this->pendingDefaultLocale === false)
+
+        return $this->pendingDefaultLocale !== false && ApplyLocaleScope::modeIs(ApplyLocaleScope::FETCH_MASTER_LOCALE_BY_DEFAULT)
             ? $this->defaultLocale($locales, $fallbackMaster)
             : $this;
     }

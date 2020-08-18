@@ -104,4 +104,30 @@ class BelongsToTest extends TestCase
 
         Translatable::fetchMasterLocaleByDefault(); // reset
     }
+
+    /** @test **/
+    public function regression_it_always_fetches_the_exact_child_id_in_compatibility_mode()
+    {
+        factory(PostMeta::class)
+            ->with(1, 'english', 'translations')
+            ->with(1, 'english', 'post.translations')
+            ->create();
+
+        Translatable::fetchAllLocalesByDefault();
+
+        // This issue occurs when eager loading parents onto their children, and parents are fetched in multiple languages.
+        // When the bug exists, it would then fetch all parents in whatever language the first row was. Instead, the
+        // correct behavior would be to only fetch the master version, which is what would normally happen without
+        // this package installed.
+        $meta = PostMeta::latest('id') // Trigger the issue by loading the english version first.
+            ->get()
+            ->load('post');
+
+        $this->assertEquals('en', $meta->first()->locale);
+        $this->assertEquals('da', $meta->first()->post->locale);
+        $this->assertEquals('da', $meta->last()->locale);
+        $this->assertEquals('da', $meta->last()->post->locale);
+
+        Translatable::fetchMasterLocaleByDefault(); // reset
+    }
 }
