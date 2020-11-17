@@ -37,7 +37,7 @@ class TranslatedMorphTo extends MorphTo
 
         // Ensure master key for translatable models
         $query = $query->{$whereIn}(
-            $instance->getTable().'.'.$this->ownerKey, $this->gatherKeysByType($type)
+            $instance->getTable().'.'.$this->ownerKey, $this->gatherKeysByType($type, $instance->getKeyType())
         );
 
         // Add default locale

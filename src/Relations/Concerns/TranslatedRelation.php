@@ -19,8 +19,11 @@ trait TranslatedRelation
      * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getRelationExistenceCountQuery(Builder $query, Builder $parentQuery)
+    public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
+
+//    public function getRelationExistenceCountQuery(Builder $query, Builder $parentQuery)
+//    {
         // In QueriesRelationships@withCount method it instantiates a new query rather than
         // building on this one. That means if withoutLocaleScope() was called directly
         // on the relationship it won't be applied unless we manually specify it here.
@@ -28,7 +31,7 @@ trait TranslatedRelation
             $query->withoutLocaleScope();
         }
 
-        return parent::getRelationExistenceCountQuery($query, $parentQuery);
+        return parent::getRelationExistenceQuery($query, $parentQuery, $columns);
     }
 
     /**

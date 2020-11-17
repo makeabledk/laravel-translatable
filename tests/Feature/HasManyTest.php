@@ -165,6 +165,10 @@ class HasManyTest extends TestCase
     /** @test * */
     public function regression_order_does_not_matter_when_using_with_count_with_locale()
     {
+        // TODO: This regression fails again starting from laravel/framework v8.12.0
+        // seemingly due to a core rewrite regarding QueriesRelationships@getRelationExistenceCountQuery.
+        // Temporarily suppressed issue by locking framework version to <= 8.11.2.
+
         $category = factory(Category::class)
             ->with(1, 'english', 'posts.translations')
             ->with(2, 'posts.translations.meta')
