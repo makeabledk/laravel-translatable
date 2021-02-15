@@ -16,6 +16,7 @@ env:
     - DB_USERNAME=travis
     - DB_PASSWORD=
     - DB_UNIX_SOCKET=~travis/.my.cnf
+    - XDEBUG_MODE=coverage
 
 matrix:
   fast_finish: true
