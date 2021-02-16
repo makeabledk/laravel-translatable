@@ -2,7 +2,7 @@
 # Laravel Translatable
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/makeabledk/laravel-translatable.svg?style=flat-square)](https://packagist.org/packages/makeabledk/laravel-translatable)
-[![Build Status](https://img.shields.io/github/workflow/status/makeabledk/laravel-translatable/master?label=Tests)](https://github.com/makeabledk/laravel-translatable/actions)
+[![Build Status](https://img.shields.io/github/workflow/status/makeabledk/laravel-translatable/Run%20tests?label=Tests)](https://github.com/makeabledk/laravel-translatable/actions)
 [![StyleCI](https://styleci.io/repos/210617296/shield?branch=master)](https://styleci.io/repos/210617296)
 
 
