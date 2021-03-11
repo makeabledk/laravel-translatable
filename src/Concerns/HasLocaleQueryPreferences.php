@@ -18,18 +18,41 @@ trait HasLocaleQueryPreferences
 
     /**
      * @param  string|null  $locale
+     * @param  callable|null  $callback
+     * @return mixed|void
      */
-    public static function setLocale($locale)
+    public static function setLocale($locale, ? callable $callback = null)
     {
-        app()[__CLASS__.'@currentLocale'] = $locale;
+        return static::handleSetLocale(__CLASS__.'@currentLocale', $locale, $callback);
     }
 
     /**
-     * @param  mixed|null  $locale
+     * @param  string|null  $locale
+     * @param  callable|null  $callback
+     * @return mixed|void
      */
-    public static function setGlobalLocale($locale)
+    public static function setGlobalLocale($locale, ? callable $callback = null)
     {
-        app()[__TRAIT__.'@globalLocale'] = $locale;
+        return static::handleSetLocale(__TRAIT__.'@globalLocale', $locale, $callback);
+    }
+
+    protected static function handleSetLocale($containerKey, $locale, ? callable $callback = null)
+    {
+        $previous = app()[$containerKey] ?? null;
+        $reset = function () use ($containerKey, $previous) {
+            static::handleSetLocale($containerKey, $previous);
+        };
+
+        app()[$containerKey] = $locale;
+
+        if ($callback) {
+            try {
+                return tap(call_user_func($callback), $reset);
+            } catch (\Exception $exception) {
+                $reset();
+                throw $exception;
+            }
+        }
     }
 
     /**

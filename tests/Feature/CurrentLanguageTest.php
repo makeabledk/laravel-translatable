@@ -34,6 +34,24 @@ class CurrentLanguageTest extends TestCase
     }
 
     /** @test **/
+    public function a_locale_can_be_applied_for_a_closure()
+    {
+        factory(Post::class)->with(1, 'english', 'translations')->create();
+
+        $this->assertNull(Post::getCurrentLocale());
+
+        Post::setLocale('en', function () {
+            $this->assertEquals('en', Post::getCurrentLocale());
+            $this->assertEquals(1, ($posts = Post::all())->count());
+            $this->assertEquals('en', $posts->first()->locale);
+        });
+
+        $this->assertNull(Post::getCurrentLocale());
+        $this->assertEquals(1, ($posts = Post::all())->count());
+        $this->assertEquals('da', $posts->first()->locale);
+    }
+
+    /** @test **/
     public function regression_it_does_not_apply_current_locale_when_disabled_on_relation()
     {
         $post = factory(Post::class)
