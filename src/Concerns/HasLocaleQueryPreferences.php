@@ -21,7 +21,7 @@ trait HasLocaleQueryPreferences
      * @param  callable|null  $callback
      * @return mixed|void
      */
-    public static function setLocale($locale, ? callable $callback = null)
+    public static function setLocale($locale, ?callable $callback = null)
     {
         return static::handleSetLocale(__CLASS__.'@currentLocale', $locale, $callback);
     }
@@ -31,12 +31,12 @@ trait HasLocaleQueryPreferences
      * @param  callable|null  $callback
      * @return mixed|void
      */
-    public static function setGlobalLocale($locale, ? callable $callback = null)
+    public static function setGlobalLocale($locale, ?callable $callback = null)
     {
         return static::handleSetLocale(__TRAIT__.'@globalLocale', $locale, $callback);
     }
 
-    protected static function handleSetLocale($containerKey, $locale, ? callable $callback = null)
+    protected static function handleSetLocale($containerKey, $locale, ?callable $callback = null)
     {
         $previous = app()[$containerKey] ?? null;
         $reset = function () use ($containerKey, $previous) {
