@@ -57,7 +57,8 @@ trait BelongsToBaseImplementation
     {
         if (! $this->pendingDefaultLocale
             && ModelChecker::checkTranslatable($query->getModel())
-            && ApplyLocaleScope::modeIs(ApplyLocaleScope::FETCH_ALL_LOCALES_BY_DEFAULT)) {
+            && ApplyLocaleScope::modeIs(ApplyLocaleScope::FETCH_ALL_LOCALES_BY_DEFAULT)
+            && get_class($query->getModel())::getCurrentLocale() === null) {
             $query->whereNull(TranslatableField::$master_id);
         }
     }

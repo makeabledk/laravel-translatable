@@ -106,6 +106,25 @@ class BelongsToTest extends TestCase
     }
 
     /** @test **/
+    public function regression_it_respects_locale_and_global_locale_preferences_in_compatibility_mode()
+    {
+        $comment = factory(Comment::class)
+        ->with(1, 'post')
+        ->with('english', 'post.translations')
+        ->create();
+
+        Translatable::fetchAllLocalesByDefault();
+        Post::setLocale('en');
+
+        $this->assertEquals('en', $comment->post()->latest('id')->first()->locale);
+        $this->assertEquals('en', $comment->load(['post' => function ($q) {
+            $q->orderBy('id');
+        }])->post->locale); // first result for eager-loads since no limit on this query
+
+        Translatable::fetchMasterLocaleByDefault(); // reset
+    }
+
+    /** @test **/
     public function regression_it_always_fetches_the_exact_child_id_in_compatibility_mode()
     {
         factory(PostMeta::class)
