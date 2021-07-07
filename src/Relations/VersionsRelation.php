@@ -48,5 +48,5 @@ class VersionsRelation extends HasMany
     protected function getModelKeyName(Model $model, $keyName = null)
     {
         return TranslatableField::$sibling_id;
-     }
+    }
 }
