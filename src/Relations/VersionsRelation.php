@@ -13,10 +13,7 @@ use Makeable\LaravelTranslatable\TranslatableField;
  */
 class VersionsRelation extends HasMany
 {
-    use HasOneOrManyImplementation {
-        addConstraints as traitAddConstraints;
-        addEagerConstraints as traitAddEagerConstraints;
-    }
+    use HasOneOrManyImplementation;
 
     public function addConstraints()
     {
@@ -47,4 +44,9 @@ class VersionsRelation extends HasMany
 
         return new static($related->newQuery(), $model, TranslatableField::$sibling_id, $model->getKeyName());
     }
+
+    protected function getModelKeyName(Model $model, $keyName = null)
+    {
+        return TranslatableField::$sibling_id;
+     }
 }

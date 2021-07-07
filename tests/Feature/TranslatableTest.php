@@ -20,9 +20,8 @@ class TranslatableTest extends TestCase
         $this->assertEquals(['da', 'sv'], $master->getTranslation('en')->siblings->pluck('locale')->toArray());
 
         // Test eager load
-        $master->setRelations([])->load('siblings');
-
-        $this->assertEquals(['en', 'sv'], $master->siblings->pluck('locale')->toArray());
+        $this->assertEquals(['en', 'sv'], $master->setRelations([])->load('siblings')->siblings->pluck('locale')->toArray());
+        $this->assertEquals(['da', 'sv'], $master->getTranslation('en')->setRelations([])->load('siblings')->siblings->pluck('locale')->toArray());
     }
 
     /** @test * */
@@ -37,9 +36,8 @@ class TranslatableTest extends TestCase
         $this->assertEquals(['en', 'sv'], $master->getTranslation('en')->translations->pluck('locale')->toArray());
 
         // Test eager load
-        $master->setRelations([])->load('siblings');
-
-        $this->assertEquals(['en', 'sv'], $master->translations->pluck('locale')->toArray());
+        $this->assertEquals(['en', 'sv'], $master->setRelations([])->load('translations')->translations->pluck('locale')->toArray());
+        $this->assertEquals(['en', 'sv'], $master->getTranslation('en')->setRelations([])->load('translations')->translations->pluck('locale')->toArray());
     }
 
     /** @test * */
@@ -53,10 +51,19 @@ class TranslatableTest extends TestCase
         $this->assertEquals(['da', 'en', 'sv'], $master->versions->pluck('locale')->toArray());
         $this->assertEquals(['da', 'en', 'sv'], $master->getTranslation('en')->versions->pluck('locale')->toArray());
 
-        // Test eager load
-        $master->setRelations([])->load('siblings');
+        $en = $master->getTranslation('en');
 
-        $this->assertEquals(['da', 'en', 'sv'], $master->versions->pluck('locale')->toArray());
+//        \DB::listen(function ($e) {
+//            dump($e->sql, $e->bindings);
+//        });
+//
+//        dd(
+//            $en->setRelations([])->load('versions')->toArray()
+//        );
+
+        // Test eager load
+        $this->assertEquals(['da', 'en', 'sv'], $master->setRelations([])->load('versions')->versions->pluck('locale')->toArray());
+        $this->assertEquals(['da', 'en', 'sv'], $master->getTranslation('en')->setRelations([])->load('versions')->versions->pluck('locale')->toArray());
     }
 
     /** @test **/
@@ -71,6 +78,10 @@ class TranslatableTest extends TestCase
 
         $this->assertEquals(3, $master->versions->count());
         $this->assertEquals(['da', 'en', 'sv'], $master->versions->pluck('locale')->toArray());
+
+        // Test eager load
+        $this->assertEquals(['da', 'en', 'sv'], $master->setRelations([])->load('versions')->versions->pluck('locale')->toArray());
+        $this->assertEquals(['da', 'en', 'sv'], $master->getTranslation('en')->setRelations([])->load('versions')->versions->pluck('locale')->toArray());
     }
 
     /** @test **/
