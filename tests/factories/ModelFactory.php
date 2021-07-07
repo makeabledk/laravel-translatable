@@ -6,7 +6,8 @@ use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
 use Makeable\LaravelTranslatable\Tests\Stubs\Tag;
 
-new class($factory) {
+new class($factory)
+{
     /**
      * @var Factory
      */
