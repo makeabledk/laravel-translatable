@@ -4,6 +4,7 @@ namespace Makeable\LaravelTranslatable\Tests\Feature;
 
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\TestCase;
+use Makeable\LaravelTranslatable\Translatable;
 
 class TranslatableTest extends TestCase
 {
@@ -34,6 +35,11 @@ class TranslatableTest extends TestCase
 
         $this->assertEquals(['en', 'sv'], $master->translations->pluck('locale')->toArray());
         $this->assertEquals(['en', 'sv'], $master->getTranslation('en')->translations->pluck('locale')->toArray());
+
+        // Test eager load
+        $master->setRelations([])->load('siblings');
+
+        $this->assertEquals(['en', 'sv'], $master->translations->pluck('locale')->toArray());
     }
 
     /** @test * */
@@ -46,6 +52,25 @@ class TranslatableTest extends TestCase
 
         $this->assertEquals(['da', 'en', 'sv'], $master->versions->pluck('locale')->toArray());
         $this->assertEquals(['da', 'en', 'sv'], $master->getTranslation('en')->versions->pluck('locale')->toArray());
+
+        // Test eager load
+        $master->setRelations([])->load('siblings');
+
+        $this->assertEquals(['da', 'en', 'sv'], $master->versions->pluck('locale')->toArray());
+    }
+
+    /** @test **/
+    public function regression_the_versions_relation_also_returns_all_versions_when_global_locale_preference_is_set()
+    {
+        $master = factory(Post::class)
+            ->with(1, 'english', 'translations')
+            ->andWith(1, 'swedish', 'translations')
+            ->create();
+
+        Translatable::setGlobalLocale('sv');
+
+        $this->assertEquals(3, $master->versions->count());
+        $this->assertEquals(['da', 'en', 'sv'], $master->versions->pluck('locale')->toArray());
     }
 
     /** @test **/

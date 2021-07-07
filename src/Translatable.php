@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Makeable\LaravelTranslatable\Builder\TranslatableEloquentBuilder;
 use Makeable\LaravelTranslatable\Concerns\HasLocaleQueryPreferences;
 use Makeable\LaravelTranslatable\Concerns\SyncsAttributes;
+use Makeable\LaravelTranslatable\Relations\SiblingsRelation;
 use Makeable\LaravelTranslatable\Relations\VersionsRelation;
 use Makeable\LaravelTranslatable\Scopes\ApplyLocaleScope;
 
@@ -62,11 +63,11 @@ trait Translatable
      * This relation should only be used for query purposes and not attaching
      * new translations as it relies on a sub-selected foreign key.
      *
-     * @return VersionsRelation
+     * @return SiblingsRelation
      */
     public function siblings()
     {
-        return VersionsRelation::model($this)->withoutSelf();
+        return SiblingsRelation::model($this);
     }
 
     /**

@@ -18,40 +18,22 @@ class VersionsRelation extends HasMany
         addEagerConstraints as traitAddEagerConstraints;
     }
 
-    /**
-     * @var bool
-     */
-    protected $withoutSelf = false;
-
-    /**
-     * @return void
-     */
     public function addConstraints()
     {
-        $this->withoutDefaultLocaleScope()->traitAddConstraints(function ($query) {
-            if ($this->withoutSelf) {
-                $query->where($this->localKey, '<>', $this->parent->getKey());
-            }
-        });
+        if (static::$constraints) {
+            $this->withoutLocaleScope()->withoutDefaultLocaleScope();
+
+            $this->where(TranslatableField::$sibling_id, $this->parent->getSiblingKey());
+        }
     }
 
-    /**
-     * @param  array  $models
-     * @return void
-     */
     public function addEagerConstraints(array $models)
     {
-        $this->withoutDefaultLocaleScope()->traitAddEagerConstraints($models, function ($query) use ($models) {
-            if ($this->withoutSelf) {
-                $query->whereNotIn($this->getLocalKeyName(), $this->getKeys($models, $this->getLocalKeyName()));
-            }
-        });
+        $this->withoutLocaleScope()->withoutDefaultLocaleScope();
+
+        $this->whereIn(TranslatableField::$sibling_id, $this->getKeys($models, TranslatableField::$sibling_id));
     }
 
-    /**
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return static
-     */
     public static function model(Model $model)
     {
         $class = get_class($model);
@@ -64,15 +46,5 @@ class VersionsRelation extends HasMany
         });
 
         return new static($related->newQuery(), $model, TranslatableField::$sibling_id, $model->getKeyName());
-    }
-
-    /**
-     * @return $this
-     */
-    public function withoutSelf()
-    {
-        $this->withoutSelf = true;
-
-        return $this;
     }
 }

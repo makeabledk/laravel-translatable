@@ -57,8 +57,8 @@ trait HasLocaleQueryPreferences
 
     /**
      * Change default behavior of the LocaleScope.
-     * When no locale scope was applied on the query, we'll fetch
-     * all locales just like a normal non-translatable model.
+     * When no locale scope was applied on the query, all locales will
+     * be fetched just like a normal non-translatable model.
      */
     public static function fetchAllLocalesByDefault()
     {
@@ -67,8 +67,8 @@ trait HasLocaleQueryPreferences
 
     /**
      * Change default behavior of the LocaleScope.
-     * When no locale scope was applied on the query, we'll fetch
-     * all locales just like a normal non-translatable model.
+     * When no locale scope was applied on the query, only the master
+     * version of the model will be fetched from the database (DEFAULT).
      */
     public static function fetchMasterLocaleByDefault()
     {
