@@ -56,6 +56,7 @@ trait BelongsToBaseImplementation
     protected function ensureMasterOnAmbiguousQueries($query)
     {
         if (! $this->pendingDefaultLocale
+            && $this->localeScopeEnabled()
             && ModelChecker::checkTranslatable($query->getModel())
             && ApplyLocaleScope::modeIs(ApplyLocaleScope::FETCH_ALL_LOCALES_BY_DEFAULT)
             && get_class($query->getModel())::getCurrentLocale() === null) {

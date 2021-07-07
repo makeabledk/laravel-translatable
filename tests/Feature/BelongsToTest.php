@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Makeable\LaravelTranslatable\Scopes\ApplyLocaleScope;
 use Makeable\LaravelTranslatable\Tests\Stubs\Comment;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\PostMeta;
@@ -148,5 +149,26 @@ class BelongsToTest extends TestCase
         $this->assertEquals('da', $meta->last()->post->locale);
 
         Translatable::fetchMasterLocaleByDefault(); // reset
+    }
+
+    /** @test **/
+    public function regression_it_respects_without_locale_scope_on_belongs_to_when_fetching_all_locales()
+    {
+        $master = factory(Post::class)->with(1, 'english', 'translations')->create();
+        $translation = $master->getTranslation('en');
+
+        ApplyLocaleScope::setMode(ApplyLocaleScope::FETCH_ALL_LOCALES_BY_DEFAULT);
+
+        $comment = factory(Comment::class)->create(['post_id' => $translation->id]);
+
+        $this->assertNull($comment->post); // Out of the box it won't find a post, as it expects the foreign key to point to the master post
+        $this->assertEquals($translation->id, $comment->post()->withoutLocaleScope()->first()->id); // However we should be able to disable the local scope and just fetch the translated post
+
+        // It works with eager load too
+        $this->assertEquals($translation->id, $comment->unsetRelations()->load(['post' => function ($q) {
+            return $q->withoutLocaleScope();
+        }])->post->id);
+
+        ApplyLocaleScope::setMode(ApplyLocaleScope::FETCH_MASTER_LOCALE_BY_DEFAULT);
     }
 }

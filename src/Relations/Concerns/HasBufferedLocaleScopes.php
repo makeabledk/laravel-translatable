@@ -59,12 +59,6 @@ trait HasBufferedLocaleScopes
         }
 
         return $this->defaultLocale($locales, $fallbackMaster);
-
-//        if ($this->pendingDefaultLocale === false)
-
-        return $this->pendingDefaultLocale !== false && ApplyLocaleScope::modeIs(ApplyLocaleScope::FETCH_MASTER_LOCALE_BY_DEFAULT)
-            ? $this->defaultLocale($locales, $fallbackMaster)
-            : $this;
     }
 
     /**
