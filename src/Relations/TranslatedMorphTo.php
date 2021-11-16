@@ -87,7 +87,7 @@ class TranslatedMorphTo extends MorphTo
     }
 
     /**
-     * @param Model|string $model
+     * @param  Model|string  $model
      */
     protected function setOwnerKeyNameFor($model)
     {

@@ -84,7 +84,7 @@ trait HasOneOrManyImplementation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array   $models
+     * @param  array  $models
      * @param  \Illuminate\Database\Eloquent\Collection  $results
      * @param  string  $relation
      * @param  string  $type
