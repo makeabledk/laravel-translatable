@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Makeable\LaravelTranslatable\Tests\Stubs\Category;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\Tag;
 use Makeable\LaravelTranslatable\Tests\TestCase;
@@ -40,5 +41,25 @@ class MorphManyTest extends TestCase
 
         $translatedPost->setRelations([])->load('tags');
         $this->assertEquals($translatedTag->id, $translatedPost->tags->first()->id ?? null);
+    }
+
+    /** @test **/
+    public function regression_it_can_eager_load_morph_children_of_different_types()
+    {
+        $post = factory(Post::class)
+            ->with(1, 'english', 'translations')
+            ->with(1, 'tags')
+            ->create();
+
+        $category = factory(Category::class)
+            ->with(1, 'english', 'translations')
+            ->with(1, 'tags')
+            ->create();
+
+        $tags = Tag::with('taggable')->get();
+
+        $this->assertEquals(2, $tags->count());
+        $this->assertTrue($tags->get(0)->taggable->is($post));
+        $this->assertTrue($tags->get(1)->taggable->is($category));
     }
 }

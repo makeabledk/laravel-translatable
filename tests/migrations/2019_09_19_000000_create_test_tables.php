@@ -69,6 +69,7 @@ class CreateTestTables extends Migration
             $table->unsignedInteger('master_id')->nullable();
             $table->unsignedInteger('sibling_id')->nullable();
             $table->string('locale');
+            $table->string('name')->nullable();
             $table->nullableMorphs('taggable');
             $table->timestamps();
         });

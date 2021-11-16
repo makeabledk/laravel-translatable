@@ -102,4 +102,15 @@ class TranslatedMorphTo extends MorphTo
             $this->originalOwnerKey ?: null
         );
     }
+
+    /**
+     * Prevent triggering an applyScopes() causing leaking
+     * constraints when fetching the connection.
+     *
+     * @return \Illuminate\Database\ConnectionInterface|\Illuminate\Support\Collection
+     */
+    public function getConnection()
+    {
+        return $this->getQuery()->getQuery()->getConnection();
+    }
 }

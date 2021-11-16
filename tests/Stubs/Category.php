@@ -15,4 +15,9 @@ class Category extends Model
     {
         return $this->belongsToMany(Post::class);
     }
+
+    public function tags()
+    {
+        return $this->morphMany(Tag::class, 'taggable');
+    }
 }
