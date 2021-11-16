@@ -24,8 +24,8 @@ trait HasBufferedLocaleScopes
     protected $hasGetterHook = false;
 
     /**
-     * @param string|array $locales
-     * @param bool $fallbackMaster
+     * @param  string|array  $locales
+     * @param  bool  $fallbackMaster
      * @return $this
      */
     public function locale($locales, $fallbackMaster = false)
@@ -36,8 +36,8 @@ trait HasBufferedLocaleScopes
     }
 
     /**
-     * @param string|array $locales
-     * @param bool $fallbackMaster
+     * @param  string|array  $locales
+     * @param  bool  $fallbackMaster
      * @return $this
      */
     public function defaultLocale($locales, $fallbackMaster = false)
@@ -48,8 +48,8 @@ trait HasBufferedLocaleScopes
     }
 
     /**
-     * @param string|array $locales
-     * @param bool $fallbackMaster
+     * @param  string|array  $locales
+     * @param  bool  $fallbackMaster
      * @return $this
      */
     public function defaultLocaleUnlessDisabled($locales, $fallbackMaster = false)
