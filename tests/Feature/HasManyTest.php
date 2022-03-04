@@ -30,7 +30,7 @@ class HasManyTest extends TestCase
     public function it_can_eager_load_has_many_from_translated_model()
     {
         $translation = factory(Post::class)
-            ->state('english')
+            ->apply('english')
             ->with(2, 'master.meta', ['key' => 'foo'])
             ->create()
             ->load('meta');
@@ -48,7 +48,7 @@ class HasManyTest extends TestCase
             ->andWith(1, 'swedish', 'translations')
             ->with(1, 'meta')
             ->with(1, 'english', 'meta.translations')
-            ->times(2)
+            ->count(2)
             ->create()
             ->first();
 
@@ -143,7 +143,7 @@ class HasManyTest extends TestCase
     public function has_many_locale_scope_may_be_disabled()
     {
         $translation = factory(Post::class)
-            ->state('english')
+            ->apply('english')
             ->with(2, 'master.meta')
             ->create();
 

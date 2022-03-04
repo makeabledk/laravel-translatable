@@ -35,7 +35,7 @@ class BelongsToManyTest extends TestCase
             ->andWith(1, 'swedish', 'translations')
             ->with(1, 'categories')
             ->with(1, 'english', 'categories.translations')
-            ->times(2)
+            ->count(2)
             ->create()
             ->last();
 
@@ -53,7 +53,7 @@ class BelongsToManyTest extends TestCase
     public function it_can_get_non_translatable_belongs_to_many_relations_from_translatable_model()
     {
         $translation = factory(Post::class)
-            ->state('english')
+            ->apply('english')
             ->with(1, 'master.images', ['src' => 'Foo'])
             ->create();
 
@@ -70,7 +70,7 @@ class BelongsToManyTest extends TestCase
             ->andWith(1, 'swedish', 'translations')
             ->with(1, 'posts')
             ->with(1, 'english', 'posts.translations')
-            ->times(2)
+            ->count(2)
             ->create();
 
         $load = function ($locale) {
@@ -110,7 +110,7 @@ class BelongsToManyTest extends TestCase
     public function belongs_to_many_locale_scope_may_be_disabled()
     {
         $translation = factory(Post::class)
-            ->state('english')
+            ->apply('english')
             ->with(2, 'master.categories')
             ->create();
 
@@ -133,7 +133,7 @@ class BelongsToManyTest extends TestCase
     public function regression_it_works_with_simple_pagination_on_belongs_to_many()
     {
         $post = factory(Post::class)
-            ->state('english')
+            ->apply('english')
             ->with(2, 'master.categories')->create();
 
         $this->assertEquals(2, $post->categories()->count());
@@ -154,7 +154,7 @@ class BelongsToManyTest extends TestCase
 //    public function it_can_query_relation_existence_on_translated_has_many_relations()
 //    {
 //        $translation = factory(Post::class)
-//            ->state('english')
+//            ->apply('english')
 //            ->with('master')
 //            ->with(1, 'meta')
 //            ->with(1, 'english', 'meta.translations')
@@ -173,7 +173,7 @@ class BelongsToManyTest extends TestCase
 //    public function regression_when_disabling_locale_scope_it_also_applies_to_with_count_method()
 //    {
 //        $englishPost = factory(Post::class)
-//            ->state('english')
+//            ->apply('english')
 //            ->with(2, 'master.meta')
 //            ->create();
 //
