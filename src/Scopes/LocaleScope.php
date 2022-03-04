@@ -71,7 +71,7 @@ class LocaleScope
     /**
      * @param  array  $locales
      * @param  bool  $fallbackMaster
-     * @return  \Makeable\LaravelTranslatable\Builder\EloquentBuilder  $query
+     * @return \Makeable\LaravelTranslatable\Builder\EloquentBuilder $query
      */
     public function __invoke($locales, $fallbackMaster = false)
     {
@@ -239,7 +239,7 @@ class LocaleScope
      * Since there is no easy mapping between a where clause and it's original bindings
      * we'll instead re-add bindings based on the values in the where clause.
      *
-     * @param array $where
+     * @param  array  $where
      * @return array
      */
     protected function getBindingsForWhere(array $where)

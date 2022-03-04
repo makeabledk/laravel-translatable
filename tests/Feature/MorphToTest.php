@@ -45,7 +45,7 @@ class MorphToTest extends TestCase
             ->with(1, 'english', 'tags.translations')
             ->count(2)
             ->create();
-        
+
         $load = function ($locale) {
             return Post::latest()
                 ->locale($locale)

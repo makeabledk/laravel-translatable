@@ -38,8 +38,8 @@ trait HasLocaleScopes
     }
 
     /**
-     * @param string|array $locales
-     * @param bool $fallbackMaster
+     * @param  string|array  $locales
+     * @param  bool  $fallbackMaster
      * @return $this
      */
     public function locale($locales, $fallbackMaster = false)

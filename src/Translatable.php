@@ -90,7 +90,7 @@ trait Translatable
     // _________________________________________________________________________________________________________________
 
     /**
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeMaster($query)
@@ -135,7 +135,7 @@ trait Translatable
     }
 
     /**
-     * @param string $locale
+     * @param  string  $locale
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function getTranslation($locale)
@@ -146,7 +146,7 @@ trait Translatable
     }
 
     /**
-     * @param string $locale
+     * @param  string  $locale
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function getTranslationOrNew($locale)
