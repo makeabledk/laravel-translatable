@@ -50,7 +50,7 @@ trait BelongsToBaseImplementation
     /**
      * Covers edge-case present when running in compatibility-mode and parent is translatable.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return void
      */
     protected function ensureMasterOnAmbiguousQueries($query)

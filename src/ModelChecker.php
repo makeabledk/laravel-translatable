@@ -25,8 +25,9 @@ class ModelChecker
 
     /**
      * @param  \Illuminate\Database\Eloquent\Model|\Makeable\LaravelTranslatable\Translatable  $model
-     * @throws \BadMethodCallException
      * @return \Makeable\LaravelTranslatable\Translatable
+     *
+     * @throws \BadMethodCallException
      */
     public static function ensureTranslatable(Model $model)
     {

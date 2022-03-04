@@ -27,7 +27,7 @@ class ApplyLocaleScope implements Scope
     protected static $mode = self::FETCH_MASTER_LOCALE_BY_DEFAULT;
 
     /**
-     * @param string $mode
+     * @param  string  $mode
      */
     public static function setMode($mode)
     {
@@ -35,7 +35,7 @@ class ApplyLocaleScope implements Scope
     }
 
     /**
-     * @param string $mode
+     * @param  string  $mode
      * @return bool
      */
     public static function modeIs($mode)

@@ -9,21 +9,21 @@ class TranslatableFactory extends Factory
     public function definition()
     {
         return [
-            'locale' => 'da'
+            'locale' => 'da',
         ];
     }
 
     public function english()
     {
         return $this->state([
-            'locale' => 'en'
+            'locale' => 'en',
         ]);
     }
 
     public function swedish()
     {
         return $this->state([
-            'locale' => 'sv'
+            'locale' => 'sv',
         ]);
     }
 }

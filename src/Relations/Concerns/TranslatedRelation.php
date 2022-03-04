@@ -62,8 +62,8 @@ trait TranslatedRelation
     }
 
     /**
-     * @param Model $model
-     * @param null $keyName
+     * @param  Model  $model
+     * @param  null  $keyName
      * @return mixed
      */
     protected function getModelKey(Model $model, $keyName = null)
@@ -72,8 +72,8 @@ trait TranslatedRelation
     }
 
     /**
-     * @param Model $model
-     * @param null $keyName
+     * @param  Model  $model
+     * @param  null  $keyName
      * @return mixed
      */
     protected function getModelKeyName(Model $model, $keyName = null)
@@ -101,6 +101,7 @@ trait TranslatedRelation
      *
      * This is useful for eager-loaded queries where we wish to persist
      * the same locale preferences throughout the entire nested queries.
+     *
      * @param  \Illuminate\Database\Eloquent\Model|null  $model
      * @return $this
      */
