@@ -20,9 +20,10 @@ jobs:
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
         strategy:
+            fail-fast: false
             matrix:
-                php: [7.3, 7.4, 8.0, 8.1]
-                laravel: [7.*, 8.*, 9.*]
+                php: [8.0, 8.1]
+                laravel: [8.*, 9.*]
                 dependency-version: [prefer-stable] # prefer-lowest,
 
         name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
