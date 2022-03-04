@@ -15,7 +15,7 @@ class MorphToTest extends TestCase
     {
         $postMaster = factory(Post::class)
             ->with(1, 'english', 'translations')
-            ->times(2)
+            ->count(2)
             ->create()
             ->last(); // Ensure the post() relation on Meta doesn't just select the first post in table, but actually matches foreign key constraints
 
@@ -43,7 +43,7 @@ class MorphToTest extends TestCase
             ->andWith(1, 'swedish', 'translations')
             ->with(1, 'tags')
             ->with(1, 'english', 'tags.translations')
-            ->times(2)
+            ->count(2)
             ->create();
 
         $load = function ($locale) {

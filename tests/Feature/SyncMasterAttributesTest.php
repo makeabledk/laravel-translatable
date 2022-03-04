@@ -15,7 +15,7 @@ class SyncMasterAttributesTest extends TestCase
         $team = factory(Team::class)->create();
 
         $danish = factory(Post::class)->create(['team_id' => $team->id]);
-        $danish->translations()->save($english = factory(Post::class)->state('english')->make());
+        $danish->translations()->save($english = factory(Post::class)->apply('english')->make());
 
         $this->assertEquals($team->id, $english->team_id);
     }
@@ -33,7 +33,7 @@ class SyncMasterAttributesTest extends TestCase
 
         // On newly created translation
         $master = factory(Post::class)->with('team')->create();
-        $translation = factory(Post::class)->state('english')->make();
+        $translation = factory(Post::class)->apply('english')->make();
         $translation->master_id = $master->id;
         $translation->team_id = $newId = factory(Team::class)->create()->id;
         $translation->save();
@@ -50,7 +50,7 @@ class SyncMasterAttributesTest extends TestCase
         $team_2 = factory(Team::class)->create();
 
         $danish = factory(Post::class)->create(['team_id' => $team_1->id]);
-        $danish->translations()->save($english = factory(Post::class)->state('english')->make(['team_id' => $team_2->id]));
+        $danish->translations()->save($english = factory(Post::class)->apply('english')->make(['team_id' => $team_2->id]));
 
         $this->assertEquals($team_2->id, $english->team_id);
         $this->assertEquals($team_2->id, $danish->refresh()->team_id);
@@ -63,7 +63,7 @@ class SyncMasterAttributesTest extends TestCase
         $team_2 = factory(Team::class)->create();
 
         $danish = factory(Post::class)->create(['team_id' => $team_1->id]);
-        $danish->translations()->save($english = factory(Post::class)->state('english')->make());
+        $danish->translations()->save($english = factory(Post::class)->apply('english')->make());
 
         $english->forceFill(['team_id' => $team_2->id])->save();
 

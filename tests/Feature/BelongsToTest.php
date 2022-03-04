@@ -16,7 +16,7 @@ class BelongsToTest extends TestCase
     {
         $postMaster = factory(Post::class)
             ->with(1, 'english', 'translations')
-            ->times(2)
+            ->count(2)
             ->create()
             ->last(); // Ensure the post() relation on Meta doesn't just select the first post in table, but actually matches foreign key constraints
 
@@ -42,7 +42,7 @@ class BelongsToTest extends TestCase
             ->andWith(1, 'swedish', 'translations')
             ->with(1, 'meta')
             ->with(1, 'english', 'meta.translations')
-            ->times(2)
+            ->count(2)
             ->create();
 
         $load = function ($locale) {
@@ -70,7 +70,7 @@ class BelongsToTest extends TestCase
     public function belongs_to_locale_scope_may_be_disabled()
     {
         $translation = factory(PostMeta::class)
-            ->state('english')
+            ->apply('english')
             ->with('master.post')
             ->with('english', 'master.post.translations')
             ->create();
