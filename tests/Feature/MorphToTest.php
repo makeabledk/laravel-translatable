@@ -2,6 +2,7 @@
 
 namespace Makeable\LaravelTranslatable\Tests\Feature;
 
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Makeable\LaravelTranslatable\Tests\Stubs\Image;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\Tag;
@@ -113,5 +114,42 @@ class MorphToTest extends TestCase
 
         $this->assertInstanceOf(Post::class, $users->first()->photo);
         $this->assertInstanceOf(Image::class, $users->last()->photo);
+    }
+
+    /** @test **/
+    public function regression_support_eager_loading_morph_constraints()
+    {
+        factory(Post::class)
+            ->with(1, 'english', 'translations')
+            ->andWith(1, 'swedish', 'translations')
+            ->with(1, 'tags')
+            ->with(1, 'english', 'tags.translations')
+            ->with(1, 'meta', ['key' => 'foo'])
+            ->with(1, 'english', 'meta.translations', ['key' => 'bar'])
+            ->count(1)
+            ->create();
+
+        $load = function ($locale) {
+            return Tag::query()
+                ->locale($locale)
+                ->with([
+                    'taggable' => fn (MorphTo $query) => $query->constrain([
+                        Post::class => fn ($query) => $query->with(['meta'])
+                    ])
+                ])
+                ->first()
+                ->toArray();
+        };
+
+        $result = $load('en');
+
+        $this->assertEquals('en', data_get($result, 'locale'));
+        $this->assertEquals(1, count(data_get($result, 'taggable.meta')));
+        $this->assertEquals('en', data_get($result, 'taggable.meta.0.locale'));
+
+        $result = $load('da');
+        $this->assertEquals('da', data_get($result, 'locale'));
+        $this->assertEquals(1, count(data_get($result, 'taggable.meta')));
+        $this->assertEquals('da', data_get($result, 'taggable.meta.0.locale'));
     }
 }

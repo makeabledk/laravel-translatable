@@ -31,7 +31,14 @@ class TranslatedMorphTo extends MorphTo
             ->with(array_merge(
                 $this->getQuery()->getEagerLoads(),
                 (array) ($this->morphableEagerLoads[get_class($instance)] ?? [])
-            ));
+            ))
+            ->withCount(
+                (array) ($this->morphableEagerLoadCounts[get_class($instance)] ?? [])
+            );
+
+        if ($callback = ($this->morphableConstraints[get_class($instance)] ?? null)) {
+            $callback($query);
+        }
 
         $whereIn = $this->whereInMethod($instance, $this->originalOwnerKey);
 
