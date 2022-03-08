@@ -134,8 +134,8 @@ class MorphToTest extends TestCase
                 ->locale($locale)
                 ->with([
                     'taggable' => fn (MorphTo $query) => $query->constrain([
-                        Post::class => fn ($query) => $query->with(['meta'])
-                    ])
+                        Post::class => fn ($query) => $query->with(['meta']),
+                    ]),
                 ])
                 ->first()
                 ->toArray();
