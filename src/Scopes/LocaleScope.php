@@ -246,7 +246,7 @@ class LocaleScope
     {
         if (! Str::endsWith($where['type'], 'Raw')) {
             foreach (['value', 'values'] as $valueType) {
-                if (($value = Arr::get($where, $valueType))) {
+                if ($value = Arr::get($where, $valueType)) {
                     // Re-implementation of protected \Illuminate\Database\Query\Builder@cleanBindings
                     return array_values(array_filter(Arr::wrap($value), function ($binding) {
                         return ! $binding instanceof Expression;
