@@ -74,7 +74,7 @@ trait HasLocaleScopes
     // _________________________________________________________________________________________________________________
 
     /**
-     * @param $locale
+     * @param  $locale
      */
     protected function setLocaleQueryHistory($locale)
     {

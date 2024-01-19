@@ -186,7 +186,7 @@ class HasManyTest extends TestCase
     }
 
     /**
-     * @param $lang
+     * @param  $lang
      * @return \Closure
      */
     protected function ofLocale($lang)

@@ -18,7 +18,7 @@ class EloquentBuilder extends Builder
     }
 
     /**
-     * @param $stack
+     * @param  $stack
      * @return array|string
      */
     protected function normalizeStackTrace($stack)

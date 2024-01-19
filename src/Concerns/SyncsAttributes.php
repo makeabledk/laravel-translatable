@@ -73,7 +73,7 @@ trait SyncsAttributes
     }
 
     /**
-     * @param $attributes
+     * @param  $attributes
      * @return $this
      */
     public function forceFillMissing($attributes)
