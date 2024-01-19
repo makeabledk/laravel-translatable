@@ -12,16 +12,16 @@
         }
     ],
     "require": {
-        "php": "^7.4|8.*",
-        "illuminate/database": "8.*|9.*",
-        "illuminate/support": "8.*|9.*"
+        "php": "^8.1",
+        "illuminate/database": "10.*|11.*",
+        "illuminate/support": "10.*|11.*"
     },
     "require-dev": {
-        "laravel/laravel": "8.*|9.*",
-        "makeabledk/laravel-factory-enhanced": "dev-next@dev",
+        "laravel/laravel": "10.*|11.*",
+        "makeabledk/laravel-factory-enhanced": "^5.0",
         "fakerphp/faker": "^1.19",
-        "mockery/mockery": "^1.4.2",
-        "phpunit/phpunit": "^8.0|^9.0",
+        "mockery/mockery": "^1.5",
+        "phpunit/phpunit": "^9.5",
         "codedungeon/phpunit-result-printer": "^0.32.0"
     },
     "autoload-dev": {
