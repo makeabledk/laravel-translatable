@@ -8,6 +8,7 @@ use Makeable\LaravelTranslatable\Builder\EloquentBuilder;
 use Makeable\LaravelTranslatable\Relations\TranslatedBelongsTo;
 use Makeable\LaravelTranslatable\Relations\TranslatedBelongsToMany;
 use Makeable\LaravelTranslatable\Relations\TranslatedHasMany;
+use Makeable\LaravelTranslatable\Relations\TranslatedHasOne;
 use Makeable\LaravelTranslatable\Relations\TranslatedMorphMany;
 use Makeable\LaravelTranslatable\Relations\TranslatedMorphTo;
 
@@ -70,6 +71,20 @@ trait TranslatableRelationships
     protected function newHasMany(Builder $query, Model $parent, $foreignKey, $localKey)
     {
         return new TranslatedHasMany(...func_get_args());
+    }
+
+    /**
+     * Instantiate a new HasOne relationship.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param  string  $foreignKey
+     * @param  string  $localKey
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    protected function newHasOne(Builder $query, Model $parent, $foreignKey, $localKey)
+    {
+        return new TranslatedHasOne(...func_get_args());
     }
 
     /**
