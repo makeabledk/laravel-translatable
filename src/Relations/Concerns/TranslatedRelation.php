@@ -105,7 +105,7 @@ trait TranslatedRelation
      * @param  \Illuminate\Database\Eloquent\Model|null  $model
      * @return $this
      */
-    protected function setDefaultLocaleFromModel(Model $model = null)
+    protected function setDefaultLocaleFromModel(?Model $model = null)
     {
         // Sometimes the parent will be an empty instance or null. In this
         // case we won't attempt to set any default locale based on that.
