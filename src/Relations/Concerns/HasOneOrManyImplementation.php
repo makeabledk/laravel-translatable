@@ -39,7 +39,7 @@ trait HasOneOrManyImplementation
      * @param  callable|null  $extraConstraint
      * @return void
      */
-    public function addConstraints(callable $extraConstraint = null)
+    public function addConstraints(?callable $extraConstraint = null)
     {
         if (! static::$constraints) {
             return;
@@ -66,7 +66,7 @@ trait HasOneOrManyImplementation
      * @param  callable|null  $extraConstraint
      * @return void
      */
-    public function addEagerConstraints(array $models, callable $extraConstraint = null)
+    public function addEagerConstraints(array $models, ?callable $extraConstraint = null)
     {
         $this
             ->setDefaultLocaleFromModel(Arr::first($models))

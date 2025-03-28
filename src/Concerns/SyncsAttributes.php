@@ -19,7 +19,7 @@ trait SyncsAttributes
      * @param  array|null  $original
      * @return array
      */
-    public function getChangedSyncAttributes(array $original = null)
+    public function getChangedSyncAttributes(?array $original = null)
     {
         if ($original !== null) {
             [$changes, $syncAttributesNames] = [[], $this->getSyncAttributeNames()];
