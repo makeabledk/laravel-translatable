@@ -11,8 +11,7 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class MorphToTest extends TestCase
 {
-    /** @test **/
-    public function it_can_save_and_access_translated_morph_to_relationships_from_translated_child()
+    public function test_it_can_save_and_access_translated_morph_to_relationships_from_translated_child()
     {
         $postMaster = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -36,8 +35,7 @@ class MorphToTest extends TestCase
         $this->assertEquals($postMaster->id, $tagTranslation->taggable()->locale('da')->first()->id, 'Another locale may be set on the relation which changes the outcome');
     }
 
-    /** @test **/
-    public function it_can_load_nested_translatable_morph_to_relations()
+    public function test_it_can_load_nested_translatable_morph_to_relations()
     {
         factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -69,8 +67,7 @@ class MorphToTest extends TestCase
         $this->assertEquals('sv', data_get($result, 'tags.0.taggable.locale'));
     }
 
-    /** @test **/
-    public function locale_scope_can_be_disabled_for_morph_to()
+    public function test_locale_scope_can_be_disabled_for_morph_to()
     {
         $user = factory(User::class)->create();
         $user->photo()->associate(
@@ -87,8 +84,7 @@ class MorphToTest extends TestCase
         $this->assertEquals('da', $user->photo()->withoutLocaleScope()->first()->locale);
     }
 
-    /** @test **/
-    public function regression_a_none_translatable_model_can_morph_to_translatable_parent()
+    public function test_regression_a_none_translatable_model_can_morph_to_translatable_parent()
     {
         $user = factory(User::class)->create();
         $user->photo()->associate(
@@ -104,8 +100,7 @@ class MorphToTest extends TestCase
         $this->assertEquals('en', data_get($user->load(['photo' => $inEnglish]), 'photo.locale'));
     }
 
-    /** @test **/
-    public function regression_it_may_morph_to_a_combination_of_both_translated_and_nontranslatable_models()
+    public function test_regression_it_may_morph_to_a_combination_of_both_translated_and_nontranslatable_models()
     {
         factory(User::class)->create()->photo()->associate(factory(Post::class)->create())->save();
         factory(User::class)->create()->photo()->associate(factory(Image::class)->create())->save();
@@ -116,8 +111,7 @@ class MorphToTest extends TestCase
         $this->assertInstanceOf(Image::class, $users->last()->photo);
     }
 
-    /** @test **/
-    public function regression_support_eager_loading_morph_constraints()
+    public function test_regression_support_eager_loading_morph_constraints()
     {
         factory(Post::class)
             ->with(1, 'english', 'translations')

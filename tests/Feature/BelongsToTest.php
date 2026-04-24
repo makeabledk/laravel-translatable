@@ -11,8 +11,7 @@ use Makeable\LaravelTranslatable\Translatable;
 
 class BelongsToTest extends TestCase
 {
-    /** @test **/
-    public function it_can_save_and_access_translated_belongs_to_relationships_from_translated_child()
+    public function test_it_can_save_and_access_translated_belongs_to_relationships_from_translated_child()
     {
         $postMaster = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -34,8 +33,7 @@ class BelongsToTest extends TestCase
         $this->assertEquals($postMaster->id, $metaTranslation->post()->locale('da')->first()->id, 'Another locale may be set on the relation which changes the outcome');
     }
 
-    /** @test **/
-    public function it_can_load_nested_translatable_belongs_to_relations()
+    public function test_it_can_load_nested_translatable_belongs_to_relations()
     {
         factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -66,8 +64,7 @@ class BelongsToTest extends TestCase
         $this->assertEquals('sv', data_get($result, 'meta.0.post.locale'));
     }
 
-    /** @test **/
-    public function belongs_to_locale_scope_may_be_disabled()
+    public function test_belongs_to_locale_scope_may_be_disabled()
     {
         $translation = factory(PostMeta::class)
             ->apply('english')
@@ -88,8 +85,7 @@ class BelongsToTest extends TestCase
         }])->post->locale);
     }
 
-    /** @test **/
-    public function regression_it_loads_the_default_locale_for_belongs_to_even_on_compatibility_mode()
+    public function test_regression_it_loads_the_default_locale_for_belongs_to_even_on_compatibility_mode()
     {
         $comment = factory(Comment::class)
             ->with(1, 'post')
@@ -106,8 +102,7 @@ class BelongsToTest extends TestCase
         Translatable::fetchMasterLocaleByDefault(); // reset
     }
 
-    /** @test **/
-    public function regression_it_respects_locale_and_global_locale_preferences_in_compatibility_mode()
+    public function test_regression_it_respects_locale_and_global_locale_preferences_in_compatibility_mode()
     {
         $comment = factory(Comment::class)
         ->with(1, 'post')
@@ -125,8 +120,7 @@ class BelongsToTest extends TestCase
         Translatable::fetchMasterLocaleByDefault(); // reset
     }
 
-    /** @test **/
-    public function regression_it_always_fetches_the_exact_child_id_in_compatibility_mode()
+    public function test_regression_it_always_fetches_the_exact_child_id_in_compatibility_mode()
     {
         factory(PostMeta::class)
             ->with(1, 'english', 'translations')
@@ -151,8 +145,7 @@ class BelongsToTest extends TestCase
         Translatable::fetchMasterLocaleByDefault(); // reset
     }
 
-    /** @test **/
-    public function regression_it_respects_without_locale_scope_on_belongs_to_when_fetching_all_locales()
+    public function test_regression_it_respects_without_locale_scope_on_belongs_to_when_fetching_all_locales()
     {
         $master = factory(Post::class)->with(1, 'english', 'translations')->create();
         $translation = $master->getTranslation('en');

@@ -9,8 +9,7 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class SyncMasterAttributesTest extends TestCase
 {
-    /** @test **/
-    public function it_fills_master_attributes_for_new_translations()
+    public function test_it_fills_master_attributes_for_new_translations()
     {
         $team = factory(Team::class)->create();
 
@@ -20,8 +19,7 @@ class SyncMasterAttributesTest extends TestCase
         $this->assertEquals($team->id, $english->team_id);
     }
 
-    /** @test **/
-    public function it_can_tell_which_sync_attributes_has_been_changed()
+    public function test_it_can_tell_which_sync_attributes_has_been_changed()
     {
         // On master
         $master = factory(Post::class)->with('team')->create();
@@ -43,8 +41,7 @@ class SyncMasterAttributesTest extends TestCase
         $this->assertEquals($newId, Arr::get($translation->getChangedSyncAttributes($master->getAttributes()), 'team_id'));
     }
 
-    /** @test **/
-    public function it_checks_for_changed_sync_attributes_when_creating_translations()
+    public function test_it_checks_for_changed_sync_attributes_when_creating_translations()
     {
         $team_1 = factory(Team::class)->create();
         $team_2 = factory(Team::class)->create();
@@ -56,8 +53,7 @@ class SyncMasterAttributesTest extends TestCase
         $this->assertEquals($team_2->id, $danish->refresh()->team_id);
     }
 
-    /** @test **/
-    public function it_updates_all_translations_when_sync_attributes_are_updated()
+    public function test_it_updates_all_translations_when_sync_attributes_are_updated()
     {
         $team_1 = factory(Team::class)->create();
         $team_2 = factory(Team::class)->create();
@@ -71,8 +67,7 @@ class SyncMasterAttributesTest extends TestCase
         $this->assertEquals($team_2->id, $danish->refresh()->team_id);
     }
 
-    /** @test **/
-    public function it_detects_relationship_names_and_expands_them_to_foreign_keys()
+    public function test_it_detects_relationship_names_and_expands_them_to_foreign_keys()
     {
         $post = new Post;
         $post->sync = ['team'];

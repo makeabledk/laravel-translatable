@@ -8,8 +8,7 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class LocaleScopeTest extends TestCase
 {
-    /** @test **/
-    public function when_using_locale_scope_it_finds_the_best_matching_model()
+    public function test_when_using_locale_scope_it_finds_the_best_matching_model()
     {
         $this->seedTranslatedModels();
 
@@ -27,8 +26,7 @@ class LocaleScopeTest extends TestCase
         $this->assertEquals('da', Post::findOrFail($sv->master_id)->locale);
     }
 
-    /** @test **/
-    public function it_can_fallback_to_master_when_no_locale_matches()
+    public function test_it_can_fallback_to_master_when_no_locale_matches()
     {
         $this->seedTranslatedModels();
 
@@ -46,8 +44,7 @@ class LocaleScopeTest extends TestCase
         $this->assertEquals(3, Post::locale(['sv', 'en', '*'])->get()->count());
     }
 
-    /** @test **/
-    public function it_applies_local_constraints_on_best_ids_query()
+    public function test_it_applies_local_constraints_on_best_ids_query()
     {
         $post = factory(Post::class)
             ->with(1, 'english', 'translations', ['is_published' => 0])
@@ -62,8 +59,7 @@ class LocaleScopeTest extends TestCase
         $this->assertEquals('da', $post->locale);
     }
 
-    /** @test **/
-    public function it_applies_global_scopes_on_best_ids_query()
+    public function test_it_applies_global_scopes_on_best_ids_query()
     {
         Post::addGlobalScope(function ($query) {
             $query->where('is_published', 1);
@@ -79,8 +75,7 @@ class LocaleScopeTest extends TestCase
         $this->assertEquals('da', $post->locale);
     }
 
-    /** @test **/
-    public function it_normalizes_given_locale_preferences_to_locale_collection()
+    public function test_it_normalizes_given_locale_preferences_to_locale_collection()
     {
         $this->assertEquals(['en'], LocaleScope::getNormalizedLocales('en', false)->toArray());
         $this->assertEquals(['en', '*'], LocaleScope::getNormalizedLocales('en', true)->toArray());

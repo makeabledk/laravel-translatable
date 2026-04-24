@@ -28,7 +28,7 @@ trait Translatable
     public static function bootTranslatable()
     {
         static::addGlobalScope(new ApplyLocaleScope);
-        static::observe(TranslatableObserver::class);
+        static::whenBooted(fn () => static::observe(TranslatableObserver::class));
     }
 
     /**

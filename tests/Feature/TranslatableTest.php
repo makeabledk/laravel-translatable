@@ -8,8 +8,7 @@ use Makeable\LaravelTranslatable\Translatable;
 
 class TranslatableTest extends TestCase
 {
-    /** @test **/
-    public function the_siblings_relation_returns_all_versions_but_the_current_instance()
+    public function test_the_siblings_relation_returns_all_versions_but_the_current_instance()
     {
         $master = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -24,8 +23,7 @@ class TranslatableTest extends TestCase
         $this->assertEquals(['da', 'sv'], $master->getTranslation('en')->setRelations([])->load('siblings')->siblings->pluck('locale')->toArray());
     }
 
-    /** @test * */
-    public function the_translations_relation_returns_all_versions_but_master()
+    public function test_the_translations_relation_returns_all_versions_but_master()
     {
         $master = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -40,8 +38,7 @@ class TranslatableTest extends TestCase
         $this->assertEquals(['en', 'sv'], $master->getTranslation('en')->setRelations([])->load('translations')->translations->pluck('locale')->toArray());
     }
 
-    /** @test * */
-    public function the_versions_relation_returns_all_translations_including_master()
+    public function test_the_versions_relation_returns_all_translations_including_master()
     {
         $master = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -66,8 +63,7 @@ class TranslatableTest extends TestCase
         $this->assertEquals(['da', 'en', 'sv'], $master->getTranslation('en')->setRelations([])->load('versions')->versions->pluck('locale')->toArray());
     }
 
-    /** @test **/
-    public function regression_the_versions_relation_also_returns_all_versions_when_global_locale_preference_is_set()
+    public function test_regression_the_versions_relation_also_returns_all_versions_when_global_locale_preference_is_set()
     {
         $master = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -84,8 +80,7 @@ class TranslatableTest extends TestCase
         $this->assertEquals(['da', 'en', 'sv'], $master->getTranslation('en')->setRelations([])->load('versions')->versions->pluck('locale')->toArray());
     }
 
-    /** @test **/
-    public function the_master_relation_returns_the_master_version()
+    public function test_the_master_relation_returns_the_master_version()
     {
         $master = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -100,8 +95,7 @@ class TranslatableTest extends TestCase
         $this->assertEquals(1, $master->getTranslation('en')->master()->take(5)->count());
     }
 
-    /** @test **/
-    public function it_sets_the_sibling_id_attribute_on_saving()
+    public function test_it_sets_the_sibling_id_attribute_on_saving()
     {
         // When master: master_id = NULL, sibling_id = id
         $master = factory(Post::class)->create();
