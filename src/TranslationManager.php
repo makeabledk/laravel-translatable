@@ -4,6 +4,7 @@ namespace Makeable\LaravelTranslatable;
 
 use Makeable\LaravelTranslatable\Concerns\HasLocaleQueryPreferences;
 use Makeable\LaravelTranslatable\Scopes\ApplyLocaleScope;
+
 class TranslationManager
 {
     protected const GLOBAL_LOCALE_KEY = HasLocaleQueryPreferences::class.'@globalLocale';

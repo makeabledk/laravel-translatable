@@ -6,7 +6,6 @@ use Makeable\LaravelTranslatable\Facades\Translations;
 use Makeable\LaravelTranslatable\Tests\Stubs\Post;
 use Makeable\LaravelTranslatable\Tests\Stubs\Tag;
 use Makeable\LaravelTranslatable\Tests\TestCase;
-use Makeable\LaravelTranslatable\Translatable;
 use RuntimeException;
 
 class TranslationManagerTest extends TestCase
