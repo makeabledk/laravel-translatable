@@ -10,8 +10,7 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class BelongsToManyTest extends TestCase
 {
-    /** @test **/
-    public function it_can_eager_load_translated_belongs_to_many_relationships()
+    public function test_it_can_eager_load_translated_belongs_to_many_relationships()
     {
         $masterPost = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -27,8 +26,7 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals('sv', $image->posts->first()->locale);
     }
 
-    /** @test * */
-    public function it_defaults_to_fetch_the_best_matching_locale_to_the_parent()
+    public function test_it_defaults_to_fetch_the_best_matching_locale_to_the_parent()
     {
         $masterPost = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -49,8 +47,7 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals('da', $masterPost->getTranslation('sv')->categories()->first()->locale, 'It defaults to master when parent locale is not available');
     }
 
-    /** @test **/
-    public function it_can_get_non_translatable_belongs_to_many_relations_from_translatable_model()
+    public function test_it_can_get_non_translatable_belongs_to_many_relations_from_translatable_model()
     {
         $translation = factory(Post::class)
             ->apply('english')
@@ -62,8 +59,7 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals('Foo', $translation->images->first()->src);
     }
 
-    /** @test **/
-    public function it_can_eager_load_nested_translated_belongs_to_many_models()
+    public function test_it_can_eager_load_nested_translated_belongs_to_many_models()
     {
         factory(Category::class)
             ->with(1, 'english', 'translations')
@@ -106,8 +102,7 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals('da', data_get($result, 'posts.0.categories.0.posts.0.locale'));
     }
 
-    /** @test * */
-    public function belongs_to_many_locale_scope_may_be_disabled()
+    public function test_belongs_to_many_locale_scope_may_be_disabled()
     {
         $translation = factory(Post::class)
             ->apply('english')
@@ -129,8 +124,7 @@ class BelongsToManyTest extends TestCase
         }])->categories->count());
     }
 
-    /** @test **/
-    public function regression_it_works_with_simple_pagination_on_belongs_to_many()
+    public function test_regression_it_works_with_simple_pagination_on_belongs_to_many()
     {
         $post = factory(Post::class)
             ->apply('english')
@@ -140,8 +134,7 @@ class BelongsToManyTest extends TestCase
         $this->assertEquals(2, count($post->categories()->simplePaginate()));
     }
 
-    /** @test * */
-    public function regression_belongs_to_many_works_between_non_translatable_models()
+    public function test_regression_belongs_to_many_works_between_non_translatable_models()
     {
         $team = factory(Team::class)->with(1, 'servers')->create();
 
@@ -150,8 +143,7 @@ class BelongsToManyTest extends TestCase
 
 //    TODO implement BelongsToMany existence query
 //
-//    /** @test **/
-//    public function it_can_query_relation_existence_on_translated_has_many_relations()
+//    public function test_it_can_query_relation_existence_on_translated_has_many_relations()
 //    {
 //        $translation = factory(Post::class)
 //            ->apply('english')
@@ -169,8 +161,7 @@ class BelongsToManyTest extends TestCase
 //        $this->assertEquals(0, Post::whereKey($translation->id)->whereHas('translations', $this->ofLocale('sv'))->get()->count());
 //    }
 //
-//    /** @test * */
-//    public function regression_when_disabling_locale_scope_it_also_applies_to_with_count_method()
+//    public function test_regression_when_disabling_locale_scope_it_also_applies_to_with_count_method()
 //    {
 //        $englishPost = factory(Post::class)
 //            ->apply('english')

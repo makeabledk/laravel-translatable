@@ -9,8 +9,7 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class MorphManyTest extends TestCase
 {
-    /** @test **/
-    public function it_can_save_and_access_translated_morph_many_relationships_from_translated_model()
+    public function test_it_can_save_and_access_translated_morph_many_relationships_from_translated_model()
     {
         $masterPost = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -43,8 +42,7 @@ class MorphManyTest extends TestCase
         $this->assertEquals($translatedTag->id, $translatedPost->tags->first()->id ?? null);
     }
 
-    /** @test **/
-    public function regression_it_can_eager_load_morph_children_of_different_types()
+    public function test_regression_it_can_eager_load_morph_children_of_different_types()
     {
         $post = factory(Post::class)
             ->with(1, 'english', 'translations')

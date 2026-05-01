@@ -8,16 +8,14 @@ use Makeable\LaravelTranslatable\Translatable;
 
 class DefaultLanguageFilterTest extends TestCase
 {
-    /** @test **/
-    public function it_defaults_to_only_fetch_master()
+    public function test_it_defaults_to_only_fetch_master()
     {
         factory(Post::class)->with(1, 'english', 'translations')->create();
 
         $this->assertEquals(1, Post::all()->count());
     }
 
-    /** @test **/
-    public function it_does_not_apply_default_scope_when_refreshing()
+    public function test_it_does_not_apply_default_scope_when_refreshing()
     {
         $master = factory(Post::class)->with(1, 'english', 'translations')->create();
         $translation = $master->getTranslation('en');
@@ -25,8 +23,7 @@ class DefaultLanguageFilterTest extends TestCase
         $this->assertEquals($translation->id, $translation->refresh()->id);
     }
 
-    /** @test **/
-    public function the_default_locale_filter_may_be_disabled_globally()
+    public function test_the_default_locale_filter_may_be_disabled_globally()
     {
         Translatable::fetchAllLocalesByDefault();
 

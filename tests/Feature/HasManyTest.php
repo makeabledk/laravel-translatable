@@ -10,8 +10,7 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class HasManyTest extends TestCase
 {
-    /** @test **/
-    public function it_can_save_and_access_translated_has_many_relationships_from_translated_model()
+    public function test_it_can_save_and_access_translated_has_many_relationships_from_translated_model()
     {
         $master = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -26,8 +25,7 @@ class HasManyTest extends TestCase
         $this->assertEquals($meta->id, $master->meta->first()->id ?? null);
     }
 
-    /** @test **/
-    public function it_can_eager_load_has_many_from_translated_model()
+    public function test_it_can_eager_load_has_many_from_translated_model()
     {
         $translation = factory(Post::class)
             ->apply('english')
@@ -40,8 +38,7 @@ class HasManyTest extends TestCase
         $this->assertEquals('foo', $translation->meta->first()->key);
     }
 
-    /** @test **/
-    public function the_has_many_translatable_models_always_selects_best_matching_locale()
+    public function test_the_has_many_translatable_models_always_selects_best_matching_locale()
     {
         $postMaster = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -62,8 +59,7 @@ class HasManyTest extends TestCase
         $this->assertEquals('da', $swedish->meta->first()->locale, 'It should default to master when locale not available');
     }
 
-    /** @test **/
-    public function it_defaults_to_master_locale_when_parent_is_non_translatable()
+    public function test_it_defaults_to_master_locale_when_parent_is_non_translatable()
     {
         $team = factory(Team::class)
             ->with(1, 'posts')
@@ -77,8 +73,7 @@ class HasManyTest extends TestCase
         $this->assertEquals('en', $team->posts()->locale('en')->first()->locale, 'A specific locale is requested');
     }
 
-    /** @test **/
-    public function it_can_load_nested_translatable_has_many_relations()
+    public function test_it_can_load_nested_translatable_has_many_relations()
     {
         $team = factory(Team::class)
             ->with(1, 'posts')
@@ -100,8 +95,7 @@ class HasManyTest extends TestCase
         $this->assertEquals('en', data_get($result, 'posts.0.meta.0.locale'));
     }
 
-    /** @test **/
-    public function it_can_query_relation_existence_on_translated_has_many_relations()
+    public function test_it_can_query_relation_existence_on_translated_has_many_relations()
     {
         $post = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -123,8 +117,7 @@ class HasManyTest extends TestCase
         $this->assertEquals('en', $translations->first()->locale);
     }
 
-    /** @test * */
-    public function regression_when_disabling_locale_scope_it_also_applies_to_with_count_method()
+    public function test_regression_when_disabling_locale_scope_it_also_applies_to_with_count_method()
     {
         $post = factory(Post::class)
             ->with(1, 'english', 'translations')
@@ -139,8 +132,7 @@ class HasManyTest extends TestCase
         }])->first()->meta_count);
     }
 
-    /** @test * */
-    public function has_many_locale_scope_may_be_disabled()
+    public function test_has_many_locale_scope_may_be_disabled()
     {
         $translation = factory(Post::class)
             ->apply('english')
@@ -162,8 +154,7 @@ class HasManyTest extends TestCase
         }])->meta->count());
     }
 
-    /** @test * */
-    public function regression_order_does_not_matter_when_using_with_count_with_locale()
+    public function test_regression_order_does_not_matter_when_using_with_count_with_locale()
     {
         // TODO: This regression fails again starting from laravel/framework v8.12.0
         // seemingly due to a core rewrite regarding QueriesRelationships@getRelationExistenceCountQuery.

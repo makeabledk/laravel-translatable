@@ -9,8 +9,7 @@ use Makeable\LaravelTranslatable\Tests\TestCase;
 
 class CurrentLanguageTest extends TestCase
 {
-    /** @test **/
-    public function when_a_local_locale_is_set_on_a_model_it_always_fetches_that_locale()
+    public function test_when_a_local_locale_is_set_on_a_model_it_always_fetches_that_locale()
     {
         factory(Post::class)->with(1, 'english', 'translations')->create();
 
@@ -21,8 +20,7 @@ class CurrentLanguageTest extends TestCase
         $this->assertEquals('en', $posts->first()->locale);
     }
 
-    /** @test **/
-    public function when_a_global_locale_is_set_it_always_fetches_that_locale_across_models()
+    public function test_when_a_global_locale_is_set_it_always_fetches_that_locale_across_models()
     {
         factory(Post::class)->with(1, 'english', 'translations')->create();
 
@@ -33,8 +31,7 @@ class CurrentLanguageTest extends TestCase
         $this->assertEquals('en', $posts->first()->locale);
     }
 
-    /** @test **/
-    public function a_locale_can_be_applied_for_a_closure()
+    public function test_a_locale_can_be_applied_for_a_closure()
     {
         factory(Post::class)->with(1, 'english', 'translations')->create();
 
@@ -51,8 +48,7 @@ class CurrentLanguageTest extends TestCase
         $this->assertEquals('da', $posts->first()->locale);
     }
 
-    /** @test **/
-    public function regression_it_does_not_apply_current_locale_when_disabled_on_relation()
+    public function test_regression_it_does_not_apply_current_locale_when_disabled_on_relation()
     {
         $post = factory(Post::class)
             ->with(1, 'meta')
@@ -65,8 +61,7 @@ class CurrentLanguageTest extends TestCase
         $this->assertEquals('da', $post->meta()->withoutLocaleScope()->first()->locale);
     }
 
-    /** @test **/
-    public function it_respects_default_master_policy_when_loading_relations()
+    public function test_it_respects_default_master_policy_when_loading_relations()
     {
         factory(Post::class)
             ->with(1, 'english', 'translations')
