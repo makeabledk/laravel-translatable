@@ -6,6 +6,16 @@
             "Makeable\\LaravelTranslatable\\": "src/"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Makeable\\LaravelTranslatable\\TranslatableServiceProvider"
+            ],
+            "aliases": {
+                "Translations": "Makeable\\LaravelTranslatable\\Facades\\Translations"
+            }
+        }
+    },
     "authors": [
         {
             "name": "Rasmus Christoffer Nielsen"
